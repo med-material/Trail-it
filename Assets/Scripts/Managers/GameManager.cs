@@ -4,7 +4,7 @@ using System;
 
 public class GameManager : MonoBehaviour {
 
-	public TextAsset[] allLevelsA;
+	public TextAsset[] allLevelsA;      
 	public TextAsset[] allLevelsB;
 
 	private bool player;
@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour {
 		LoadPlayerPrefs ();
 
 		DontDestroyOnLoad (this);
+        //TODO: update this to the new scenemanager.
 		Application.LoadLevel ("PlayerSelect");
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;

@@ -1,7 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum Event{Nothing, PickPlayer, PickGuest, LoadSettings, LoadLevelSelectA, LoadLevelSelectB, PlayerSelect, MainMenu, Tutorial, LoadLevel, LoadLevelSelect, NextLevel, Reset, FirstLevel};
+public enum Event{
+    Nothing,
+    PickPlayer,
+    PickGuest,
+    LoadSettings,
+    LoadLevelSelectA,
+    LoadLevelSelectB,
+    PlayerSelect,
+    MainMenu,
+    Tutorial,
+    LoadLevel,
+    LoadLevelSelect,
+    NextLevel,
+    Reset,
+    FirstLevel };
 
 public class EventManager : MonoBehaviour {
 
