@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -8,18 +9,24 @@ public class GameManager : MonoBehaviour {
 	public TextAsset[] allLevelsB;
 
 	private bool player;
-	private int userID;
+	//private int userID;
 	private bool gameA;
 	private int nextLevel;
-	private int progressA;
-	private int progressB;
-	private int orderRow;
-	private bool tutorialASeen = false;
-	private bool tutorialBSeen = false;
+	//private int progressA;
+	//private int progressB;
+	//private int orderRow;
+	//private bool tutorialASeen = false;
+	//private bool tutorialBSeen = false;
 	private float levelCompletionTime;
+
+	private PlayerData playerDat; 
+
+	private InputHandler input; 
 
 	// Use this for initialization
 	void Start () {
+
+		input = gameObject.AddComponent<InputHandler> (); 
 
 		LoadPlayerPrefs ();
 
@@ -32,65 +39,98 @@ public class GameManager : MonoBehaviour {
 
 	public void LoadPlayerPrefs () {
 
-		if(PlayerPrefs.HasKey("userID")) {
+		if (PlayerPrefs.HasKey("userId"))
+		{
+			playerDat.userID = PlayerPrefs.GetInt("userID");  
+			playerDat.progressA = PlayerPrefs.GetInt("progressA");
+			playerDat.progressB = PlayerPrefs.GetInt("progressB");
+			playerDat.tutorialASeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialASeen"));
+			playerDat.tutorialBSeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialBSeen"));
+			playerDat.orderRow = PlayerPrefs.GetInt("orderRow");
+		} 
+		else 
+		{
+			playerDat.userID = 0;
+			PlayerPrefs.SetInt("userID", playerDat.userID);
 
-			userID = PlayerPrefs.GetInt("userID");
+			playerDat.progressA = 0;
+			PlayerPrefs.SetInt("progressA", playerDat.progressA);
+
+			playerDat.progressB = 0;
+			PlayerPrefs.SetInt("progressB", playerDat.progressB);
+
+			playerDat.tutorialASeen = false;
+			PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
+
+			playerDat.tutorialBSeen = false;
+			PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
+
+			playerDat.orderRow = 0;
+			PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
 		}
-		else {
 
-			userID = 0;
+		/*
+		if(PlayerPrefs.HasKey("userID")) 
+		{
+			playerDat.userID = PlayerPrefs.GetInt("userID");  
+		}
+		else 
+		{
+
+			playerDat.userID = 0;
 			PlayerPrefs.SetInt("userID", userID);
 		}
 
-		if(PlayerPrefs.HasKey("progressA")) {
-			
-			progressA = PlayerPrefs.GetInt("progressA");
+		if(PlayerPrefs.HasKey("progressA")) 
+		{
+			playerDat.progressA = PlayerPrefs.GetInt("progressA");
 		}
-		else {
-
-			progressA = 0;
+		else 
+		{
+			playerDat.progressA = 0;
 			PlayerPrefs.SetInt("progressA", progressA);
 		}
 		
-		if(PlayerPrefs.HasKey("progressB")) {
-
-			progressB = PlayerPrefs.GetInt("progressB");
+		if(PlayerPrefs.HasKey("progressB")) 
+		{
+			playerDat.progressB = PlayerPrefs.GetInt("progressB");
 		}
-		else {
-
-			progressB = 0;
+		else 
+		{
+			playerDat.progressB = 0;
 			PlayerPrefs.SetInt("progressB", progressB);
 		}
 		
-		if(PlayerPrefs.HasKey("tutorialASeen")) {
-			
-			tutorialASeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialASeen"));
+		if(PlayerPrefs.HasKey("tutorialASeen")) 
+		{
+			playerDat.tutorialASeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialASeen"));
 		}
-		else {
-
-			tutorialASeen = false;
+		else 
+		{
+			playerDat.tutorialASeen = false;
 			PlayerPrefs.SetString("tutorialASeen", tutorialASeen.ToString());
 		}
 		
-		if(PlayerPrefs.HasKey("tutorialBSeen")) {
-
-			tutorialBSeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialBSeen"));
+		if(PlayerPrefs.HasKey("tutorialBSeen")) 
+		{
+			playerDat.tutorialBSeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialBSeen"));
 		}
-		else {
-			
-			tutorialBSeen = false;
+		else 
+		{
+			playerDat.tutorialBSeen = false;
 			PlayerPrefs.SetString("tutorialBSeen", tutorialBSeen.ToString());
 		}
 
-		if(PlayerPrefs.HasKey("orderRow")) {
-			
-			orderRow = PlayerPrefs.GetInt("orderRow");
+		if(PlayerPrefs.HasKey("orderRow")) 
+		{
+			playerDat.orderRow = PlayerPrefs.GetInt("orderRow");
 		}
-		else {
-			
-			orderRow = 0;
+		else 
+		{
+			playerDat.orderRow = 0;
 			PlayerPrefs.SetInt("orderRow", orderRow);
-		}
+		} 
+		*/
 	}
 	
 	public void SetPlayer (bool inputPlayer) {
@@ -113,22 +153,22 @@ public class GameManager : MonoBehaviour {
 
 	public void SetProgressA (int inputProgressA) {
 
-		progressA = inputProgressA;
-		PlayerPrefs.SetInt("progressA", progressA);
+		playerDat.progressA = inputProgressA;
+		PlayerPrefs.SetInt("progressA", playerDat.progressA);
 	}
 	public int GetProgressA () {
 		
-		return progressA;
+		return playerDat.progressA;
 	}
 
 	public void SetProgressB (int inputProgressB) {
 
-		progressB = inputProgressB;
-		PlayerPrefs.SetInt("progressB", progressB);
+		playerDat.progressB = inputProgressB;
+		PlayerPrefs.SetInt("progressB", playerDat.progressB);
 	}
 	public int GetProgressB () {
 		
-		return progressB;
+		return playerDat.progressB;
 	}
 
 	public void SetNextLevel (int inputLevel) {
@@ -151,22 +191,22 @@ public class GameManager : MonoBehaviour {
 
 	public void SetTutorialASeen (bool inputTutorial) {
 		
-		tutorialASeen = inputTutorial;
-		PlayerPrefs.SetString("tutorialASeen", tutorialASeen.ToString());
+		playerDat.tutorialASeen = inputTutorial;
+		PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
 	}
 	public bool GetTutorialASeen () {
 		
-		return tutorialASeen;
+		return playerDat.tutorialASeen;
 	}
 
 	public void SetTutorialBSeen (bool inputTutorial) {
 		
-		tutorialBSeen = inputTutorial;
-		PlayerPrefs.SetString("tutorialBSeen", tutorialBSeen.ToString());
+		playerDat.tutorialBSeen = inputTutorial;
+		PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
 	}
 	public bool GetTutorialBSeen () {
 		
-		return tutorialBSeen;
+		return playerDat.tutorialBSeen;
 	}
 
 	public int GetTotalLevelsA () {
@@ -201,21 +241,21 @@ public class GameManager : MonoBehaviour {
 
 	public int GetUserID () {
 
-		return userID;
+		return playerDat.userID;
 	}
 	public void IncreaseUserID () {
 
-		userID++;
-		PlayerPrefs.SetInt ("userID", userID);
+		playerDat.userID++;
+		PlayerPrefs.SetInt ("userID", playerDat.userID);
 	}
 
 	public int GetOrderRow () {
 		
-		return orderRow;
+		return playerDat.orderRow;
 	}
 	public void SetOrderRow (int inputRow) {
 		
-		orderRow = inputRow;
-		PlayerPrefs.SetInt ("orderRow", orderRow);
+		playerDat.orderRow = inputRow;
+		PlayerPrefs.SetInt ("orderRow", playerDat.orderRow);
 	}
 }
