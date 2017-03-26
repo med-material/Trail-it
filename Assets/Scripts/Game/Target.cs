@@ -66,7 +66,7 @@ public class Target : MonoBehaviour {
 	public void SetWhite () {
 		
 		sprite.sprite = whiteTarget;
-		targetLabel.color = Color.black;
+		targetLabel.color = Color.white;
 		red = false;
 	}
 
@@ -80,7 +80,7 @@ public class Target : MonoBehaviour {
 	public void SetGreenOutline () {
 		
 		sprite.sprite = greenOutline;
-		targetLabel.color = Color.black;
+		targetLabel.color = Color.white;
 		red = false;
 	}
 
