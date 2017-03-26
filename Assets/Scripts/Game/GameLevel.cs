@@ -229,8 +229,7 @@ public class GameLevel : MonoBehaviour {
 				if (gameManager.LevelEnded())
 				{
 					gameManager.SetNextLevel (gameManager.GetNextLevel() + 1);
-					LoadLevel (); 
-					levelComplete = false;
+					LoadNextLevel (); 
 				}
 				/*		else 
 				{
@@ -378,6 +377,12 @@ public class GameLevel : MonoBehaviour {
 		}*/
 	}
 
+
+	public void LoadNextLevel()
+	{
+		LoadLevel ();
+		levelComplete = false; 
+	}
 
 	private void LoadLevel () {
 

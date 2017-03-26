@@ -53,7 +53,10 @@ public class GameManager : MonoBehaviour {
 		//Application.LoadLevel ("PlayerSelect");
 
 	
-		setupCanvas.gameObject.SetActive (true);
+		//setupCanvas.gameObject.SetActive (true);
+
+		if (IsGuest)
+			SetPlayer(false); // Sets player to guest if IsGuest is set in the inspector.
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 	}
@@ -221,6 +224,13 @@ public class GameManager : MonoBehaviour {
 	public int GetProgressB () {
 		
 		return playerDat.progressB;
+	}
+
+	public void NextLevelButton()
+	{
+		SetNextLevel (GetNextLevel () + 1); 
+		_CurrentScene = "Level"; 
+		GameObject.Find ("GameLevel").GetComponent<GameLevel> ().LoadNextLevel (); 
 	}
 
 	public void SetNextLevel (int inputLevel) {
