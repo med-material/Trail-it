@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI; 
 
 public class GameManager : MonoBehaviour {
 
@@ -23,6 +24,16 @@ public class GameManager : MonoBehaviour {
 
 	private InputHandler input; 
 
+	// Canvas Stuff
+	[SerializeField]
+	private Canvas menuCanvas; 
+	[SerializeField]
+	private Canvas setupCanvas; 
+	[SerializeField]
+	private Canvas endLevelCanvas; 
+
+	public bool SkipTutorial = false; 
+
 	// Use this for initialization
 	void Start () {
 
@@ -31,8 +42,11 @@ public class GameManager : MonoBehaviour {
 		LoadPlayerPrefs ();
 
 		DontDestroyOnLoad (this);
-        //TODO: update this to the new scenemanager.
-		Application.LoadLevel ("PlayerSelect");
+        //: update this to the new scenemanager.
+		//Application.LoadLevel ("PlayerSelect");
+
+	
+		setupCanvas.gameObject.SetActive (true);
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 	}
@@ -68,78 +82,93 @@ public class GameManager : MonoBehaviour {
 			playerDat.orderRow = 0;
 			PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
 		}
-
-		/*
-		if(PlayerPrefs.HasKey("userID")) 
-		{
-			playerDat.userID = PlayerPrefs.GetInt("userID");  
-		}
-		else 
-		{
-
-			playerDat.userID = 0;
-			PlayerPrefs.SetInt("userID", userID);
-		}
-
-		if(PlayerPrefs.HasKey("progressA")) 
-		{
-			playerDat.progressA = PlayerPrefs.GetInt("progressA");
-		}
-		else 
-		{
-			playerDat.progressA = 0;
-			PlayerPrefs.SetInt("progressA", progressA);
-		}
-		
-		if(PlayerPrefs.HasKey("progressB")) 
-		{
-			playerDat.progressB = PlayerPrefs.GetInt("progressB");
-		}
-		else 
-		{
-			playerDat.progressB = 0;
-			PlayerPrefs.SetInt("progressB", progressB);
-		}
-		
-		if(PlayerPrefs.HasKey("tutorialASeen")) 
-		{
-			playerDat.tutorialASeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialASeen"));
-		}
-		else 
-		{
-			playerDat.tutorialASeen = false;
-			PlayerPrefs.SetString("tutorialASeen", tutorialASeen.ToString());
-		}
-		
-		if(PlayerPrefs.HasKey("tutorialBSeen")) 
-		{
-			playerDat.tutorialBSeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialBSeen"));
-		}
-		else 
-		{
-			playerDat.tutorialBSeen = false;
-			PlayerPrefs.SetString("tutorialBSeen", tutorialBSeen.ToString());
-		}
-
-		if(PlayerPrefs.HasKey("orderRow")) 
-		{
-			playerDat.orderRow = PlayerPrefs.GetInt("orderRow");
-		}
-		else 
-		{
-			playerDat.orderRow = 0;
-			PlayerPrefs.SetInt("orderRow", orderRow);
-		} 
-		*/
 	}
-	
-	public void SetPlayer (bool inputPlayer) {
 
+
+	public void SetPlayer (bool inputPlayer) {
+		//TODO: Redo this so we don't use the setter to go to menu. 
 		player = inputPlayer;
+		setupCanvas.gameObject.SetActive (false);
+		menuCanvas.gameObject.SetActive (true);
 	}
 	public bool GetPlayer () {
 		
 		return player;
+	}
+
+	public void StartGame(bool isGameTypeA)
+	{
+		SetGameType (isGameTypeA);
+		//TODO: Insert: 			loggingManager.WriteLog ("Guest Profile Selected");
+
+
+		if (isGameTypeA)
+		{
+			if (playerDat.tutorialASeen || SkipTutorial) 
+			{
+				Debug.Log ("Load level select"); 
+				SetNextLevel (0);
+				LoadNextLevel ();
+			}
+			else 
+			{
+				GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject; 
+				tutObj.GetComponent<Tutorial>().Init (this);
+				//Debug.Log ("Load tutorial"); 
+				SetTutorialASeen (true); 
+			}
+		} 
+		else 
+		{
+			if (playerDat.tutorialBSeen || SkipTutorial) 
+			{
+				Debug.Log ("Load level select for type B"); 
+				SetNextLevel (0); 
+				LoadNextLevel (); 
+			}
+			else 
+			{
+				//Debug.Log ("Load tutorial for type B"); 
+				GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject; 
+				tutObj.GetComponent<Tutorial>().Init (this);
+				SetTutorialBSeen (true);
+			}
+		}
+		menuCanvas.gameObject.SetActive (false); 
+	}
+
+	public GameLevel activeLevel; 
+
+	public void Update()
+	{
+		if (input.TouchActive)
+		{
+			activeLevel.AttemptHit (input.TouchPos);
+		} else if (input.TouchUp)
+		{
+			activeLevel.TempHit = null; 
+		}
+	}
+
+	public void LoadNextLevel()
+	{
+		if (!GameLevel._DidInit)
+		{
+			//Debug.Log ("I get this far.");	
+			GameObject.Find ("GameLevel").GetComponent<GameLevel> ().Init (this); 
+		} 
+	}
+
+	public bool LevelEnded()
+	{
+		if (endLevelCanvas == null)
+		{
+			return true;
+		} 
+		else 
+		{
+			return false; 	
+		}
 	}
 
 	public void SetGameType (bool inputGameA) {

@@ -73,9 +73,9 @@ public class AssistanceManager : MonoBehaviour {
 
 		mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> ();
 
-		settingsManager = GameObject.Find ("Managers").GetComponent<SettingsManager> ();
-		gameManager = GameObject.Find("Managers").GetComponent<GameManager>();
-		loggingManager = GameObject.Find("Managers").GetComponent<LoggingManager>();
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+		settingsManager = gameManager.GetComponent<SettingsManager> ();
+		loggingManager = gameManager.GetComponent<LoggingManager>();
 		gameLevel = this.GetComponent<GameLevel>();
 
 		animationOn = settingsManager.GetSetting (Settings.Anim);

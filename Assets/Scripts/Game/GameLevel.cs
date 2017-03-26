@@ -44,7 +44,9 @@ public class GameLevel : MonoBehaviour {
 
 	private float startTime;
 
-	// Use this for initialization
+	public static bool _DidInit = false; 
+
+/*	// Use this for initialization
 	void Start () {
 
 		gameManager = GameObject.Find("Managers").GetComponent<GameManager>();
@@ -62,19 +64,177 @@ public class GameLevel : MonoBehaviour {
 		errorSound.playOnAwake = false;
 
 		startTime = Time.time;
+	}*/
+
+	public void Init(GameManager gm) 
+	{
+		if (_DidInit)
+			return; 
+		
+		gameManager = gm;
+		loggingManager = gm.GetComponent<LoggingManager> ();
+		assistanceManager = this.GetComponent<AssistanceManager> (); 
+
+		LoadLevel (); 
+
+		correctSound = gameObject.AddComponent<AudioSource>();
+		correctSound.clip = correctClip;
+		correctSound.playOnAwake = false;
+
+		errorSound = gameObject.AddComponent<AudioSource>();
+		errorSound.clip = errorClip;
+		errorSound.playOnAwake = false;
+
+		startTime = Time.time;
+
+		_DidInit = true; 
 	}
-	
+
+
+	public void AttemptHit(Vector3 hitPos)
+	{
+		colliderHit = Physics2D.OverlapPoint(hitPos);
+
+		if (colliderHit != null) {
+
+			if (colliderHit != tempHit) {
+
+				tempHit = colliderHit;
+
+				hit = colliderHit.GetComponent<Target> ().GetID ();
+
+				if (colliderHit.GetComponent<Target> ().GetObstacle ()) {
+
+					obstacles [hit].SetRed ();
+					obstacles [hit].TurnLight ();
+
+					hit = (hit * -1) - 1;
+
+					loggingManager.WriteLog ("Obstacle Hit");
+
+					currentTarget = lastValid;
+					outset = hit;
+					errorsInRow++;
+					correctingError = true;
+					errorSound.Play ();
+
+					for (int i = 0; i < targets.Length; i++) {
+						if (!targets [i].IsRed () && i != currentTarget)
+							targets [i].TurnDark ();
+					}
+					for (int i = 0; i < obstacles.Length; i++)
+						if (!obstacles [i].IsRed ())
+							obstacles [i].TurnDark ();
+				} else {
+
+					if (hit == currentTarget) {
+
+						if (hit == targets.Length - 1) {
+							CompeleteLevel ();
+							loggingManager.WriteLog ("Target Hit - Level Complete");
+						} else {
+							loggingManager.WriteLog ("Target Hit");
+						}
+
+						for (int i = hit + 1; i < targets.Length; i++)
+							targets [i].SetWhite ();
+						for (int i = 0; i < targets.Length; i++)
+							targets [i].TurnLight ();
+						if (obstacles != null) {
+							for (int i = 0; i < obstacles.Length; i++) {
+
+								obstacles [i].SetWhite ();
+								obstacles [i].TurnLight ();
+							}
+						}
+						targets [lastValid].SetGreen ();
+						targets [hit].SetGreenOutline ();
+						outset = currentTarget;
+						lastValid = currentTarget;
+						currentTarget++;
+						correctingError = false;
+						errorsInRow = 0;
+						correctSound.Play ();
+					} else if (hit == lastValid) {
+
+						loggingManager.WriteLog ("LastValid Hit");
+
+						correctingError = false;
+						errorsInRow = 0;
+						correctSound.Play ();
+					} else if (hit < lastValid) {
+
+						loggingManager.WriteLog ("Backtracking");
+
+						for (int i = hit + 1; i < targets.Length; i++)
+							targets [i].SetWhite ();
+						for (int i = 0; i < targets.Length; i++)
+							targets [i].TurnLight ();
+						if (obstacles != null) {
+							for (int i = 0; i < obstacles.Length; i++) {
+
+								obstacles [i].SetWhite ();
+								obstacles [i].TurnLight ();
+							}
+						}
+						targets [hit].SetGreenOutline ();
+						outset = hit;
+						lastValid = hit;
+						currentTarget = hit + 1;
+						correctingError = false;
+						errorsInRow = 0;
+						correctSound.Play ();
+					} else if (hit > currentTarget) {
+
+						loggingManager.WriteLog ("Wrong Target Hit");
+
+						targets [hit].SetRed ();
+						targets [hit].TurnLight ();
+						currentTarget = lastValid;
+						outset = hit;
+						correctingError = true;
+						errorsInRow++;
+						errorSound.Play ();
+
+						for (int i = 0; i < targets.Length; i++) {
+							if (!targets [i].IsRed () && i != currentTarget)
+								targets [i].TurnDark ();
+						}
+						if (obstacles != null) {
+							for (int i = 0; i < obstacles.Length; i++)
+								if (!obstacles [i].IsRed ())
+									obstacles [i].TurnDark ();
+						}
+					}
+				}
+				assistanceManager.ResetTimer ();
+			}
+		}
+
+	}
+
 	// Update is called once per frame
 	void Update () {
 
 		if(levelComplete) {
 
-			if(Time.time - completionTime > endDelay) {
-
-				Application.LoadLevel("LevelComplete");
+			if(Time.time - completionTime > endDelay) 
+			{
+				if (gameManager.LevelEnded())
+				{
+					gameManager.SetNextLevel (gameManager.GetNextLevel() + 1);
+					LoadLevel (); 
+					levelComplete = false;
+				}
+				else 
+				{
+					
+				}
+				//Application.LoadLevel("LevelComplete");
 			}
 		}
 		else {
+			return; 
 
 			if(Input.GetMouseButton(0)) {
 
@@ -224,7 +384,13 @@ public class GameLevel : MonoBehaviour {
 
 		camTransform.position = new Vector3 (float.Parse (levelData[0]),float.Parse (levelData[1]),float.Parse (levelData[2]));
 		mainCam.orthographicSize = float.Parse (levelData[3]);
-		
+
+
+		if (targetObjects != null && targetObjects.Length > 0)
+		{
+			DestroyLevel (); 
+		}
+
 		targetObjects = new GameObject[int.Parse(levelData[4])];
 		targets = new Target[targetObjects.Length];
 		
@@ -258,6 +424,24 @@ public class GameLevel : MonoBehaviour {
 				obstacles[i].SetObstacle(true);
 				obstacles[i].SetLabel(obstacleLabels[i]);
 			}
+		}
+	}
+
+	private void DestroyLevel()
+	{
+		for (int i = 0; i < targetObjects.Length; i++)
+		{
+			Destroy (targetObjects[i]); 
+			targets [i] = null; 
+		}
+
+		if (obstacleObjects == null)
+			return; 
+		
+		for (int i = 0; i < obstacleObjects.Length; i++)
+		{
+			Destroy (obstacleObjects[i]);
+			obstacles [i] = null; 
 		}
 	}
 
@@ -324,5 +508,10 @@ public class GameLevel : MonoBehaviour {
 			return mainCam.WorldToViewportPoint(obstacleObjects[(inputTargetID + 1)*-1].transform.position);
 		else
 			return mainCam.WorldToViewportPoint(targetObjects[inputTargetID].transform.position);
+	}
+
+	public Collider2D TempHit {
+		get{ return tempHit; }
+		set{ tempHit = value; }
 	}
 }

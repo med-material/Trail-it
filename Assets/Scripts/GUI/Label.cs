@@ -1,7 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum importString {None, Name, GameType, LevelTime, SessionTime, CurrentPlayer, TotalSessions};
+public enum importString {
+	None, 
+	Name, 
+	GameType, 
+	LevelTime, 
+	SessionTime, 
+	CurrentPlayer, 
+	TotalSessions };
 
 [ExecuteInEditMode]
 

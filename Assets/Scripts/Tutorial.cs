@@ -63,7 +63,7 @@ public class Tutorial : MonoBehaviour {
 	private int handAt;
 
 	// Use this for initialization
-	void Start () {
+/*	void Start () {
 
 		gameManager = GameObject.Find("Managers").GetComponent<GameManager>();
 		loggingManager = GameObject.Find("Managers").GetComponent<LoggingManager>();
@@ -86,7 +86,33 @@ public class Tutorial : MonoBehaviour {
 		LoadSounds ();
 
 		StartStage0 ();
+	}*/
+
+	public void Init (GameManager gm) {
+
+		gameManager = gm;
+		loggingManager = gm.gameObject.GetComponent<LoggingManager>();
+
+		mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> ();
+
+		gameA = gameManager.GetGameType ();
+
+/*		if(gameA) {
+
+			gameManager.SetTutorialASeen(true);
+		}
+		else {
+
+			gameManager.SetTutorialBSeen(true);
+		}*/
+
+		hand = (GameObject)Instantiate (handPrefab, new Vector3(0,-5,0), Quaternion.identity);
+
+		LoadSounds ();
+
+		StartStage0 ();
 	}
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -115,7 +141,7 @@ public class Tutorial : MonoBehaviour {
 		else if(stage == 0 || stage == 1) {
 
 			RunGame();
-			RunHand();
+			RunHand(); 
 		}
 	}
 
@@ -156,6 +182,7 @@ public class Tutorial : MonoBehaviour {
 		handStartTime = Time.time;
 		handStage = 0;
 		hand.transform.position = new Vector3(0, -5, 0);
+		hand.GetComponent<Renderer> ().enabled = true; 
 		handAt = 0;
 
 		targetObjects = new GameObject[2];
@@ -249,13 +276,16 @@ public class Tutorial : MonoBehaviour {
 		lineDrawer.gameObject.SetActive (false);
 
 		endSound.Play ();
+		//Debug.Log ("I've reached the end");
 		a2Sound.Stop();
 		b2Sound.Stop();
 		hand.transform.position = new Vector3(0, -5, 0);
+		hand.GetComponent<Renderer> ().enabled = false; 
 		gameManager.SetNextLevel (0);
 		phase2Menu.SetActive (true);
 		phase1A.SetActive (false);
 		phase1B.SetActive (false);
+		gameManager.LoadNextLevel (); 
 	}
 
 	private void RunGame() {

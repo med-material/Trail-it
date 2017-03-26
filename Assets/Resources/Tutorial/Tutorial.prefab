@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1096884252792922}
+  m_IsPrefabParent: 1
+--- !u!1 &1096884252792922
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4626642880856868}
+  - component: {fileID: 114068218046735724}
+  m_Layer: 0
+  m_Name: Tutorial
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4626642880856868
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1096884252792922}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.22998257, y: -0.43014365, z: 0.14821005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114068218046735724
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1096884252792922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffe1469c881fd0840bbb583992b56dbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetPrefab: {fileID: 100000, guid: 91588d9c3fc317c41a9b03f16b8976a4, type: 2}
+  handPrefab: {fileID: 100000, guid: ceaadf655a1802547bd85affa440974a, type: 2}
+  phase2Menu: {fileID: 1635355138049846, guid: 8b73b878c7bc14de4846d2ce486d5b82, type: 2}
+  phase0A: {fileID: 1215973486898408, guid: 00ab2d1df8895490ea62c3d8ca723ada, type: 2}
+  phase1A: {fileID: 1630997345832268, guid: 4c62e45f09f84485ca882b20123aa6e0, type: 2}
+  phase0B: {fileID: 1607316182396826, guid: 7d4b67510c9034c68b84d6215f927580, type: 2}
+  phase1B: {fileID: 1760011478451532, guid: 2213e280062d34fb5845bc7fca8e41ad, type: 2}
+  correctClip: {fileID: 8300000, guid: f9d95052f323f7346a3671f11d2eded9, type: 3}
+  errorClip: {fileID: 8300000, guid: e56a860e76b53e24885d8d086cdc8a33, type: 3}
+  a1Clip: {fileID: 8300000, guid: ad69d67b092979e4a91299e795f13a53, type: 3}
+  a2Clip: {fileID: 8300000, guid: 9e954e595cb8e8c4b9074d267eb30180, type: 3}
+  b1Clip: {fileID: 8300000, guid: 90ac81e8d404ceb4caf63f1f8159fc56, type: 3}
+  b2Clip: {fileID: 8300000, guid: f574ec3c605a2d44887154eebbb25dbf, type: 3}
+  endClip: {fileID: 8300000, guid: 4c6754fee35f0e44a850ddcfed856652, type: 3}
+  delayTime: 1
+  targetPositions:
+  - {x: -3, y: 1, z: 0}
+  - {x: 3, y: 1, z: 0}
+  - {x: -4, y: -1, z: 0}
+  - {x: -1.5, y: 2, z: 0}
+  - {x: 1, y: -1, z: 0}
+  - {x: 4, y: 2, z: 0}
+  targetScale: {x: 1.5, y: 1.5, z: 1}
+  handSpeed: 2
+  handDistTolerance: 0.2
+  handAwayTime: 2
+  handStillTime: 1
+  lineDrawer: {fileID: 114904478942971324, guid: cb6cb1cac09604db1b81c957e1820bc8,
+    type: 2}
