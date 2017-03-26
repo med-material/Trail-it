@@ -51,7 +51,8 @@ public class LineDrawer : MonoBehaviour {
 				tempPos = newPos;
 
 				vertices++;
-				currentLine.SetVertexCount(vertices);
+				//currentLine.SetVertexCount(vertices);
+				currentLine.numPositions = vertices; 
 				currentLine.SetPosition(vertices-1, mainCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, lineZPos)));
 			}
 		}
@@ -64,12 +65,16 @@ public class LineDrawer : MonoBehaviour {
 		vertices = 0;
 		
 		currentLine = newLine.GetComponent<LineRenderer>();
-		currentLine.SetWidth(mainCam.orthographicSize/100*lineWidth, mainCam.orthographicSize/100*lineWidth);
+		currentLine.startWidth = mainCam.orthographicSize / 100 * lineWidth;
+		currentLine.endWidth  = mainCam.orthographicSize / 100 * lineWidth;
+
+		//currentLine.SetWidth(mainCam.orthographicSize/100*lineWidth, mainCam.orthographicSize/100*lineWidth);
 		
 		tempPos = mainCam.ScreenToViewportPoint(Input.mousePosition);
 		
 		vertices++;
-		currentLine.SetVertexCount(vertices);
+		//currentLine.SetVertexCount(vertices);
+		currentLine.numPositions = vertices; 
 		currentLine.SetPosition(vertices-1, mainCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, lineZPos)));
 	}
 

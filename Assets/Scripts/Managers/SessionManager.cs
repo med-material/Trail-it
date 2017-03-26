@@ -29,12 +29,12 @@ public class SessionManager : MonoBehaviour {
 		if (System.DateTime.Now.Subtract (lastInteraction).TotalMinutes > resetTime) {
 			
 			ResetSessionTime();
-			Application.LoadLevel("PlayerSelect");
+			//Application.LoadLevel("PlayerSelect");
 			loggingManager.NewLog();
 			loggingManager.WriteLog("Game Reset - Inactivity");
 		}
 		
-		if ((Application.loadedLevelName == "PlayerSelect" || Application.loadedLevelName == "MainMenu") && GetMinutesLeft() <= 0) {
+		if ((GameManager._CurrentScene == "PlayerSelect" || GameManager._CurrentScene == "MainMenu") && GetMinutesLeft() <= 0) {
 			
 			ResetSessionTime();
 			loggingManager.WriteLog("Session Time Reset");

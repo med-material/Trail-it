@@ -32,6 +32,12 @@ public class GameManager : MonoBehaviour {
 	[SerializeField]
 	private Canvas endLevelCanvas; 
 
+
+	// Since we're doing everything in one scene now, we're just adding this to figure out 
+	// the state we're in. 
+	public static string _CurrentScene = ""; 
+
+	// Can be set in the inspector in case you don't want to finish the Tutorial
 	public bool SkipTutorial = false; 
 
 	// Use this for initialization
@@ -41,7 +47,7 @@ public class GameManager : MonoBehaviour {
 
 		LoadPlayerPrefs ();
 
-		DontDestroyOnLoad (this);
+		DontDestroyOnLoad (this); // Technically not needed anymore. 
         //: update this to the new scenemanager.
 		//Application.LoadLevel ("PlayerSelect");
 
@@ -114,6 +120,7 @@ public class GameManager : MonoBehaviour {
 			{
 				GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject; 
 				tutObj.GetComponent<Tutorial>().Init (this);
+				_CurrentScene = "Tutorial";
 				//Debug.Log ("Load tutorial"); 
 				SetTutorialASeen (true); 
 			}
@@ -131,6 +138,7 @@ public class GameManager : MonoBehaviour {
 				//Debug.Log ("Load tutorial for type B"); 
 				GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject; 
 				tutObj.GetComponent<Tutorial>().Init (this);
+				_CurrentScene = "Tutorial";
 				SetTutorialBSeen (true);
 			}
 		}
@@ -141,12 +149,16 @@ public class GameManager : MonoBehaviour {
 
 	public void Update()
 	{
-		if (input.TouchActive)
-		{
-			activeLevel.AttemptHit (input.TouchPos);
-		} else if (input.TouchUp)
-		{
-			activeLevel.TempHit = null; 
+
+		if (_CurrentScene == "Level")
+		{	
+			if (input.TouchActive)
+			{
+				activeLevel.AttemptHit (input.TouchPos);
+			} else if (input.TouchUp)
+			{
+				activeLevel.TempHit = null; 
+			}
 		}
 	}
 
@@ -156,6 +168,7 @@ public class GameManager : MonoBehaviour {
 		{
 			//Debug.Log ("I get this far.");	
 			GameObject.Find ("GameLevel").GetComponent<GameLevel> ().Init (this); 
+			_CurrentScene = "Level"; 
 		} 
 	}
 
@@ -167,6 +180,8 @@ public class GameManager : MonoBehaviour {
 		} 
 		else 
 		{
+			_CurrentScene = "LevelComplete"; 
+			endLevelCanvas.gameObject.SetActive (true); 
 			return false; 	
 		}
 	}

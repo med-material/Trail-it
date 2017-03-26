@@ -89,7 +89,7 @@ public class LevelScreen : MonoBehaviour {
 					if(GUI.Button(buttonRect, (i+1).ToString(), currentStyle)) {
 
 						gameManager.SetNextLevel(i);
-						Application.LoadLevel("Level");
+						//TODO: I removed this check up on it later. //Application.LoadLevel("Level");
 						loggingManager.WriteLog("Chose Level " + i.ToString());
 					}
 				}

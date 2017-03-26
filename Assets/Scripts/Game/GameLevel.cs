@@ -226,14 +226,14 @@ public class GameLevel : MonoBehaviour {
 					LoadLevel (); 
 					levelComplete = false;
 				}
-				else 
+				/*		else 
 				{
 					
-				}
+				}*/
 				//Application.LoadLevel("LevelComplete");
 			}
 		}
-		else {
+/*		else {
 			return; 
 
 			if(Input.GetMouseButton(0)) {
@@ -369,7 +369,7 @@ public class GameLevel : MonoBehaviour {
 
 				tempHit = null;
 			}
-		}
+		}*/
 	}
 
 	private void LoadLevel () {

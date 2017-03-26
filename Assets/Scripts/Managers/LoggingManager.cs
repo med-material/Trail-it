@@ -79,7 +79,7 @@ public class LoggingManager : MonoBehaviour {
 	public void WriteLog(string inputEvent) {
 
 		eventLabel = inputEvent;
-		scene = Application.loadedLevelName;
+		scene = GameManager._CurrentScene; // Was Application.loadedlevelname or something. 
 
 		userID = gameManager.GetUserID().ToString();
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
