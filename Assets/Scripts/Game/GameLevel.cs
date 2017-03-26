@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System;
+
 
 public class GameLevel : MonoBehaviour {
 	
@@ -45,6 +48,9 @@ public class GameLevel : MonoBehaviour {
 	private float startTime;
 
 	public static bool _DidInit = false; 
+
+	[Range(0.001f, 1.0f)]
+	public float TargetSpawnDelay = 0.01f; 
 
 /*	// Use this for initialization
 	void Start () {
@@ -372,6 +378,7 @@ public class GameLevel : MonoBehaviour {
 		}*/
 	}
 
+
 	private void LoadLevel () {
 
 		camTransform = GameObject.Find ("Main Camera").transform;
@@ -408,6 +415,10 @@ public class GameLevel : MonoBehaviour {
 			else {
 				targets[i].SetLabel(labelsB[i]);
 			}
+
+			targetObjects [i].SetActive(false); 
+
+			//targetObjects [i].GetComponent<Animator> ().Play("TargetSpawn"); 
 		}
 		
 		if(levelData[5+targetObjects.Length*6] != null && levelData[5+targetObjects.Length*6] != "") {
@@ -423,8 +434,36 @@ public class GameLevel : MonoBehaviour {
 				obstacles[i].SetID(i);
 				obstacles[i].SetObstacle(true);
 				obstacles[i].SetLabel(obstacleLabels[i]);
+				obstacleObjects [i].SetActive(false); 
 			}
 		}
+
+		//GameObject[] objsToSpawn = new GameObject[targetObjects.Length + obstacleObjects.Length];
+
+		//targetObjects.CopyTo (objsToSpawn, 0);
+		//obstacleObjects.CopyTo (objsToSpawn, targetObjects.Length);
+		StartCoroutine (SpawnTargets (targetObjects));
+	}
+
+	IEnumerator SpawnTargets(GameObject[] objsToSpawn) 
+	{
+		float t = TargetSpawnDelay; 
+
+		//List<int> nextIndex = new List<int> (); 
+
+		GameObject[] sorted = objsToSpawn; 
+
+		Array.Sort(sorted,delegate(GameObject x, GameObject y) { return x.transform.position.x.CompareTo(y.transform.position.x); });
+
+		for (int i = 0; i < sorted.Length; i++)
+		{
+			sorted [i].GetComponent<Animator> ().Play("TargetSpawn");
+			sorted [i].SetActive(true); 
+			//t = UnityEngine.Random.Range (0.008f, 0.03f);
+			yield return new WaitForSeconds (t); 
+		}
+
+		yield return null; 
 	}
 
 	private void DestroyLevel()
@@ -443,6 +482,12 @@ public class GameLevel : MonoBehaviour {
 			Destroy (obstacleObjects[i]);
 			obstacles [i] = null; 
 		}
+	}
+
+	public void ReloadLevel()
+	{
+		DestroyLevel (); 
+		LoadLevel ();
 	}
 
 	private void CompeleteLevel () {

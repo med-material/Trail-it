@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour {
 
 	// Can be set in the inspector in case you don't want to finish the Tutorial
 	public bool SkipTutorial = false; 
+	public bool IsGuest = true; 
 
 	// Use this for initialization
 	void Start () {
@@ -120,6 +121,7 @@ public class GameManager : MonoBehaviour {
 			{
 				GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject; 
 				tutObj.GetComponent<Tutorial>().Init (this);
+				tutObj.name = "Tutorial";
 				_CurrentScene = "Tutorial";
 				//Debug.Log ("Load tutorial"); 
 				SetTutorialASeen (true); 
@@ -138,6 +140,7 @@ public class GameManager : MonoBehaviour {
 				//Debug.Log ("Load tutorial for type B"); 
 				GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject; 
 				tutObj.GetComponent<Tutorial>().Init (this);
+				tutObj.name = "Tutorial";
 				_CurrentScene = "Tutorial";
 				SetTutorialBSeen (true);
 			}
@@ -159,6 +162,11 @@ public class GameManager : MonoBehaviour {
 			{
 				activeLevel.TempHit = null; 
 			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			GameObject.Find ("GameLevel").GetComponent<GameLevel> ().ReloadLevel ();
 		}
 	}
 
