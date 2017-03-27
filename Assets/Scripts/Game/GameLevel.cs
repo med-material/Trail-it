@@ -14,6 +14,8 @@ public class GameLevel : MonoBehaviour {
 	public AudioClip errorClip;
 	public float endDelay;
 
+	public LineDrawer lineDrawer;
+
 	private GameObject[] targetObjects;
 	private GameObject[] obstacleObjects;
 	private Target[] targets;
@@ -385,7 +387,6 @@ public class GameLevel : MonoBehaviour {
 	}
 
 	private void LoadLevel () {
-
 		camTransform = GameObject.Find ("Main Camera").transform;
 		mainCam = camTransform.GetComponent<Camera> ();
 		
@@ -402,6 +403,8 @@ public class GameLevel : MonoBehaviour {
 		{
 			DestroyLevel (); 
 		}
+
+		lineDrawer.ClearAll ();
 
 		targetObjects = new GameObject[int.Parse(levelData[4])];
 		targets = new Target[targetObjects.Length];
@@ -543,6 +546,7 @@ public class GameLevel : MonoBehaviour {
 
 		return correctingError;
 	}
+
 	public float GetGameTime () {
 
 		return Time.time - startTime;
