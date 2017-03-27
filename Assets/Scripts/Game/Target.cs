@@ -15,6 +15,7 @@ public class Target : MonoBehaviour {
 	private bool obstacle = false;
 	private bool rightSide;
 	private bool red = false;
+	private bool green = false;
 
 	// Use this for initialization
 	void Awake () {
@@ -75,6 +76,7 @@ public class Target : MonoBehaviour {
 		sprite.sprite = greenTarget;
 		targetLabel.color = Color.white;
 		red = false;
+		green = true;
 	}
 
 	public void SetGreenOutline () {
@@ -82,12 +84,13 @@ public class Target : MonoBehaviour {
 		sprite.sprite = greenOutline;
 		targetLabel.color = Color.white;
 		red = false;
+		green = true;
 	}
 
 	public void SetRed () {
 		
 		sprite.sprite = redTarget;
-		targetLabel.color = Color.white;
+		targetLabel.color = new Color(255,255,255,0);
 		red = true;
 	}
 
@@ -121,6 +124,11 @@ public class Target : MonoBehaviour {
 	public bool IsRed() {
 
 		return red;
+	}
+
+	public bool IsGreen() {
+
+		return green;
 	}
 
 	public float GetX () {
