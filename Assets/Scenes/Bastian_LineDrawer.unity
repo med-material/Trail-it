@@ -579,7 +579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.78
+  startDelay: 0.48
 --- !u!1 &204468423
 GameObject:
   m_ObjectHideFlags: 0
@@ -2397,7 +2397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.78
+  startDelay: 0.48
 --- !u!1 &749725379
 GameObject:
   m_ObjectHideFlags: 0
@@ -2820,7 +2820,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.44
+  startDelay: 0.1
 --- !u!1 &1000699150
 GameObject:
   m_ObjectHideFlags: 0
@@ -3473,7 +3473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.91
+  startDelay: 0.71
 --- !u!1001 &1076552947
 Prefab:
   m_ObjectHideFlags: 0
@@ -4780,7 +4780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.91
+  startDelay: 0.71
 --- !u!1 &1459365875
 GameObject:
   m_ObjectHideFlags: 0
@@ -5040,7 +5040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.65
+  startDelay: 0.25
 --- !u!1 &1530041638
 GameObject:
   m_ObjectHideFlags: 0
@@ -6482,7 +6482,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.65
+  startDelay: 0.25
 --- !u!224 &2028834952 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224422182759157224, guid: 968ce7bb267784a37bcb2aab9f601bae,
