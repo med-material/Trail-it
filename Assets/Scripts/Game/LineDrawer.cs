@@ -15,9 +15,11 @@ public class LineDrawer : MonoBehaviour {
 	public GameLevel gameLevel;
 
 	private int alreadyHit = 0;
+	private bool needNewLine = true;
 	private GameObject newLine;
-	private LineRenderer currentLine;
+	private List <LineRenderer> lines = new List<LineRenderer>();
 	private LineRenderer fadeLine;
+	private LineRenderer oldLine;
 	private int vertices;
 
 	private Camera mainCam;
@@ -43,32 +45,33 @@ public class LineDrawer : MonoBehaviour {
 		if(Input.GetMouseButtonDown(0)) {
 
 			NewLine();
-			currentLine.startColor = normalColor;
-			currentLine.endColor = normalColor;
+			lines[lines.Count-1].startColor = normalColor;
+			lines[lines.Count-1].endColor = normalColor;
 		}
 
 		// If mouse is released
 		// is our position a circle?
 		// then take the coordinates in vertices and redraw them as light green. 
 
+		if (Input.GetMouseButton (0)) {
 
-		if(Input.GetMouseButton(0)) {
+			if (needNewLine) {
 
-			if(currentLine == null) {
-
-				NewLine();
+				NewLine ();
+				needNewLine = false;
 			}
 
-			newPos = mainCam.ScreenToViewportPoint(Input.mousePosition);
+			LineRenderer curLine = lines [lines.Count - 1];
+			newPos = mainCam.ScreenToViewportPoint (Input.mousePosition);
 
-			if(Vector3.Distance(newPos, tempPos) > minDist) {
+			if (Vector3.Distance (newPos, tempPos) > minDist) {
 
 				tempPos = newPos;
 
 				vertices++;
 				//currentLine.SetVertexCount(vertices);
-				currentLine.numPositions = vertices; 
-				currentLine.SetPosition(vertices-1, mainCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, lineZPos)));
+				curLine.numPositions = vertices; 
+				curLine.SetPosition (vertices - 1, mainCam.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, lineZPos)));
 			}
 
 			RaycastHit2D hit = Physics2D.Raycast (mainCam.ScreenToWorldPoint (new Vector3 (Input.mousePosition.x, Input.mousePosition.y, lineZPos)), -Vector2.up);
@@ -79,33 +82,47 @@ public class LineDrawer : MonoBehaviour {
 				int hitID = target.GetID ();
 				if (target.IsGreen () && hitID > alreadyHit) {
 					Debug.Log ("Color Time");
-					currentLine.startColor = correctColor;
-					currentLine.endColor = correctColor;
-					currentLine.numPositions = vertices;
-					currentLine.SetPosition (vertices - 1, target.transform.position);
+					curLine.startColor = correctColor;
+					curLine.endColor = correctColor;
+					curLine.numPositions = vertices;
+					curLine.SetPosition (vertices - 1, target.transform.position);
 
-					currentLine = null;
+					needNewLine = true;
+
 					alreadyHit++;
-				} else if (target.IsRed() || target.GetObstacle ()) {
-					currentLine.startColor = errorColor;
-					currentLine.endColor = errorColor;
-					currentLine.numPositions = vertices;
-					currentLine.SetPosition (vertices - 1, target.transform.position);
-					currentLine = null;
-					// TODO: remove the wrong line slowly and gradually.
+				} else if (target.IsRed () || target.GetObstacle ()) {
+					curLine.startColor = errorColor;
+					curLine.endColor = errorColor;
+					curLine.numPositions = vertices;
+					curLine.SetPosition (vertices - 1, target.transform.position);
+					StartCoroutine ("FadeLine", curLine);
+					needNewLine = true;
 					// TODO: else if mouse button GetMouseButtonDown is false, then start co-routine to iteratively delete the line again.
 				} else {
 					Debug.Log ("OFF");
-					currentLine.startColor = normalColor;
-					currentLine.endColor = normalColor;
+					curLine.startColor = normalColor;
+					curLine.endColor = normalColor;
 				}
 
 			}
+		} else if (Input.GetMouseButtonUp(0) && lines.Count > 0) {
+			if (lines [lines.Count - 1].startColor.a > 0.8f) {
+				StartCoroutine ("FadeLine", lines [lines.Count - 1]);
+				needNewLine = true;
+			}
 		}
-
-
-
+			
 	}
+
+	IEnumerator FadeLine(LineRenderer curLine) {
+		for (float f = 1f; f >= 0; f -= 0.03f) {
+			curLine.startColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, f);
+			curLine.endColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, f);
+			//Debug.Log ("alpha is: " + f);
+			yield return null;
+		}
+	}
+
 
 	private void NewLine() {
 
@@ -113,21 +130,23 @@ public class LineDrawer : MonoBehaviour {
 		newLine.transform.parent = this.transform;
 		vertices = 0;
 		
-		currentLine = newLine.GetComponent<LineRenderer>();
-		currentLine.startWidth = mainCam.orthographicSize / 100 * lineWidth;
-		currentLine.endWidth  = mainCam.orthographicSize / 100 * lineWidth;
+		LineRenderer newLineComp = newLine.GetComponent<LineRenderer>();
+		newLineComp.startWidth = mainCam.orthographicSize / 100 * lineWidth;
+		newLineComp.endWidth  = mainCam.orthographicSize / 100 * lineWidth;
 		//currentLine.SetWidth(mainCam.orthographicSize/100*lineWidth, mainCam.orthographicSize/100*lineWidth);
-		
+
 		tempPos = mainCam.ScreenToViewportPoint(Input.mousePosition);
 		
 		vertices++;
 		//currentLine.SetVertexCount(vertices);
-		currentLine.numPositions = vertices; 
-		currentLine.SetPosition(vertices-1, mainCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, lineZPos)));
+		newLineComp.numPositions = vertices; 
+		newLineComp.SetPosition(vertices-1, mainCam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, lineZPos)));
+		lines.Add (newLineComp);
 	}
 
 	public void ClearAll() {
 		alreadyHit = 0;
+		lines.Clear ();
 		for(int i = 0; i < transform.childCount; i++) {
 
 			Destroy(transform.GetChild(i).gameObject);
