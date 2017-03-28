@@ -12,5 +12,6 @@ public class blurImageScaler : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		this.transform.localScale += new Vector3 (0.00005f, 0.00005f, 0.00005f);
+		this.transform.Rotate(0.0f, 0.0f, 0.005f);
 	}
 }
