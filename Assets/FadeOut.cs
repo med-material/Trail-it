@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Fadein : MonoBehaviour {
+public class FadeOut : MonoBehaviour {
 
 	Image sprite;
 	Text text;
 	public float duration;
+	public bool startNow;
 	public float startDelay;
-	public bool startNow = true;
-	private float f = 0f;
-	private bool fadeIn = false;
+
+	private float f = 1f;
+	private bool fadeOut = false;
 	private float startTime;
 
 	// Use this for initialization
@@ -19,15 +20,14 @@ public class Fadein : MonoBehaviour {
 		sprite = this.GetComponent<Image> ();
 		text = this.GetComponent<Text> ();
 		if (sprite != null) {
-			sprite.color = new Color (sprite.color.r, sprite.color.g, sprite.color.b, 0f);
+			sprite.color = new Color (sprite.color.r, sprite.color.g, sprite.color.b, 1f);
 			//Debug.Log ("found sprite");
 		}
 		if (text != null) {
-			text.color = new Color (text.color.r, text.color.g, text.color.b, 0f);
+			text.color = new Color (text.color.r, text.color.g, text.color.b, 1f);
 			//Debug.Log ("found text");
 		}
 		startTime = Time.fixedTime;
-		Debug.Log (gameObject);
 	}
 	
 	// Update is called once per frame
@@ -38,24 +38,23 @@ public class Fadein : MonoBehaviour {
 		}
 
 		if (startDelay < (Time.fixedTime - startTime)) {
-			fadeIn = true;
+			fadeOut = true;
 		}
 		//Debug.Log(Time.fixedTime - startTime + " seconds passed");	
 
-		if (fadeIn) {
+		if (fadeOut) {
 			if (sprite != null) {
 				sprite.color = new Color (sprite.color.r, sprite.color.g, sprite.color.b, f);
 			}
 			if (text != null) {
 				text.color = new Color (text.color.r, text.color.g, text.color.b, f);
 			}
-			if (f >= 1) {
-				fadeIn = false;
+			if (f <= 0) {
+				fadeOut = false;
 				startNow = false;
-				f = 0;
-				//Debug.Log ("fading stopped!: " + f);
+				f = 1;
 			}
-			f += Time.deltaTime / duration;
+			f -= Time.deltaTime / duration;
 			//Debug.Log ("alpha is: " + f);
 		}
 	}
