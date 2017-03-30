@@ -19,10 +19,9 @@ public class landingsBane : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		Canvas.ForceUpdateCanvases ();
 		transform = this.GetComponent<RectTransform> ();
 		sprite = this.GetComponent<Image> ();
-
-		Canvas.ForceUpdateCanvases ();
 
 		resetOffsetMin = transform.offsetMin;
 		resetOffsetMax = transform.offsetMax;
