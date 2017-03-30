@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum Tool {anim, lane, audio};
 
@@ -15,6 +16,12 @@ public class AssistanceManager : MonoBehaviour {
 	public AudioClip[] voiceClipsA;
 	public AudioClip[] voiceClipsB;
 	public bool laneType;
+
+	public GameObject gameCanvas;
+	public GameObject arrowLeftTop;
+	public GameObject arrowLeftBottom;
+	public GameObject arrowRightTop;
+	public GameObject arrowRightBottom;
 	public Texture arrow;
 	public int arrowCount;
 	public Vector2 laneCornerOffset;
@@ -24,6 +31,9 @@ public class AssistanceManager : MonoBehaviour {
 	public float laneFramerate;
 	public int guiDepth;
 	public TextAsset orderSheet;
+
+	private List <GameObject> LeftArrowObjects = new List<GameObject>();
+	private List <GameObject> RightArrowObjects = new List<GameObject>();
 
 	private Camera mainCam;
 
@@ -36,6 +46,7 @@ public class AssistanceManager : MonoBehaviour {
 
 	private bool audioActive = false;
 	private bool laneActive = false;
+	private bool activateLane = true;
 	private bool animActive = false;
 	private bool oneShot = false;
 	private int lastStarter;
@@ -80,14 +91,39 @@ public class AssistanceManager : MonoBehaviour {
 
 		animationOn = settingsManager.GetSetting (Settings.Anim);
 		audioOn = settingsManager.GetSetting (Settings.Voice);
-		laneOn = settingsManager.GetSetting (Settings.Lane);
+		laneOn = true; //settingsManager.GetSetting (Settings.Lane);
 		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
 		laneType = settingsManager.GetSetting (Settings.LaneType);
 
-		if(laneType)
-			arrowCount = 16;
-		else
-			arrowCount = 8;
+		arrowCount = 12;
+
+		Canvas.ForceUpdateCanvases ();
+
+		GameObject arrowObject;
+
+		for (int i = 1; i < arrowCount; i++) {
+			arrowObject = (GameObject)Instantiate (arrowRightTop, arrowRightTop.transform);
+			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
+			arrowObject.transform.SetParent (gameCanvas.transform);
+			RightArrowObjects.Add(arrowObject);
+
+			arrowObject = (GameObject)Instantiate(arrowRightBottom,arrowRightBottom.transform);
+			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
+			arrowObject.transform.SetParent (gameCanvas.transform);
+			RightArrowObjects.Add(arrowObject);
+
+			arrowObject = (GameObject)Instantiate(arrowLeftTop,arrowLeftTop.transform);
+			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
+			arrowObject.transform.SetParent (gameCanvas.transform);
+			LeftArrowObjects.Add(arrowObject);
+
+			arrowObject = (GameObject)Instantiate(arrowLeftBottom,arrowLeftBottom.transform);
+			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
+			arrowObject.transform.SetParent (gameCanvas.transform);
+			LeftArrowObjects.Add (arrowObject);
+
+		}
+
 
 		if(animationOn)
 			toolsOn++;
@@ -143,7 +179,9 @@ public class AssistanceManager : MonoBehaviour {
 								ActivatePulse();
 								break;
 							case 1:
-								ActivateLane();
+								if (!laneActive) {
+									ActivateLane ();
+								}
 								break;
 							case 2:
 								ActivateAudio();
@@ -168,7 +206,7 @@ public class AssistanceManager : MonoBehaviour {
 							if(queueAudio)
 								repeatStartTime = Time.time;
 						}
-						else if(laneOn && lastStarter != 1 && !laneActive) {
+						else if(laneOn && lastStarter != 1 && activateLane && !laneActive) {
 							ActivateLane();
 							if(!oneShot) {
 								lastStarter = 1;
@@ -198,7 +236,7 @@ public class AssistanceManager : MonoBehaviour {
 
 				if(animationOn)
 					ActivatePulse();
-				if(laneOn)
+				if(laneOn && !laneActive)
 					ActivateLane();
 				if(audioOn)
 					ActivateAudio();
@@ -214,25 +252,25 @@ public class AssistanceManager : MonoBehaviour {
 				
 				ActivateAudio();
 			}
-			
-			if(laneActive) {
-				
-				currentFrame = (int)(Time.time * laneFramerate) % arrowColors.Length;
+			//Debug.Log ("activateLane: " + activateLane + " laneActive: " + laneActive);
+			if(activateLane && !laneActive) {
+				ActivateLane ();
+				//currentFrame = (int)(Time.time * laneFramerate) % arrowColors.Length;
 			}
 		}
 	}
 
-	//void OnGUI () {
+	/*void OnGUI () {
 
-	//	if(laneActive) {
+		if(laneActive) {
 
-	//		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (Screen.width / nativeWidth, Screen.height / nativeHeight, 1));
+			GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (Screen.width / nativeWidth, Screen.height / nativeHeight, 1));
 		
-	//		GUI.depth = guiDepth;
+			GUI.depth = guiDepth;
 
-	//		DrawLane();
-	//	}
-	//}
+			DrawLane();
+		}
+	}*/
 
 	private void ActivateAudio () {
 
@@ -258,8 +296,10 @@ public class AssistanceManager : MonoBehaviour {
 
 	private void ActivateLane () {
 
-		laneActive = true;
-		
+		if (laneActive) {
+			return;
+		}
+
 		if(currentTarget.GetSide()) {
 			
 			laneRight = true;
@@ -270,7 +310,7 @@ public class AssistanceManager : MonoBehaviour {
 		}
 
 		targetX = mainCam.WorldToScreenPoint (new Vector3 (currentTarget.GetX (), 0, 0)).x / Screen.width * nativeWidth;
-
+		StartLane();
 		loggingManager.WriteLog ("Lane Activated");
 	}
 
@@ -283,8 +323,26 @@ public class AssistanceManager : MonoBehaviour {
 		loggingManager.WriteLog ("Pulse Activated");
 	}
 
-	private void DrawLane () {
+	private void StartLane () {
+		laneActive = true;
+		Debug.Log ("Lane is Drawing!");
+		gameCanvas.SetActive (true);
+		GameObject arrowObject;
+		if (laneRight) {
+			Debug.Log ("Activating RightArrowObjects!");
+			for (int i = 0; i < RightArrowObjects.Count; i++) {
+				RightArrowObjects[i].SetActive (true);
+				RightArrowObjects[i].GetComponent<Fadein> ().startNow = true;
+			}
+		} else {
+			Debug.Log ("Activating LeftArrowObjects!");
+			for (int i = 0; i < LeftArrowObjects.Count; i++) {
+				LeftArrowObjects[i].SetActive (true);
+				LeftArrowObjects[i].GetComponent<Fadein> ().startNow = true;
+			}
+		}
 
+		/*
 		for(int i = 0; i < arrowCount; i++) {
 			
 			currentColor = arrowColors.Length - 1 - currentFrame - i;
@@ -320,14 +378,30 @@ public class AssistanceManager : MonoBehaviour {
 				}
 			}
 		}
+		*/
+	}
+
+	private void StopLane () {
+		laneActive = false;
+		if (laneRight) {
+			for (int i = 0; i < RightArrowObjects.Count; i++) {
+				RightArrowObjects [i].GetComponent<FadeOut> ().startNow = true;
+			}
+		} else {
+			for (int i = 0; i < LeftArrowObjects.Count; i++) {
+				LeftArrowObjects [i].GetComponent<FadeOut> ().startNow = true;
+			}
+		}
 	}
 
 	public void ResetTimer () {
-
+		Debug.Log ("ResetTimer is called");
 		toolStartTime = Time.time;
 		offsetStartTime = -1;
 		audioActive = false;
-		laneActive = false;
+		if (laneActive) {
+			StopLane ();
+		}
 		animActive = false;
 		oneShot = false;
 		voice.Stop ();
@@ -358,7 +432,7 @@ public class AssistanceManager : MonoBehaviour {
 		case Tool.anim:
 			return animActive;
 		case Tool.lane:
-			return laneActive;
+			return activateLane;
 		case Tool.audio:
 			return audioActive;
 		default:
