@@ -8,6 +8,7 @@ public class Target : MonoBehaviour {
 	public Sprite greenOutline;
 	public Sprite redTarget;
 
+    [SerializeField]
 	private int targetID;
 	private TextMesh targetLabel;
 	private SpriteRenderer sprite;

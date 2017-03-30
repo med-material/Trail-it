@@ -20,7 +20,8 @@ public class InputHandler : MonoBehaviour
 		touchDown = Input.GetMouseButtonDown (0) && !EventSystem.current.IsPointerOverGameObject();
 		touchActive = Input.GetMouseButton (0) && !EventSystem.current.IsPointerOverGameObject();
 		touchUp = Input.GetMouseButtonUp (0) && !EventSystem.current.IsPointerOverGameObject(); 
-		touchPos = inputCam.ScreenToWorldPoint (Input.mousePosition); 
+		touchPos = inputCam.ScreenToWorldPoint (Input.mousePosition);
+        touchPos.z = 0f; 
 	}
 
 	public bool TouchDown {	get { return touchDown; } private set { touchDown = value; }	}

@@ -222,17 +222,17 @@ public class AssistanceManager : MonoBehaviour {
 		}
 	}
 
-	void OnGUI () {
+	//void OnGUI () {
 
-		if(laneActive) {
+	//	if(laneActive) {
 
-			GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (Screen.width / nativeWidth, Screen.height / nativeHeight, 1));
+	//		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (Screen.width / nativeWidth, Screen.height / nativeHeight, 1));
 		
-			GUI.depth = guiDepth;
+	//		GUI.depth = guiDepth;
 
-			DrawLane();
-		}
-	}
+	//		DrawLane();
+	//	}
+	//}
 
 	private void ActivateAudio () {
 
