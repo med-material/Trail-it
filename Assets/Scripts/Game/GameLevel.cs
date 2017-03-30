@@ -59,6 +59,7 @@ public class GameLevel : MonoBehaviour
     private LoggingManager loggingManager;
 
     private float startTime;
+    public float StartTime { get { return startTime; } }
 
     public static bool _DidInit = false;
 
@@ -92,8 +93,6 @@ public class GameLevel : MonoBehaviour
         errorSound = gameObject.AddComponent<AudioSource>();
         errorSound.clip = errorClip;
         errorSound.playOnAwake = false;
-
-        startTime = Time.time;
 
         _DidInit = true;
     }
@@ -318,6 +317,8 @@ public class GameLevel : MonoBehaviour
         lastValid = currentTarget;
 
         StartCoroutine(SpawnTargets(targetObjects));
+
+        StartLevelTimer();
     }
 
     IEnumerator SpawnTargets(GameObject[] objsToSpawn)
@@ -417,6 +418,11 @@ public class GameLevel : MonoBehaviour
     {
 
         return correctingError;
+    }
+
+    public void StartLevelTimer()
+    {
+        startTime = Time.time;
     }
 
     public float GetGameTime()

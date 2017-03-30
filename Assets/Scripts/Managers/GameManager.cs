@@ -32,7 +32,11 @@ public class GameManager : MonoBehaviour
     private Canvas setupCanvas;
     [SerializeField]
     private Canvas endLevelCanvas;
-
+    [SerializeField]
+    private Text endLevelText;
+    [SerializeField]
+    private Text endLevelTime;
+    private string endLevelTextTemplate;
 
     // Since we're doing everything in one scene now, we're just adding this to figure out 
     // the state we're in. 
@@ -47,6 +51,8 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        // Get template string for end level message
+        endLevelTextTemplate = endLevelText.text;
 
         input = gameObject.AddComponent<InputHandler>();
 
@@ -203,6 +209,7 @@ public class GameManager : MonoBehaviour
     private void LevelEnded()
     {
         _CurrentScene = "LevelComplete";
+        SetLevelCompletionTime(Time.time - activeLevel.StartTime);
         StartCoroutine(ShowEndLevelCanvas());
     }
 
@@ -217,6 +224,7 @@ public class GameManager : MonoBehaviour
 
         endLevelCanvas.gameObject.SetActive(true);
 
+        SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
 
         //while (t < 0.8f)
         //{
@@ -224,6 +232,13 @@ public class GameManager : MonoBehaviour
         //    t += (Time.deltaTime * Time.deltaTime * (3 - 2 * Time.deltaTime)) / 10f; 
         //}
         //bgPanel.color = new Color(col.r, col.g, col.b, 0.8f);
+    }
+
+    private void SetEndScreenValues(int seconds)
+    {
+        endLevelText.text = string.Format(endLevelTextTemplate, seconds);
+        var timeSpan = TimeSpan.FromSeconds(seconds);
+        endLevelTime.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
     }
 
     public void SetGameType(bool inputGameA)
