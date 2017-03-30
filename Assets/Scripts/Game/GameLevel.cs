@@ -108,9 +108,9 @@ public class GameLevel : MonoBehaviour
 
         if (colliderHit != null)
         {
-            colliderHit.GetComponent<Animator>().SetTrigger("Highlight"); 
             if (colliderHit != tempHit)
             {
+                colliderHit.GetComponent<Animator>().SetTrigger("Highlight"); 
                 tempHit = colliderHit;
 
                 hit = colliderHit.GetComponent<Target>().GetID();
