@@ -169,6 +169,14 @@ public class GameManager : MonoBehaviour
             {
                 HitType hitType = activeLevel.AttemptHit(input.TouchPos);
                 LD.DrawLine(input.TouchPos, hitType);
+
+                //TODO: Write around this. I just wanted a quick fix for the time being :D 
+                GameObject.Find("GameLevel").SendMessage("UpdateAssistance"); 
+
+                if (hitType == HitType.TargetHitLevelComplete)
+                {
+                    LevelEnded(); 
+                }
             }
             else if (input.TouchUp)
             {
@@ -192,18 +200,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public bool LevelEnded()
+    private void LevelEnded()
     {
-        if (endLevelCanvas == null)
-        {
-            return true;
-        }
-        else
-        {
-            _CurrentScene = "LevelComplete";
-            endLevelCanvas.gameObject.SetActive(true);
-            return false;
-        }
+        _CurrentScene = "LevelComplete";
+        StartCoroutine(ShowEndLevelCanvas());
+    }
+
+    IEnumerator ShowEndLevelCanvas()
+    {
+        yield return new WaitForSeconds(1f);
+        Image bgPanel = endLevelCanvas.GetComponentInChildren<Image>();
+        Color col = bgPanel.color; 
+
+        //float t = 0f; 
+        //bgPanel.color = new Color(col.r,col.g,col.b, t); 
+
+        endLevelCanvas.gameObject.SetActive(true);
+
+
+        //while (t < 0.8f)
+        //{
+        //    bgPanel.color = new Color(col.r, col.g, col.b, t);
+        //    t += (Time.deltaTime * Time.deltaTime * (3 - 2 * Time.deltaTime)) / 10f; 
+        //}
+        //bgPanel.color = new Color(col.r, col.g, col.b, 0.8f);
     }
 
     public void SetGameType(bool inputGameA)

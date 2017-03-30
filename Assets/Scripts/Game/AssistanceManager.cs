@@ -159,7 +159,7 @@ public class AssistanceManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void UpdateAssistance () {
 
 		if(toolsOn > 0 && Time.time - toolStartTime > toolDelay) {
 
@@ -260,18 +260,6 @@ public class AssistanceManager : MonoBehaviour {
 		}
 	}
 
-	/*void OnGUI () {
-
-		if(laneActive) {
-
-			GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, new Vector3 (Screen.width / nativeWidth, Screen.height / nativeHeight, 1));
-		
-			GUI.depth = guiDepth;
-
-			DrawLane();
-		}
-	}*/
-
 	private void ActivateAudio () {
 
 		audioActive = true;
@@ -325,17 +313,17 @@ public class AssistanceManager : MonoBehaviour {
 
 	private void StartLane () {
 		laneActive = true;
-		Debug.Log ("Lane is Drawing!");
+		//Debug.Log ("Lane is Drawing!");
 		gameCanvas.SetActive (true);
 		GameObject arrowObject;
 		if (laneRight) {
-			Debug.Log ("Activating RightArrowObjects!");
+			//Debug.Log ("Activating RightArrowObjects!");
 			for (int i = 0; i < RightArrowObjects.Count; i++) {
 				RightArrowObjects[i].SetActive (true);
 				RightArrowObjects[i].GetComponent<Fadein> ().startNow = true;
 			}
 		} else {
-			Debug.Log ("Activating LeftArrowObjects!");
+			//Debug.Log ("Activating LeftArrowObjects!");
 			for (int i = 0; i < LeftArrowObjects.Count; i++) {
 				LeftArrowObjects[i].SetActive (true);
 				LeftArrowObjects[i].GetComponent<Fadein> ().startNow = true;
@@ -395,7 +383,7 @@ public class AssistanceManager : MonoBehaviour {
 	}
 
 	public void ResetTimer () {
-		Debug.Log ("ResetTimer is called");
+		//Debug.Log ("ResetTimer is called");
 		toolStartTime = Time.time;
 		offsetStartTime = -1;
 		audioActive = false;

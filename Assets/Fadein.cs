@@ -27,7 +27,7 @@ public class Fadein : MonoBehaviour {
 			//Debug.Log ("found text");
 		}
 		startTime = Time.fixedTime;
-		Debug.Log (gameObject);
+		//Debug.Log (gameObject);
 	}
 	
 	// Update is called once per frame

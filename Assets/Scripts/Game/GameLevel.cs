@@ -70,8 +70,6 @@ public class GameLevel : MonoBehaviour
 
     private AudioSource audioSource; 
     
-
-
     public void Init(GameManager gm)
     {
         if (_DidInit)
@@ -248,23 +246,6 @@ public class GameLevel : MonoBehaviour
         return typeHit;
     }
 
-    void Update()
-    {
-
-        if (levelComplete)
-        {
-
-            if (Time.time - completionTime > endDelay)
-            {
-                if (gameManager.LevelEnded())
-                {
-                    gameManager.SetNextLevel(gameManager.GetNextLevel() + 1);
-                    LoadNextLevel();
-                }
-            }
-        }
-    }
-
     public void LoadNextLevel()
     {
         LoadLevel();
@@ -409,7 +390,6 @@ public class GameLevel : MonoBehaviour
 
     public Target GetCurrentTarget()
     {
-
         return targets[currentTarget];
     }
 
