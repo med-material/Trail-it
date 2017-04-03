@@ -46,8 +46,8 @@ public class GameLevel : MonoBehaviour
     private int lastValid;
     private bool correctingError;
     private int errorsInRow;
-    private bool levelComplete = false;
-    private float completionTime;
+    //private bool levelComplete = false; // Assigned to but never used
+    //private float completionTime; Never used
 
     private Collider2D colliderHit;
     private Collider2D tempHit;
@@ -248,7 +248,7 @@ public class GameLevel : MonoBehaviour
     public void LoadNextLevel()
     {
         LoadLevel();
-        levelComplete = false;
+        //levelComplete = false; // Assigned to but never used
     }
 
     private void LoadLevel()
@@ -368,8 +368,8 @@ public class GameLevel : MonoBehaviour
 
     private void CompeleteLevel()
     {
-        levelComplete = true;
-        completionTime = Time.time;
+        //levelComplete = true; // Assigned to but never used
+        //completionTime = Time.time;
 
         gameManager.SetLevelCompletionTime(Time.time - startTime);
 

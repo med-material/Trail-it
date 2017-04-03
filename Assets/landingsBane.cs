@@ -9,7 +9,7 @@ public class landingsBane : MonoBehaviour {
 	public float arrowWidth = 138f;
 	public float arrowOffset = 0;
 	public float speed = 4f;
-	private RectTransform transform;
+	private new RectTransform transform;
 	private Image sprite;
 	private Vector2 resetOffsetMin;
 	private Vector2 resetOffsetMax;

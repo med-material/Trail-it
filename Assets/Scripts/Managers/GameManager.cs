@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Canvas endLevelCanvas;
     [SerializeField]
+    private Canvas gameOverlayCanvas;
+    [SerializeField]
     private Text endLevelText;
     [SerializeField]
     private Text endLevelTime;

@@ -35,10 +35,10 @@ public class AssistanceManager : MonoBehaviour {
 	private List <GameObject> LeftArrowObjects = new List<GameObject>();
 	private List <GameObject> RightArrowObjects = new List<GameObject>();
 
-	private Camera mainCam;
+	//private Camera mainCam; // Never used
 
-	private float nativeWidth = 1024;
-	private float nativeHeight = 768;
+	//private float nativeWidth = 1024; // Never used
+	//private float nativeHeight = 768;
 
 	private float toolStartTime;
 	private float repeatStartTime;
@@ -55,9 +55,9 @@ public class AssistanceManager : MonoBehaviour {
 	private int currentFrame;
 	private int currentColor;
 	private bool laneRight;
-	private float targetX;
+    //private float targetX; // Assigned to but never used
 
-	private Target currentTarget;
+    private Target currentTarget;
 
 	private GameLevel gameLevel;
 	private GameManager gameManager;
@@ -82,7 +82,7 @@ public class AssistanceManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> ();
+		//mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> (); // Never used
 
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 		settingsManager = gameManager.GetComponent<SettingsManager> ();
@@ -297,7 +297,7 @@ public class AssistanceManager : MonoBehaviour {
 			laneRight = false;
 		}
 
-		targetX = mainCam.WorldToScreenPoint (new Vector3 (currentTarget.GetX (), 0, 0)).x / Screen.width * nativeWidth;
+		//targetX = mainCam.WorldToScreenPoint (new Vector3 (currentTarget.GetX (), 0, 0)).x / Screen.width * nativeWidth; // Assigned to butn never used
 		StartLane();
 		loggingManager.WriteLog ("Lane Activated");
 	}
@@ -315,7 +315,7 @@ public class AssistanceManager : MonoBehaviour {
 		laneActive = true;
 		//Debug.Log ("Lane is Drawing!");
 		gameCanvas.SetActive (true);
-		GameObject arrowObject;
+		//GameObject arrowObject; // Declared, but never used
 		if (laneRight) {
 			//Debug.Log ("Activating RightArrowObjects!");
 			for (int i = 0; i < RightArrowObjects.Count; i++) {
