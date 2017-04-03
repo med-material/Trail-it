@@ -25,5 +25,7 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
   - enabled: 0
     path: Assets/Scenes/Bastian.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Alexander.unity
+  - enabled: 1
+    path: Assets/Scenes/Game_Optimizing_Alexander.unity
