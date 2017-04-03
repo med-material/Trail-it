@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public TextAsset[] allLevelsA;
     public TextAsset[] allLevelsB;
 
+    private int currentLevel;
     private bool player;
     //private int userID;
     private bool gameA;
@@ -68,6 +69,13 @@ public class GameManager : MonoBehaviour
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
+    public void GameOverlay_MainMenuButton_Click()
+    {
+        // TODO: Go to main menu
+        menuCanvas.gameObject.SetActive(true);
+        gameOverlayCanvas.gameObject.SetActive(false);
+    }
+
     public void LoadPlayerPrefs()
     {
 
@@ -102,6 +110,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SavePlayerPrefs()
+    {
+        PlayerPrefs.SetInt("userID", playerDat.userID);
+        PlayerPrefs.SetInt("progressA", playerDat.progressA);
+        PlayerPrefs.SetInt("progressB", playerDat.progressB);
+        PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
+        PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
+        PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
+    }
 
     public void SetPlayer(bool inputPlayer)
     {
@@ -122,12 +139,14 @@ public class GameManager : MonoBehaviour
         //TODO: Insert: 			loggingManager.WriteLog ("Guest Profile Selected");
 
 
+        gameOverlayCanvas.gameObject.SetActive(true);
+
         if (isGameTypeA)
         {
             if (playerDat.tutorialASeen || SkipTutorial)
             {
                 Debug.Log("Load level select");
-                SetNextLevel(0);
+                SetNextLevel(GetProgressA());
                 LoadNextLevel();
             }
             else
@@ -179,11 +198,11 @@ public class GameManager : MonoBehaviour
                 LD.DrawLine(input.TouchPos, hitType);
 
                 //TODO: Write around this. I just wanted a quick fix for the time being :D 
-                GameObject.Find("GameLevel").SendMessage("UpdateAssistance"); 
+                GameObject.Find("GameLevel").SendMessage("UpdateAssistance"); // The pinnacle of all programming
 
                 if (hitType == HitType.TargetHitLevelComplete)
                 {
-                    LevelEnded(); 
+                    LevelEnded();
                 }
             }
             else if (input.TouchUp)
@@ -210,16 +229,34 @@ public class GameManager : MonoBehaviour
 
     private void LevelEnded()
     {
+        gameOverlayCanvas.gameObject.SetActive(false);
         _CurrentScene = "LevelComplete";
         SetLevelCompletionTime(Time.time - activeLevel.StartTime);
         StartCoroutine(ShowEndLevelCanvas());
+
+        if (gameA)
+        {
+            if (currentLevel == GetProgressA())
+            {
+                SetProgressA(GetProgressA() + 1);
+            }
+        }
+        else
+        {
+            if (currentLevel == GetProgressB())
+            {
+                SetProgressB(GetProgressB() + 1);
+            }
+        }
+
+        SavePlayerPrefs();
     }
 
     IEnumerator ShowEndLevelCanvas()
     {
         yield return new WaitForSeconds(1f);
         Image bgPanel = endLevelCanvas.GetComponentInChildren<Image>();
-        Color col = bgPanel.color; 
+        Color col = bgPanel.color;
 
         //float t = 0f; 
         //bgPanel.color = new Color(col.r,col.g,col.b, t); 
@@ -275,6 +312,9 @@ public class GameManager : MonoBehaviour
     public void NextLevelButton()
     {
         SetNextLevel(GetNextLevel() + 1);
+        SetProgressA(GetNextLevel());
+        SavePlayerPrefs();
+        gameOverlayCanvas.gameObject.SetActive(true);
         _CurrentScene = "Level";
         GameObject.Find("GameLevel").GetComponent<GameLevel>().LoadNextLevel();
     }

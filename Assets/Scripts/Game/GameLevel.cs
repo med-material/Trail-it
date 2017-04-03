@@ -34,7 +34,6 @@ public class GameLevel : MonoBehaviour
 
     private GameManager gameManager;
     private bool gameA;
-    private int currentLevel;
     public string[] levelData;
 
     private Transform camTransform;
@@ -144,7 +143,6 @@ public class GameLevel : MonoBehaviour
 
                         if (hit == targets.Length - 1)
                         {
-                            CompeleteLevel();
                             loggingManager.WriteLog("Target Hit - Level Complete");
                             typeHit = HitType.TargetHitLevelComplete;
                         }
@@ -257,8 +255,6 @@ public class GameLevel : MonoBehaviour
         mainCam = camTransform.GetComponent<Camera>();
 
         gameA = gameManager.GetGameType();
-        currentLevel = gameManager.GetNextLevel();
-
 
         levelData = gameManager.GetLevelData().text.Split("\n"[0]);
 
@@ -364,29 +360,6 @@ public class GameLevel : MonoBehaviour
     {
         DestroyLevel();
         LoadLevel();
-    }
-
-    private void CompeleteLevel()
-    {
-        //levelComplete = true; // Assigned to but never used
-        //completionTime = Time.time;
-
-        gameManager.SetLevelCompletionTime(Time.time - startTime);
-
-        if (gameA)
-        {
-            if (currentLevel == gameManager.GetProgressA())
-            {
-                gameManager.SetProgressA(gameManager.GetProgressA() + 1);
-            }
-        }
-        else
-        {
-            if (currentLevel == gameManager.GetProgressB())
-            {
-                gameManager.SetProgressB(gameManager.GetProgressB() + 1);
-            }
-        }
     }
 
     public Target GetCurrentTarget()
