@@ -15,7 +15,7 @@ public class InputHandler : MonoBehaviour
 	{
 		inputCam = Camera.main; 
 	}
-	void LateUpdate () 
+	void Update () 
 	{
 		touchDown = Input.GetMouseButtonDown (0) && !EventSystem.current.IsPointerOverGameObject();
 		touchActive = Input.GetMouseButton (0) && !EventSystem.current.IsPointerOverGameObject();
