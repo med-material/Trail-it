@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,7 +21,14 @@ public class GameManager : MonoBehaviour
     //private int orderRow;
     //private bool tutorialASeen = false;
     //private bool tutorialBSeen = false;
-    private float levelCompletionTime;
+    private float levelCompletionTime = -1;
+	private float startGameTime = -1;
+	private bool sessionActive = true;
+	private int amountOfTargets = -1;
+	private int totalTargets = 0;
+	private int levelErrors = 0;
+	private int totalErrors = 0;
+	private float pauseTime;
 
     private PlayerData playerDat;
 
@@ -33,13 +41,32 @@ public class GameManager : MonoBehaviour
     private Canvas setupCanvas;
     [SerializeField]
     private Canvas endLevelCanvas;
-    [SerializeField]
+	[SerializeField]
+	private Canvas endSessionCanvas;
+	[SerializeField]
     private Canvas gameOverlayCanvas;
     [SerializeField]
-    private Text endLevelText;
-    [SerializeField]
     private Text endLevelTime;
-    private string endLevelTextTemplate;
+    [SerializeField]
+    private Text endLevelDuration;
+	[SerializeField]
+	private Text endLevelAmount;
+	[SerializeField]
+	private Text endLevelAverage;
+	[SerializeField]
+	private Text totalAmount;
+	[SerializeField]
+	private Text levelErrorsText;
+	//[SerializeField]
+	//private Text totalErrorsText;
+	private string endLevelTimeTemplate;
+	private string endLevelAmountTemplate;
+	private string endLevelAverageTemplate;
+	private string totalAmountTemplate;
+	private string levelErrorsTemplate;
+	//private string totalErrorsTemplate;
+	private int sessionLength = 8;
+
 
     // Since we're doing everything in one scene now, we're just adding this to figure out 
     // the state we're in. 
@@ -55,7 +82,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Get template string for end level message
-        endLevelTextTemplate = endLevelText.text;
+		endLevelTimeTemplate = endLevelTime.text;
+		endLevelAmountTemplate = endLevelAmount.text;
+		endLevelAverageTemplate = endLevelAverage.text;
+		totalAmountTemplate = totalAmount.text;
+		levelErrorsTemplate = levelErrorsText.text;
+		//totalErrorsTemplate = totalErrorsText.text;
 
         input = gameObject.AddComponent<InputHandler>();
 
@@ -135,7 +167,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(bool isGameTypeA)
     {
-        SetGameType(isGameTypeA);
+		SetGameType (false);//isGameTypeA);
         //TODO: Insert: 			loggingManager.WriteLog ("Guest Profile Selected");
 
 
@@ -146,6 +178,7 @@ public class GameManager : MonoBehaviour
             if (playerDat.tutorialASeen || SkipTutorial)
             {
                 Debug.Log("Load level select");
+				startGameTime = Time.time;
                 SetNextLevel(GetProgressA());
                 LoadNextLevel();
             }
@@ -166,6 +199,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Load level select for type B");
                 SetNextLevel(0);
                 LoadNextLevel();
+				startGameTime = Time.time;
             }
             else
             {
@@ -184,13 +218,18 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
-        Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
+
+		Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
         if (_CurrentScene == "Level")
         {
             if (input.TouchDown)
             {
                 LD.StartLine(input.TouchPos);
             }
+
+			if (Time.time - startGameTime > sessionLength * 60 && sessionActive) {
+				activeLevel.shouldCountTotal = false;
+			}
 
             if (input.TouchActive)
             {
@@ -210,12 +249,13 @@ public class GameManager : MonoBehaviour
                 activeLevel.TempHit = null;
                 LD.EndLine();
             }
-        }
+		} else if (_CurrentScene == "LevelComplete") {
+			SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
+		}
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            GameObject.Find("GameLevel").GetComponent<GameLevel>().ReloadLevel();
-        }
+		if (Input.GetKeyDown (KeyCode.R)) {
+			GameObject.Find ("GameLevel").GetComponent<GameLevel> ().ReloadLevel ();
+		} 
     }
 
     public void LoadNextLevel()
@@ -232,6 +272,13 @@ public class GameManager : MonoBehaviour
         gameOverlayCanvas.gameObject.SetActive(false);
         _CurrentScene = "LevelComplete";
         SetLevelCompletionTime(Time.time - activeLevel.StartTime);
+		GameLevel gameLevel = GameObject.Find ("GameLevel").GetComponent<GameLevel> ();
+		amountOfTargets = gameLevel.GetTotalCount();
+		totalTargets += amountOfTargets;
+		print ("totalTargets: " + totalTargets);
+		levelErrors = gameLevel.GetErrorTotal ();
+		totalTargets -= levelErrors;
+
         StartCoroutine(ShowEndLevelCanvas());
 
         if (gameA)
@@ -262,7 +309,13 @@ public class GameManager : MonoBehaviour
         //bgPanel.color = new Color(col.r,col.g,col.b, t); 
 
         endLevelCanvas.gameObject.SetActive(true);
-
+		if (Time.time - startGameTime > sessionLength*60 && sessionActive) {
+			print ("time is up!" + (Time.time - startGameTime));
+			endSessionCanvas.gameObject.SetActive(true);
+			sessionActive = false;
+		}
+		UpdateEndScreenClock ();
+		TimerPause ();
         SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
 
         //while (t < 0.8f)
@@ -273,30 +326,74 @@ public class GameManager : MonoBehaviour
         //bgPanel.color = new Color(col.r, col.g, col.b, 0.8f);
     }
 
-    private void SetEndScreenValues(int seconds)
-    {
-        endLevelText.text = string.Format(endLevelTextTemplate, seconds);
-        var timeSpan = TimeSpan.FromSeconds(seconds);
-        endLevelTime.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
+	private void UpdateEndScreenClock()
+	{
+		var timeSpan = TimeSpan.FromSeconds(Time.time - startGameTime);
+		endLevelDuration.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
+	}
+
+
+    private void SetEndScreenValues(int levelCompletionSeconds)
+    {	
+		if (sessionActive) {
+			endLevelTime.text = string.Format (endLevelTimeTemplate, levelCompletionSeconds);
+			endLevelAmount.text = string.Format (endLevelAmountTemplate, totalTargets);
+			float average = (float)levelCompletionSeconds / (float)amountOfTargets;
+			endLevelAverage.text = string.Format (endLevelAverageTemplate, average.ToString ("n2"));
+			levelErrorsText.text = string.Format (levelErrorsTemplate, levelErrors);
+		} else {
+			totalAmount.text = string.Format (totalAmountTemplate, totalTargets);
+			//totalErrorsText.text = string.Format (totalErrorsTemplate, totalErrors); 
+		}
     }
 
     public void SetGameType(bool inputGameA)
     {
         gameA = inputGameA;
     }
+
+	public void TimerPause()
+	{
+		pauseTime = Time.time;
+	}
+
+	public void TimerResume()
+	{
+		startGameTime += (Time.time - pauseTime);
+	}
+
     public bool GetGameType()
     {
         return gameA;
     }
+
+	public void QuitGame()
+	{
+		print ("quitting");
+		Application.Quit();
+	}
 
     public void SetProgressA(int inputProgressA)
     {
         playerDat.progressA = inputProgressA;
         PlayerPrefs.SetInt("progressA", playerDat.progressA);
     }
+
+	public static void ShuffleArray<T>(T[] arr) {
+		for (int i = arr.Length - 1; i > 0; i--) {
+			int r = UnityEngine.Random.Range(0, i);
+			T tmp = arr[i];
+			arr[i] = arr[r];
+			arr[r] = tmp;
+		}
+	}
+
     public int GetProgressA()
     {
-        return playerDat.progressA;
+		int[] randomID = Enumerable.Range(23, 28).ToArray();
+		ShuffleArray<int>(randomID);
+        int progress = randomID[playerDat.progressA % 2];
+		return progress;
     }
 
     public void SetProgressB(int inputProgressB)
@@ -306,17 +403,22 @@ public class GameManager : MonoBehaviour
     }
     public int GetProgressB()
     {
-        return playerDat.progressB;
+		int[] randomID = Enumerable.Range(23, 28).ToArray();
+		ShuffleArray<int>(randomID);
+		int progress = randomID[playerDat.progressB % 2];
+		return progress;
     }
 
     public void NextLevelButton()
     {
-        SetNextLevel(GetNextLevel() + 1);
+		TimerResume ();
+		SetNextLevel(GetNextLevel() + 1);
         SetProgressA(GetNextLevel());
         SavePlayerPrefs();
         gameOverlayCanvas.gameObject.SetActive(true);
         _CurrentScene = "Level";
-        GameObject.Find("GameLevel").GetComponent<GameLevel>().LoadNextLevel();
+		GameLevel gameLevel = GameObject.Find ("GameLevel").GetComponent<GameLevel> ();
+		gameLevel.LoadNextLevel();
     }
 
     public void SetNextLevel(int inputLevel)
@@ -332,6 +434,7 @@ public class GameManager : MonoBehaviour
         {
             nextLevel = allLevelsB.Length - 1;
         }
+
     }
     public int GetNextLevel()
     {

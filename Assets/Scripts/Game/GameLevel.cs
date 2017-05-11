@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public enum HitType
 {
@@ -45,6 +46,9 @@ public class GameLevel : MonoBehaviour
     private int lastValid;
     private bool correctingError;
     private int errorsInRow;
+	private int errorTotal = 0;
+	public bool shouldCountTotal = true;
+	private int countTotal = 0;
     //private bool levelComplete = false; // Assigned to but never used
     //private float completionTime; Never used
 
@@ -121,9 +125,13 @@ public class GameLevel : MonoBehaviour
                     loggingManager.WriteLog("Obstacle Hit");
                     typeHit = HitType.ObstacleHit;
 
-                    currentTarget = lastValid;
+                    //currentTarget = lastValid;
                     outset = hit;
                     errorsInRow++;
+					if (errorsInRow == 1) {
+						errorTotal++;
+						print ("incrementing errorTotal");
+					}
                     correctingError = true;
                     errorSound.Play();
 
@@ -152,10 +160,15 @@ public class GameLevel : MonoBehaviour
                             typeHit = HitType.TargetHit;
                         }
 
-                        for (int i = hit + 1; i < targets.Length; i++)
-                            targets[i].SetWhite();
+						for (int i = 0; i < targets.Length; i++) {
+							if (i > (hit)) {
+								targets [i].SetWhite ();
+							} else if (targets [i].IsRed ()) {
+								targets [i].SetGreen ();
+							}
+						}
                         for (int i = 0; i < targets.Length; i++)
-                            targets[i].TurnLight();
+							targets[i].TurnLight();
                         if (obstacles != null)
                         {
                             for (int i = 0; i < obstacles.Length; i++)
@@ -170,6 +183,10 @@ public class GameLevel : MonoBehaviour
                         outset = currentTarget;
                         lastValid = currentTarget;
                         currentTarget++;
+						if (shouldCountTotal) {
+							countTotal++;
+							print ("countTotal: " + countTotal);
+						}
                         correctingError = false;
                         errorsInRow = 0;
                         correctSound.Play();
@@ -183,7 +200,18 @@ public class GameLevel : MonoBehaviour
                         errorsInRow = 0;
                         correctSound.Play();
                     }
-                    else if (hit < lastValid)
+					// I would rather have it count as an error than creating a scenario
+					// where an accidental hit completely backtraces your progress.
+					// we count them as error instead.
+					// PROBLEM: Error does not map to a singular thing.
+					// We cant say whether an error was caused by an accident
+					// or if it was caused because you legitimately made a mistake.
+					// But we keep it in here, to ensure consistent player behavior.
+					// Ideally we shouldnt show errors at all. We should just let the player
+					// draw the most direct trail to the target. Then it truly becomes a mere
+					// visual search task. However, then you dont get feedback if you genuinely
+					// thought some number was after another number.
+                    /*else if (hit < lastValid)
                     {
                         loggingManager.WriteLog("Backtracking");
                         typeHit = HitType.Backtracking;
@@ -207,9 +235,10 @@ public class GameLevel : MonoBehaviour
                         currentTarget = hit + 1;
                         correctingError = false;
                         errorsInRow = 0;
-                        correctSound.Play();
-                    }
-                    else if (hit > currentTarget)
+						
+                        correctSound.Play(); 
+                    }*/
+					else //if (hit > currentTarget || hit < lastValid)
                     {
 
                         loggingManager.WriteLog("Wrong Target Hit");
@@ -217,15 +246,19 @@ public class GameLevel : MonoBehaviour
 
                         targets[hit].SetRed();
                         targets[hit].TurnLight();
-                        currentTarget = lastValid;
+                        //currentTarget = lastValid;
                         outset = hit;
                         correctingError = true;
                         errorsInRow++;
+						if (errorsInRow == 1) {
+							errorTotal++;
+							print ("incrementing errorTotal");
+						}
                         errorSound.Play();
 
                         for (int i = 0; i < targets.Length; i++)
                         {
-                            if (!targets[i].IsRed() && i != currentTarget)
+							if (!targets[i].IsRed() && i != currentTarget && i != lastValid)
                                 targets[i].TurnDark();
                         }
 
@@ -249,11 +282,35 @@ public class GameLevel : MonoBehaviour
         //levelComplete = false; // Assigned to but never used
     }
 
+	public static void ShuffleArray<T>(T[] arr) {
+		for (int i = arr.Length - 1; i > 0; i--) {
+			int r = UnityEngine.Random.Range(0, i);
+			T tmp = arr[i];
+			arr[i] = arr[r];
+			arr[r] = tmp;
+		}
+	}
+		
+	public static void Shuffle<T>(IList<T> list)  
+	{  
+		System.Random rng = new System.Random();
+		int n = list.Count;  
+		while (n > 1) {  
+			n--;  
+			int k = rng.Next(n + 1);  
+			T value = list[k];  
+			list[k] = list[n];  
+			list[n] = value;  
+		}  
+	}
+
+
     private void LoadLevel()
     {
         camTransform = GameObject.Find("Main Camera").transform;
         mainCam = camTransform.GetComponent<Camera>();
-
+		errorTotal = 0;
+		countTotal = 0;
         gameA = gameManager.GetGameType();
 
         levelData = gameManager.GetLevelData().text.Split("\n"[0]);
@@ -272,14 +329,33 @@ public class GameLevel : MonoBehaviour
         targetObjects = new GameObject[int.Parse(levelData[4])];
         targets = new Target[targetObjects.Length];
 
-        for (int i = 0; i < targetObjects.Length; i++)
+		int[] randomID = Enumerable.Range(0, targetObjects.Length).ToArray();
+		List<int> randomLevel = new List<int>();
+		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
+		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
+		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
+		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
+		Debug.Log("inital level = " +String.Join("",
+			new List<int>(randomID)
+			.ConvertAll(i => i.ToString())
+			.ToArray()));
+		ShuffleArray<int>(randomID);
+		Shuffle<int>(randomLevel);
+		Debug.Log("shuffled level = " +String.Join("",
+			new List<int>(randomID)
+			.ConvertAll(i => i.ToString())
+			.ToArray()));
+        for (int j = 0; j < targetObjects.Length; j++)
         {
-            targetObjects[i] = (GameObject)Instantiate(targetPrefab, new Vector3(float.Parse(levelData[i * 6 + 5]), float.Parse(levelData[i * 6 + 6]), float.Parse(levelData[i * 6 + 7])), Quaternion.identity);
-            targetObjects[i].transform.localScale = new Vector3(float.Parse(levelData[i * 6 + 8]), float.Parse(levelData[i * 6 + 9]), float.Parse(levelData[i * 6 + 10]));
+			int i = randomID [j];
+			int k = randomLevel [j];
+			Debug.Log (" k is: " + k);
+            targetObjects[i] = (GameObject)Instantiate(targetPrefab, new Vector3(float.Parse(levelData[j * 6 + 5]), float.Parse(levelData[j * 6 + 6]), float.Parse(levelData[j * 6 + 7])), Quaternion.identity);
+            targetObjects[i].transform.localScale = new Vector3(float.Parse(levelData[j * 6 + 8]), float.Parse(levelData[j * 6 + 9]), float.Parse(levelData[j * 6 + 10]));
             targets[i] = targetObjects[i].GetComponent<Target>();
-            targets[i].SetID(i);
-            targets[i].SetObstacle(false);
 
+			targets[i].SetID(i);
+            targets[i].SetObstacle(false);
             if (gameA)
             {
                 targets[i].SetLabel(labelsA[i]);
@@ -367,6 +443,12 @@ public class GameLevel : MonoBehaviour
         return targets[currentTarget];
     }
 
+	public int GetErrorTotal()
+	{
+
+		return errorTotal;
+	}
+
     public int GetCurrent()
     {
 
@@ -382,6 +464,17 @@ public class GameLevel : MonoBehaviour
 
         return lastValid;
     }
+
+	public int GetTotalCount()
+	{
+		//int total = 0;
+		//if (targets != null)
+		//	total += targets.Length;
+		//if (obstacles != null)
+		//	total += obstacles.Length;
+		return countTotal;
+	}
+
     public int GetOutset()
     {
 
@@ -403,6 +496,7 @@ public class GameLevel : MonoBehaviour
 
         return Time.time - startTime;
     }
+
     public int GetErrorsInRow()
     {
 
