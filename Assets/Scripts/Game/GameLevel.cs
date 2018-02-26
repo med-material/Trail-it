@@ -175,7 +175,7 @@ public class GameLevel : MonoBehaviour
                             {
                                 obstacles[i].SetWhite();
                                 obstacles[i].TurnLight();
-                            }
+							}
                         }
 
                         targets[lastValid].SetGreen();
@@ -209,7 +209,8 @@ public class GameLevel : MonoBehaviour
 					// But we keep it in here, to ensure consistent player behavior.
 					// Ideally we shouldnt show errors at all. We should just let the player
 					// draw the most direct trail to the target. Then it truly becomes a mere
-					// visual search task. However, then you dont get feedback if you genuinely
+					// visual search task. However, then you dont g assistanceManager.ResetTimer();
+					//et feedback if you genuinely
 					// thought some number was after another number.
                     /*else if (hit < lastValid)
                     {

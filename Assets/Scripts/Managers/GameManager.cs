@@ -216,6 +216,7 @@ public class GameManager : MonoBehaviour
     }
 
     public GameLevel activeLevel;
+	public AssistanceManager activeLevelAssistance;
 
     public void Update()
     {
@@ -238,7 +239,8 @@ public class GameManager : MonoBehaviour
                 LD.DrawLine(input.TouchPos, hitType);
 
                 //TODO: Write around this. I just wanted a quick fix for the time being :D 
-                GameObject.Find("GameLevel").SendMessage("UpdateAssistance"); // The pinnacle of all programming
+				//activeLevelAssistance.UpdateAssistance();
+				//GameObject.Find("GameLevel").SendMessage("UpdateAssistance"); // The pinnacle of all programming
 
                 if (hitType == HitType.TargetHitLevelComplete)
                 {

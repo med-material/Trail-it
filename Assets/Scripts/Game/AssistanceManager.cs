@@ -91,7 +91,7 @@ public class AssistanceManager : MonoBehaviour {
 
 		animationOn = settingsManager.GetSetting (Settings.Anim);
 		audioOn = settingsManager.GetSetting (Settings.Voice);
-		laneOn = true; //settingsManager.GetSetting (Settings.Lane);
+		laneOn =  PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
 		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
 		laneType = settingsManager.GetSetting (Settings.LaneType);
 
@@ -159,7 +159,7 @@ public class AssistanceManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	public void UpdateAssistance () {
+	public void Update () {
 
 		if(toolsOn > 0 && Time.time - toolStartTime > toolDelay) {
 
@@ -300,6 +300,7 @@ public class AssistanceManager : MonoBehaviour {
 		//targetX = mainCam.WorldToScreenPoint (new Vector3 (currentTarget.GetX (), 0, 0)).x / Screen.width * nativeWidth; // Assigned to butn never used
 		StartLane();
 		loggingManager.WriteLog ("Lane Activated");
+		//Debug.Log ("Lane Activated");
 	}
 
 	private void ActivatePulse () {
