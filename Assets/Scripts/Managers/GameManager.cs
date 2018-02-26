@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
 	private string totalAmountTemplate;
 	//private string levelErrorsTemplate;
 	//private string totalErrorsTemplate;
-	private int sessionLength = 8;
+	private int sessionLength = 1;
 
 
     // Since we're doing everything in one scene now, we're just adding this to figure out 
@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour
         {
             if (playerDat.tutorialASeen || SkipTutorial)
             {
-                Debug.Log("Load level select");
+                //Debug.Log("Load level select");
 				startGameTime = Time.time;
                 SetNextLevel(GetProgressA());
                 LoadNextLevel();
@@ -276,7 +276,7 @@ public class GameManager : MonoBehaviour
 		GameLevel gameLevel = GameObject.Find ("GameLevel").GetComponent<GameLevel> ();
 		amountOfTargets = gameLevel.GetTotalCount();
 		totalTargets += amountOfTargets;
-		print ("totalTargets: " + totalTargets);
+		//print ("totalTargets: " + totalTargets);
 		levelErrors = gameLevel.GetErrorTotal ();
 		totalTargets -= levelErrors;
 
@@ -311,7 +311,7 @@ public class GameManager : MonoBehaviour
 
         endLevelCanvas.gameObject.SetActive(true);
 		if (Time.time - startGameTime > sessionLength*60 && sessionActive) {
-			print ("time is up!" + (Time.time - startGameTime));
+			//print ("time is up!" + (Time.time - startGameTime));
 			endSessionCanvas.gameObject.SetActive(true);
 			sessionActive = false;
 		}

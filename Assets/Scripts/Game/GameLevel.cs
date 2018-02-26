@@ -185,7 +185,7 @@ public class GameLevel : MonoBehaviour
                         currentTarget++;
 						if (shouldCountTotal) {
 							countTotal++;
-							print ("countTotal: " + countTotal);
+							//print ("countTotal: " + countTotal);
 						}
                         correctingError = false;
                         errorsInRow = 0;
@@ -252,7 +252,7 @@ public class GameLevel : MonoBehaviour
                         errorsInRow++;
 						if (errorsInRow == 1) {
 							errorTotal++;
-							print ("incrementing errorTotal");
+							//print ("incrementing errorTotal");
 						}
                         errorSound.Play();
 
@@ -335,21 +335,21 @@ public class GameLevel : MonoBehaviour
 		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
 		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
 		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
-		Debug.Log("inital level = " +String.Join("",
+		/*Debug.Log("inital level = " +String.Join("",
 			new List<int>(randomID)
 			.ConvertAll(i => i.ToString())
-			.ToArray()));
+			.ToArray()));*/
 		ShuffleArray<int>(randomID);
 		Shuffle<int>(randomLevel);
-		Debug.Log("shuffled level = " +String.Join("",
+		/*Debug.Log("shuffled level = " +String.Join("",
 			new List<int>(randomID)
 			.ConvertAll(i => i.ToString())
-			.ToArray()));
+			.ToArray()));*/
         for (int j = 0; j < targetObjects.Length; j++)
         {
 			int i = randomID [j];
 			int k = randomLevel [j];
-			Debug.Log (" k is: " + k);
+			//Debug.Log (" k is: " + k);
             targetObjects[i] = (GameObject)Instantiate(targetPrefab, new Vector3(float.Parse(levelData[j * 6 + 5]), float.Parse(levelData[j * 6 + 6]), float.Parse(levelData[j * 6 + 7])), Quaternion.identity);
             targetObjects[i].transform.localScale = new Vector3(float.Parse(levelData[j * 6 + 8]), float.Parse(levelData[j * 6 + 9]), float.Parse(levelData[j * 6 + 10]));
             targets[i] = targetObjects[i].GetComponent<Target>();
