@@ -46,7 +46,6 @@ public class AssistanceManager : MonoBehaviour {
 
 	private bool audioActive = false;
 	private bool laneActive = false;
-	private bool activateLane = true;
 	private bool animActive = false;
 	private bool oneShot = false;
 	private int lastStarter;
@@ -90,7 +89,7 @@ public class AssistanceManager : MonoBehaviour {
 		gameLevel = this.GetComponent<GameLevel>();
 
 		animationOn = settingsManager.GetSetting (Settings.Anim);
-		audioOn = settingsManager.GetSetting (Settings.Voice);
+		audioOn = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
 		laneOn =  PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
 		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
 		laneType = settingsManager.GetSetting (Settings.LaneType);
@@ -167,10 +166,12 @@ public class AssistanceManager : MonoBehaviour {
 				currentTarget = gameLevel.GetCurrentTarget();
 			}
 
-			if(offsetTools && toolsOn > 1) {
+			/*if(offsetTools && toolsOn > 1) {
 
 				if(Time.time - offsetStartTime > offset || offsetStartTime < 0){
 
+
+					
 					switch (toolsOn) {
 					case 3:
 						if(orderColumn < 3) {
@@ -179,7 +180,7 @@ public class AssistanceManager : MonoBehaviour {
 								ActivatePulse();
 								break;
 							case 1:
-								if (!laneActive) {
+								if (laneOn && !laneActive) {
 									ActivateLane ();
 								}
 								break;
@@ -206,7 +207,7 @@ public class AssistanceManager : MonoBehaviour {
 							if(queueAudio)
 								repeatStartTime = Time.time;
 						}
-						else if(laneOn && lastStarter != 1 && activateLane && !laneActive) {
+						else if(laneOn && lastStarter != 1 && !laneActive) {
 							ActivateLane();
 							if(!oneShot) {
 								lastStarter = 1;
@@ -231,8 +232,8 @@ public class AssistanceManager : MonoBehaviour {
 						break;
 					}
 				}
-			}
-			else if(!oneShot) {
+			}*/
+			if(!oneShot) {
 
 				if(animationOn)
 					ActivatePulse();
@@ -252,8 +253,8 @@ public class AssistanceManager : MonoBehaviour {
 				
 				ActivateAudio();
 			}
-			//Debug.Log ("activateLane: " + activateLane + " laneActive: " + laneActive);
-			if(activateLane && !laneActive) {
+
+			if(laneOn && !laneActive) {
 				ActivateLane ();
 				//currentFrame = (int)(Time.time * laneFramerate) % arrowColors.Length;
 			}
@@ -421,7 +422,7 @@ public class AssistanceManager : MonoBehaviour {
 		case Tool.anim:
 			return animActive;
 		case Tool.lane:
-			return activateLane;
+			return laneActive;
 		case Tool.audio:
 			return audioActive;
 		default:
