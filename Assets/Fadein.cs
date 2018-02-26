@@ -53,7 +53,7 @@ public class Fadein : MonoBehaviour {
 	}
 
 	public void ResetFade() {
-		print ("resetFade() called");
+		//print ("resetFade() called");
 		f = 0f;
 		startNow = true;
 		fadeIn = false;
