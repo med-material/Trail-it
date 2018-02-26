@@ -160,105 +160,42 @@ public class AssistanceManager : MonoBehaviour {
 	// Update is called once per frame
 	public void Update () {
 
-		Debug.Log ("GetLevelActive: " + gameManager.GetLevelActive ());
-		if(gameManager.GetLevelActive() && toolsOn > 0 && Time.time - toolStartTime > toolDelay) {
+		if (gameManager.GetLevelActive ()) {
+			if (toolsOn > 0 && Time.time - toolStartTime > toolDelay) {
 
-			if(currentTarget == null) {
-				currentTarget = gameLevel.GetCurrentTarget();
-			}
-
-			/*if(offsetTools && toolsOn > 1) {
-
-				if(Time.time - offsetStartTime > offset || offsetStartTime < 0){
-
-
-					
-					switch (toolsOn) {
-					case 3:
-						if(orderColumn < 3) {
-							switch (orderMatrix[orderRow, orderColumn]) {
-							case 0:
-								ActivatePulse();
-								break;
-							case 1:
-								if (laneOn && !laneActive) {
-									ActivateLane ();
-								}
-								break;
-							case 2:
-								ActivateAudio();
-								break;
-							}
-							orderColumn++;
-							offsetStartTime = Time.time;
-						}
-						else if(queueAudio && audioActive && repeatAudio && Time.time - repeatStartTime > repeatDelay) {
-							
-							ActivateAudio();
-						}
-						break;
-					case 2:
-						if(pulseOn && lastStarter != 0 && !pulseActive) {
-							ActivatePulse();
-							if(!oneShot) {
-								lastStarter = 0;
-								oneShot = true;
-								offsetStartTime = Time.time;
-							}
-							if(queueAudio)
-								repeatStartTime = Time.time;
-						}
-						else if(laneOn && lastStarter != 1 && !laneActive) {
-							ActivateLane();
-							if(!oneShot) {
-								lastStarter = 1;
-								oneShot = true;
-								offsetStartTime = Time.time;
-							}
-							if(queueAudio)
-								repeatStartTime = Time.time;
-						}
-						else if(audioOn && lastStarter != 2 && !audioActive) {
-							ActivateAudio();
-							if(!oneShot) {
-								lastStarter = 2;
-								oneShot = true;
-								offsetStartTime = Time.time;
-							}
-						}
-						else if(queueAudio && audioActive && repeatAudio && Time.time - repeatStartTime > repeatDelay) {
-							
-							ActivateAudio();
-						}
-						break;
-					}
+				if (currentTarget == null) {
+					currentTarget = gameLevel.GetCurrentTarget ();
 				}
-			}*/
-			if(!oneShot) {
+						
+				if (!oneShot) {
 
-				if(pulseOn)
-					ActivatePulse();
-				if(laneOn && !laneActive)
-					ActivateLane();
-				if(audioOn)
-					ActivateAudio();
+					if (pulseOn)
+						ActivatePulse ();
+					if (laneOn && !laneActive)
+						ActivateLane ();
+					if (audioOn)
+						ActivateAudio ();
 
-				oneShot = true;
-			}
-			else if(queueAudio && audioActive && repeatAudio && Time.time - repeatStartTime > repeatDelay) {
-				
-				ActivateAudio();
-			}
+					oneShot = true;
+				} else if (queueAudio && audioActive && repeatAudio && Time.time - repeatStartTime > repeatDelay) {
+					
+					ActivateAudio ();
+				}
 
-			if(!queueAudio && audioActive && repeatAudio && Time.time - repeatStartTime > repeatDelay) {
-				
-				ActivateAudio();
-			}
+				if (!queueAudio && audioActive && repeatAudio && Time.time - repeatStartTime > repeatDelay) {
+					
+					ActivateAudio ();
+				}
 
-			if(laneOn && !laneActive) {
-				ActivateLane ();
-				//currentFrame = (int)(Time.time * laneFramerate) % arrowColors.Length;
+				if (laneOn && !laneActive) {
+					ActivateLane ();
+					//currentFrame = (int)(Time.time * laneFramerate) % arrowColors.Length;
+				}
+
+				// removed a big chunk of code here that we do not use. Go find it in P8 folder if you really need it.
 			}
+		} else {
+			ResetTimer ();
 		}
 	}
 

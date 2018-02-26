@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
 	private int totalTargets = 0;
 	private int levelErrors = 0;
 	private int totalErrors = 0;
-	private float pauseTime;
+	private float pauseTime = 0;
 
     private PlayerData playerDat;
 
@@ -107,6 +107,8 @@ public class GameManager : MonoBehaviour
         // TODO: Go to main menu
         menuCanvas.gameObject.SetActive(true);
         gameOverlayCanvas.gameObject.SetActive(false);
+		levelActive = false;
+		TimerPause ();
     }
 
     public void LoadPlayerPrefs()
