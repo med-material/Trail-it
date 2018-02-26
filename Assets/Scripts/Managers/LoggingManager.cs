@@ -28,12 +28,12 @@ public class LoggingManager : MonoBehaviour {
 	private string level;
 	private string laneOn;
 	private string laneType;
-	private string animOn;
+	private string pulseOn;
 	private string audioOn;
 	private string repeatAudio;
 	private string gameTime;
 	private string laneActive;
-	private string animActive;
+	private string pulseActive;
 	private string audioActive;
 	private string audioShots;
 	private string currentTarget;
@@ -93,7 +93,7 @@ public class LoggingManager : MonoBehaviour {
 
 		laneOn = settingsManager.GetSetting(Settings.Lane).ToString();
 		laneType = settingsManager.GetSetting (Settings.LaneType).ToString ();
-		animOn = settingsManager.GetSetting(Settings.Anim).ToString();
+		pulseOn = settingsManager.GetSetting(Settings.Pulse).ToString();
 		audioOn = settingsManager.GetSetting(Settings.Voice).ToString();
 		repeatAudio = settingsManager.GetSetting (Settings.Repeat).ToString ();
 
@@ -135,7 +135,7 @@ public class LoggingManager : MonoBehaviour {
 
 			gameTime = gameLevel.GetGameTime().ToString();
 			laneActive = assistanceManager.GetToolActive(Tool.lane).ToString();
-			animActive = assistanceManager.GetToolActive(Tool.anim).ToString();
+			pulseActive = assistanceManager.GetToolActive(Tool.pulse).ToString();
 			audioActive = assistanceManager.GetToolActive(Tool.audio).ToString();
 			audioShots = assistanceManager.GetAudioShots().ToString();
 			currentTarget = gameLevel.GetCurrent().ToString();
@@ -175,7 +175,7 @@ public class LoggingManager : MonoBehaviour {
 			errorsInRow = tutorial.GetErrorsInRow().ToString();
 
 			laneActive = "";
-			animActive = "";
+			pulseActive = "";
 			audioActive = "";
 			audioShots = "";
 
@@ -192,7 +192,7 @@ public class LoggingManager : MonoBehaviour {
 			
 			gameTime = "";
 			laneActive = "";
-			animActive = "";
+			pulseActive = "";
 			audioActive = "";
 			audioShots = "";
 			currentTarget = "";
@@ -224,12 +224,12 @@ public class LoggingManager : MonoBehaviour {
 						+ level + sep
 						+ laneOn + sep
 						+ laneType + sep
-						+ animOn + sep
+						+ pulseOn + sep
 						+ audioOn + sep
 						+ repeatAudio + sep
 						+ gameTime + sep
 						+ laneActive + sep
-						+ animActive + sep
+						+ pulseActive + sep
 						+ audioActive + sep
 						+ audioShots + sep
 						+ currentHit + sep

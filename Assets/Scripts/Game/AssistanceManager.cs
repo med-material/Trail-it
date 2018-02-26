@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum Tool {anim, lane, audio};
+public enum Tool {pulse, lane, audio};
 
 public class AssistanceManager : MonoBehaviour {
 
@@ -46,7 +46,7 @@ public class AssistanceManager : MonoBehaviour {
 
 	private bool audioActive = false;
 	private bool laneActive = false;
-	private bool animActive = false;
+	private bool pulseActive = false;
 	private bool oneShot = false;
 	private int lastStarter;
 	private int audioShots;
@@ -63,7 +63,7 @@ public class AssistanceManager : MonoBehaviour {
 	private SettingsManager settingsManager;
 	private LoggingManager loggingManager;
 
-	private bool animationOn = false;
+	private bool pulseOn = false;
 	private bool audioOn = false;
 	private bool laneOn = false;
 
@@ -88,7 +88,7 @@ public class AssistanceManager : MonoBehaviour {
 		loggingManager = gameManager.GetComponent<LoggingManager>();
 		gameLevel = this.GetComponent<GameLevel>();
 
-		animationOn = settingsManager.GetSetting (Settings.Anim);
+		pulseOn = PlayerPrefs.GetInt("Settings:Pulse", 0) == 1;
 		audioOn = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
 		laneOn =  PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
 		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
@@ -124,7 +124,7 @@ public class AssistanceManager : MonoBehaviour {
 		}
 
 
-		if(animationOn)
+		if(pulseOn)
 			toolsOn++;
 		if(audioOn)
 			toolsOn++;
@@ -197,7 +197,7 @@ public class AssistanceManager : MonoBehaviour {
 						}
 						break;
 					case 2:
-						if(animationOn && lastStarter != 0 && !animActive) {
+						if(pulseOn && lastStarter != 0 && !pulseActive) {
 							ActivatePulse();
 							if(!oneShot) {
 								lastStarter = 0;
@@ -235,7 +235,7 @@ public class AssistanceManager : MonoBehaviour {
 			}*/
 			if(!oneShot) {
 
-				if(animationOn)
+				if(pulseOn)
 					ActivatePulse();
 				if(laneOn && !laneActive)
 					ActivateLane();
@@ -306,7 +306,7 @@ public class AssistanceManager : MonoBehaviour {
 
 	private void ActivatePulse () {
 
-		animActive = true;
+		pulseActive = true;
 
 		currentTarget.PlayPulse();
 
@@ -392,7 +392,7 @@ public class AssistanceManager : MonoBehaviour {
 		if (laneActive) {
 			StopLane ();
 		}
-		animActive = false;
+		pulseActive = false;
 		oneShot = false;
 		voice.Stop ();
 		chime.Stop ();
@@ -419,8 +419,8 @@ public class AssistanceManager : MonoBehaviour {
 	public bool GetToolActive (Tool inputTool) {
 
 		switch(inputTool) {
-		case Tool.anim:
-			return animActive;
+		case Tool.pulse:
+			return pulseActive;
 		case Tool.lane:
 			return laneActive;
 		case Tool.audio:

@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public enum Settings {Lane, Voice, Anim, Repeat, LaneType};
+public enum Settings {Lane, Voice, Pulse, Repeat, LaneType};
 
 public class SettingsManager : MonoBehaviour {
 
@@ -10,7 +10,7 @@ public class SettingsManager : MonoBehaviour {
 
 	private string playerName;
 
-	private bool animationOn = false;
+	private bool pulseOn = false;
 	private bool audioOn = false;
 	private bool landinglaneOn = false;
 	private bool repeatAudio = false;
@@ -25,14 +25,14 @@ public class SettingsManager : MonoBehaviour {
 
 	public void LoadPlayerPrefs () {
 
-		if(PlayerPrefs.HasKey("animationOn")) {
+		if(PlayerPrefs.HasKey("pulseOn")) {
 			
-			animationOn = Convert.ToBoolean(PlayerPrefs.GetString("animationOn"));
+			pulseOn = Convert.ToBoolean(PlayerPrefs.GetString("pulseOn"));
 		}
 		else {
 
-			animationOn = false;
-			PlayerPrefs.SetString("animationOn", animationOn.ToString());
+			pulseOn = false;
+			PlayerPrefs.SetString("pulseOn", pulseOn.ToString());
 		}
 		
 		if(PlayerPrefs.HasKey("audioOn")) {
@@ -89,8 +89,8 @@ public class SettingsManager : MonoBehaviour {
 	public bool GetSetting (Settings setting) {
 		
 		switch(setting) {
-		case Settings.Anim:
-			return animationOn;
+		case Settings.Pulse:
+			return pulseOn;
 		case Settings.Lane:
 			return landinglaneOn;
 		case Settings.Voice:
@@ -107,10 +107,10 @@ public class SettingsManager : MonoBehaviour {
 	public void SetSetting (Settings setting, bool settingValue) {
 
 		switch(setting) {
-		case Settings.Anim:
-			animationOn = settingValue;
-			PlayerPrefs.SetString("animationOn", animationOn.ToString());
-			loggingManager.WriteLog("Animantion Set");
+		case Settings.Pulse:
+			pulseOn = settingValue;
+			PlayerPrefs.SetString("pulseOn", pulseOn.ToString());
+			loggingManager.WriteLog("Pulse Set");
 			break;
 		case Settings.Lane:
 			landinglaneOn = settingValue;
