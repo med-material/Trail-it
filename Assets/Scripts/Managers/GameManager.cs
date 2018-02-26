@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private float levelCompletionTime = -1;
 	private float startGameTime = -1;
 	private bool sessionActive = true;
+	private bool levelActive = false;
 	private int amountOfTargets = -1;
 	private int totalTargets = 0;
 	private int levelErrors = 0;
@@ -171,7 +172,7 @@ public class GameManager : MonoBehaviour
 		//TODO: Insert: 	       else
 				//loggingManager.WriteLog ("Guest Profile Selected");
 
-
+		levelActive = true;
         gameOverlayCanvas.gameObject.SetActive(true);
 
         if (isGameTypeA)
@@ -272,7 +273,8 @@ public class GameManager : MonoBehaviour
 
     private void LevelEnded()
     {
-        gameOverlayCanvas.gameObject.SetActive(false);
+		levelActive = false;
+		gameOverlayCanvas.gameObject.SetActive(false);
         _CurrentScene = "LevelComplete";
         SetLevelCompletionTime(Time.time - activeLevel.StartTime);
 		GameLevel gameLevel = GameObject.Find ("GameLevel").GetComponent<GameLevel> ();
@@ -358,11 +360,13 @@ public class GameManager : MonoBehaviour
 	public void TimerPause()
 	{
 		pauseTime = Time.time;
+		levelActive = false;
 	}
 
 	public void TimerResume()
 	{
 		startGameTime += (Time.time - pauseTime);
+		levelActive = true;
 	}
 
     public bool GetGameType()
@@ -415,6 +419,7 @@ public class GameManager : MonoBehaviour
     public void NextLevelButton()
     {
 		TimerResume ();
+		levelActive = true;
 		SetNextLevel(GetNextLevel() + 1);
         SetProgressA(GetNextLevel());
         SavePlayerPrefs();
@@ -472,6 +477,10 @@ public class GameManager : MonoBehaviour
     {
         return allLevelsB.Length;
     }
+
+	public bool GetLevelActive() {
+		return levelActive;
+	}
 
     public TextAsset GetLevelData()
     {

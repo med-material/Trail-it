@@ -160,7 +160,8 @@ public class AssistanceManager : MonoBehaviour {
 	// Update is called once per frame
 	public void Update () {
 
-		if(toolsOn > 0 && Time.time - toolStartTime > toolDelay) {
+		Debug.Log ("GetLevelActive: " + gameManager.GetLevelActive ());
+		if(gameManager.GetLevelActive() && toolsOn > 0 && Time.time - toolStartTime > toolDelay) {
 
 			if(currentTarget == null) {
 				currentTarget = gameLevel.GetCurrentTarget();
