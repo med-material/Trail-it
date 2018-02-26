@@ -2255,7 +2255,6 @@ MonoBehaviour:
   endLevelAmount: {fileID: 1492646124}
   endLevelAverage: {fileID: 1827846890}
   totalAmount: {fileID: 632265026}
-  levelErrorsText: {fileID: 0}
   SkipTutorial: 1
   IsGuest: 1
   LD: {fileID: 1864533673}

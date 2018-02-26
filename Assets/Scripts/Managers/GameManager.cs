@@ -55,15 +55,15 @@ public class GameManager : MonoBehaviour
 	private Text endLevelAverage;
 	[SerializeField]
 	private Text totalAmount;
-	[SerializeField]
-	private Text levelErrorsText;
+	//[SerializeField]
+	//private Text levelErrorsText;
 	//[SerializeField]
 	//private Text totalErrorsText;
 	private string endLevelTimeTemplate;
 	private string endLevelAmountTemplate;
 	private string endLevelAverageTemplate;
 	private string totalAmountTemplate;
-	private string levelErrorsTemplate;
+	//private string levelErrorsTemplate;
 	//private string totalErrorsTemplate;
 	private int sessionLength = 8;
 
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
 		endLevelAmountTemplate = endLevelAmount.text;
 		endLevelAverageTemplate = endLevelAverage.text;
 		totalAmountTemplate = totalAmount.text;
-		levelErrorsTemplate = levelErrorsText.text;
+		//levelErrorsTemplate = levelErrorsText.text;
 		//totalErrorsTemplate = totalErrorsText.text;
 
         input = gameObject.AddComponent<InputHandler>();
@@ -168,7 +168,8 @@ public class GameManager : MonoBehaviour
     public void StartGame(bool isGameTypeA)
     {
 		SetGameType (false);//isGameTypeA);
-        //TODO: Insert: 			loggingManager.WriteLog ("Guest Profile Selected");
+		//TODO: Insert: 	       else
+				//loggingManager.WriteLog ("Guest Profile Selected");
 
 
         gameOverlayCanvas.gameObject.SetActive(true);
@@ -340,7 +341,7 @@ public class GameManager : MonoBehaviour
 			endLevelAmount.text = string.Format (endLevelAmountTemplate, totalTargets);
 			float average = (float)levelCompletionSeconds / (float)amountOfTargets;
 			endLevelAverage.text = string.Format (endLevelAverageTemplate, average.ToString ("n2"));
-			levelErrorsText.text = string.Format (levelErrorsTemplate, levelErrors);
+			//levelErrorsText.text = string.Format (levelErrorsTemplate, levelErrors);
 		} else {
 			totalAmount.text = string.Format (totalAmountTemplate, totalTargets);
 			//totalErrorsText.text = string.Format (totalErrorsTemplate, totalErrors); 
