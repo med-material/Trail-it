@@ -88,11 +88,7 @@ public class AssistanceManager : MonoBehaviour {
 		loggingManager = gameManager.GetComponent<LoggingManager>();
 		gameLevel = this.GetComponent<GameLevel>();
 
-		pulseOn = PlayerPrefs.GetInt("Settings:Pulse", 0) == 1;
-		audioOn = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
-		laneOn =  PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
-		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
-		laneType = settingsManager.GetSetting (Settings.LaneType);
+		LoadPlayerPrefs ();		
 
 		arrowCount = 12;
 
@@ -120,29 +116,6 @@ public class AssistanceManager : MonoBehaviour {
 			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
 			arrowObject.transform.SetParent (gameCanvas.transform);
 			LeftArrowObjects.Add (arrowObject);
-
-		}
-
-
-		if(pulseOn)
-			toolsOn++;
-		if(audioOn)
-			toolsOn++;
-		if(laneOn)
-			toolsOn++;
-
-		if(toolsOn == 3) {
-
-			orderMatrix = new int[6,3];
-			orderStrings = orderSheet.text.Split("\n"[0]);
-
-			for(int i = 0; i < orderStrings.Length; i++) {
-
-				for(int j = 0; j < 3; j++) {
-
-					orderMatrix[i,j] = int.Parse((orderStrings[i][j]).ToString());
-				}
-			}
 		}
 
 		gameA = gameManager.GetGameType ();
@@ -156,7 +129,27 @@ public class AssistanceManager : MonoBehaviour {
 
 		toolStartTime = Time.time;
 	}
-	
+
+	public void LoadPlayerPrefs() {
+		toolsOn = 0;
+
+		pulseOn = PlayerPrefs.GetInt("Settings:Pulse", 0) == 1;
+		audioOn = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
+		laneOn =  PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
+		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
+		laneType = settingsManager.GetSetting (Settings.LaneType);
+
+		gameA = gameManager.GetGameType ();
+		orderRow = gameManager.GetOrderRow ();
+
+		if(pulseOn)
+			toolsOn++;
+		if(audioOn)
+			toolsOn++;
+		if(laneOn)
+			toolsOn++;
+	}
+
 	// Update is called once per frame
 	public void Update () {
 

@@ -149,6 +149,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 114354810877759322, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
@@ -266,7 +271,7 @@ Prefab:
     - target: {fileID: 224623398584774602, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -130
       objectReference: {fileID: 0}
     - target: {fileID: 224623398584774602, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -276,7 +281,7 @@ Prefab:
     - target: {fileID: 224623398584774602, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -296,7 +301,7 @@ Prefab:
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -130
       objectReference: {fileID: 0}
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -306,7 +311,7 @@ Prefab:
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 224928971901801846, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -522,6 +527,46 @@ Prefab:
         type: 2}
       propertyPath: m_Text
       value: Blinke Animation
+      objectReference: {fileID: 0}
+    - target: {fileID: 114867054318817776, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_Text
+      value: Trail it spillet forbedrer syn og koncentration.
+      objectReference: {fileID: 0}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 36167942}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: LoadPlayerPrefs
+      objectReference: {fileID: 0}
+    - target: {fileID: 114585389307549814, guid: 98cafaf4b9a7b4b25a90918e76661ede,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114918933816778892, guid: 98cafaf4b9a7b4b25a90918e76661ede, type: 2}
@@ -1268,7 +1313,7 @@ MonoBehaviour:
   landingsbaneToggle: {fileID: 737497549}
   pulseToggle: {fileID: 959431783}
   stemmeToggle: {fileID: 727646589}
-  trainingMinutes: {fileID: 1763127632}
+  trainingMinutes: {fileID: 541337249}
   trainingSlider: {fileID: 716819945}
 --- !u!1 &148219926
 GameObject:
@@ -1964,6 +2009,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 2043959511}
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &190950629
@@ -2489,6 +2545,7 @@ MonoBehaviour:
   endLevelAmount: {fileID: 1492646124}
   endLevelAverage: {fileID: 1827846890}
   totalAmount: {fileID: 632265026}
+  endSessionAmount: {fileID: 2130726626}
   SkipTutorial: 1
   IsGuest: 1
   LD: {fileID: 1864533673}
@@ -4015,7 +4072,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: eb41fb180b8fc3c44a11a2b0d703419e, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: eb41fb180b8fc3c44a11a2b0d703419e, type: 2}
@@ -14337,7 +14394,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1702015939039786, guid: 968ce7bb267784a37bcb2aab9f601bae, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1077886686196714, guid: 968ce7bb267784a37bcb2aab9f601bae, type: 2}
       propertyPath: m_IsActive
@@ -15061,6 +15118,11 @@ CanvasRenderer:
 --- !u!223 &2043687481 stripped
 Canvas:
   m_PrefabParentObject: {fileID: 223763773588533690, guid: 730a98b6e3feb4bbdb264089d4691419,
+    type: 2}
+  m_PrefabInternal: {fileID: 537481880}
+--- !u!1 &2043959511 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1269889395394086, guid: 730a98b6e3feb4bbdb264089d4691419,
     type: 2}
   m_PrefabInternal: {fileID: 537481880}
 --- !u!1 &2075680746

@@ -173,6 +173,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(bool isGameTypeA)
     {
+		LoadPlayerPrefs ();
 		SetGameType (false);//isGameTypeA);
 		//TODO: Insert: 	       else
 				//loggingManager.WriteLog ("Guest Profile Selected");
