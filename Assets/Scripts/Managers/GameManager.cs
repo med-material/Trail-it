@@ -56,6 +56,8 @@ public class GameManager : MonoBehaviour
 	private Text endLevelAverage;
 	[SerializeField]
 	private Text totalAmount;
+	[SerializeField]
+	private Text endSessionAmount;
 	//[SerializeField]
 	//private Text levelErrorsText;
 	//[SerializeField]
@@ -66,7 +68,7 @@ public class GameManager : MonoBehaviour
 	private string totalAmountTemplate;
 	//private string levelErrorsTemplate;
 	//private string totalErrorsTemplate;
-	private int sessionLength = 1;
+	private int sessionLength;
 
 
     // Since we're doing everything in one scene now, we're just adding this to figure out 
@@ -93,7 +95,6 @@ public class GameManager : MonoBehaviour
         input = gameObject.AddComponent<InputHandler>();
 
         LoadPlayerPrefs();
-
         //DontDestroyOnLoad (this); // Technically not needed anymore. 
 
         if (IsGuest)
@@ -114,7 +115,8 @@ public class GameManager : MonoBehaviour
     public void LoadPlayerPrefs()
     {
 
-        if (PlayerPrefs.HasKey("userId"))
+		sessionLength = PlayerPrefs.GetInt("Settings:Training", 0);
+		if (PlayerPrefs.HasKey("userId"))
         {
             playerDat.userID = PlayerPrefs.GetInt("userID");
             playerDat.progressA = PlayerPrefs.GetInt("progressA");
@@ -122,6 +124,7 @@ public class GameManager : MonoBehaviour
             playerDat.tutorialASeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialASeen"));
             playerDat.tutorialBSeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialBSeen"));
             playerDat.orderRow = PlayerPrefs.GetInt("orderRow");
+
         }
         else
         {
@@ -316,9 +319,13 @@ public class GameManager : MonoBehaviour
         //bgPanel.color = new Color(col.r,col.g,col.b, t); 
 
         endLevelCanvas.gameObject.SetActive(true);
+		gameOverlayCanvas.gameObject.SetActive (false);
 		if (Time.time - startGameTime > sessionLength*60 && sessionActive) {
 			//print ("time is up!" + (Time.time - startGameTime));
 			endSessionCanvas.gameObject.SetActive(true);
+
+
+
 			sessionActive = false;
 		}
 		UpdateEndScreenClock ();
@@ -337,6 +344,7 @@ public class GameManager : MonoBehaviour
 	{
 		var timeSpan = TimeSpan.FromSeconds(Time.time - startGameTime);
 		endLevelDuration.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
+		endSessionAmount.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
 	}
 
 

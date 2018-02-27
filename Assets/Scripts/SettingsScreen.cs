@@ -27,9 +27,16 @@ public class SettingsScreen : MonoBehaviour
     private Image stemmeToggle;
     private UnityEngine.UI.Button stemmeButton;
 
+	[SerializeField]
+	private Text trainingMinutes;
+	[SerializeField]
+	private UnityEngine.UI.Slider trainingSlider;
+
     private bool landingsbane;
     private new bool pulse;
     private bool stemme;
+	private int trainingTime;
+	private string trainingMinutesTemplate;
 
     private void Awake()
     {
@@ -44,7 +51,14 @@ public class SettingsScreen : MonoBehaviour
         landingsbaneToggle.sprite = landingsbane ? til : fra;
         pulseToggle.sprite = pulse ? til : fra;
         stemmeToggle.sprite = stemme ? til : fra;
+		trainingSlider.value = (float) trainingTime;
     }
+
+	private void Start()
+	{
+		trainingMinutesTemplate = trainingMinutes.text;
+		trainingMinutes.text = string.Format (trainingMinutesTemplate, trainingTime.ToString());
+	}
 
     public void Landingsbane_Click()
     {
@@ -76,6 +90,18 @@ public class SettingsScreen : MonoBehaviour
         }
     }
 
+	public void Slider_OnValueChanged()
+	{
+		if (passwordInput.text == password) {
+			int val = (int) trainingSlider.value;
+			trainingTime = val;
+			trainingMinutes.text = string.Format (trainingMinutesTemplate, val.ToString());
+			SaveSettings ();
+		} else {
+			trainingSlider.value = (float) trainingTime;
+		}
+	}
+
     /// <summary>
     /// Load the settings from PlayerPrefs
     /// </summary>
@@ -84,6 +110,7 @@ public class SettingsScreen : MonoBehaviour
         landingsbane = PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1;
         pulse = PlayerPrefs.GetInt("Settings:Pulse", 0) == 1;
         stemme = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1;
+		trainingTime = PlayerPrefs.GetInt("Settings:Training", 0);
     }
 
     /// <summary>
@@ -94,5 +121,6 @@ public class SettingsScreen : MonoBehaviour
         PlayerPrefs.SetInt("Settings:Landingsbane", landingsbane ? 1 : 0);
         PlayerPrefs.SetInt("Settings:Pulse", pulse ? 1 : 0);
         PlayerPrefs.SetInt("Settings:Stemme", stemme ? 1 : 0);
+		PlayerPrefs.SetInt ("Settings:Training", trainingTime);
     }
 }
