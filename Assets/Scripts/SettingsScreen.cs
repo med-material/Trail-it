@@ -31,11 +31,18 @@ public class SettingsScreen : MonoBehaviour
 	private Text trainingMinutes;
 	[SerializeField]
 	private UnityEngine.UI.Slider trainingSlider;
+	[SerializeField]
+	private Text circleAmountNumber;
+	[SerializeField]
+	private UnityEngine.UI.Slider circleAmountSlider;
+
 
     private bool landingsbane;
     private new bool pulse;
     private bool stemme;
-	private int trainingTime;
+	private int trainingTime = 8;
+	private int circleAmount = 18;
+	private string circleAmountNumberTemplate;
 	private string trainingMinutesTemplate;
 
     private void Awake()
@@ -52,12 +59,16 @@ public class SettingsScreen : MonoBehaviour
         pulseToggle.sprite = pulse ? til : fra;
         stemmeToggle.sprite = stemme ? til : fra;
 		trainingSlider.value = (float) trainingTime;
+		circleAmountSlider.value = (float) circleAmount;
     }
 
 	private void Start()
 	{
 		trainingMinutesTemplate = trainingMinutes.text;
 		trainingMinutes.text = string.Format (trainingMinutesTemplate, trainingTime.ToString());
+		circleAmountNumberTemplate = circleAmountNumber.text;
+		circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmount.ToString());
+
 	}
 
     public void Landingsbane_Click()
@@ -90,7 +101,7 @@ public class SettingsScreen : MonoBehaviour
         }
     }
 
-	public void Slider_OnValueChanged()
+	public void TrainingSlider_OnValueChanged()
 	{
 		if (passwordInput.text == password) {
 			int val = (int) trainingSlider.value;
@@ -102,6 +113,18 @@ public class SettingsScreen : MonoBehaviour
 		}
 	}
 
+	public void CircleSlider_OnValueChanged()
+	{
+		if (passwordInput.text == password) {
+			int val = (int) circleAmountSlider.value;
+			circleAmount = val;
+			circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmount.ToString());
+			SaveSettings ();
+		} else {
+			circleAmountSlider.value = (float) circleAmount;
+		}
+	}
+
     /// <summary>
     /// Load the settings from PlayerPrefs
     /// </summary>
@@ -110,7 +133,8 @@ public class SettingsScreen : MonoBehaviour
         landingsbane = PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1;
         pulse = PlayerPrefs.GetInt("Settings:Pulse", 0) == 1;
         stemme = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1;
-		trainingTime = PlayerPrefs.GetInt("Settings:Training", 0);
+		trainingTime = PlayerPrefs.GetInt("Settings:Time", 0);
+		circleAmount = PlayerPrefs.GetInt("Settings:CircleAmount", 0);
     }
 
     /// <summary>
@@ -121,6 +145,7 @@ public class SettingsScreen : MonoBehaviour
         PlayerPrefs.SetInt("Settings:Landingsbane", landingsbane ? 1 : 0);
         PlayerPrefs.SetInt("Settings:Pulse", pulse ? 1 : 0);
         PlayerPrefs.SetInt("Settings:Stemme", stemme ? 1 : 0);
-		PlayerPrefs.SetInt ("Settings:Training", trainingTime);
+		PlayerPrefs.SetInt ("Settings:Time", trainingTime);
+		PlayerPrefs.SetInt ("Settings:CircleAmount", circleAmount);
     }
 }
