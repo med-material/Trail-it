@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
 	private int totalErrors = 0;
 	private float pauseTime = 0;
 
+	private int minimumLevel = 7;
+	private int maximumLevel = 12;
+
     private PlayerData playerDat;
 
     private InputHandler input;
@@ -116,6 +119,8 @@ public class GameManager : MonoBehaviour
     {
 
 		sessionLength = PlayerPrefs.GetInt("Settings:Training", 0);
+		minimumLevel = PlayerPrefs.GetInt ("Settings:MinLevel", 0);
+		maximumLevel = PlayerPrefs.GetInt ("Settings:MaxLevel", 0);
 		if (PlayerPrefs.HasKey("userId"))
         {
             playerDat.userID = PlayerPrefs.GetInt("userID");
@@ -145,6 +150,7 @@ public class GameManager : MonoBehaviour
 
             playerDat.orderRow = 0;
             PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
+
         }
     }
 
@@ -408,9 +414,9 @@ public class GameManager : MonoBehaviour
 
     public int GetProgressA()
     {
-		int[] randomID = Enumerable.Range(23, 28).ToArray();
+		int[] randomID = Enumerable.Range(minimumLevel, maximumLevel).ToArray();
 		ShuffleArray<int>(randomID);
-        int progress = randomID[playerDat.progressA % 2];
+		int progress = randomID[playerDat.progressA % 2];
 		return progress;
     }
 
