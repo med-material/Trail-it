@@ -92,17 +92,20 @@ public class LineDrawer : MonoBehaviour
 
         while (t > 0f)
         {
-            curLine.startColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, t);
-            curLine.endColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, t);
-
-            t -= (Time.deltaTime * Time.deltaTime * (3 - 2 * Time.deltaTime)) * fadeTimeScaler; // Smoothstep x * x * (3 - 2 * x)
+			if (curLine != null) {
+				curLine.startColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, t);
+	            curLine.endColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, t);
+			}
+	            t -= (Time.deltaTime * Time.deltaTime * (3 - 2 * Time.deltaTime)) * fadeTimeScaler; // Smoothstep x * x * (3 - 2 * x)
             yield return null;
         }
 
-        curLine.startColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, 0f);
-        curLine.endColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, 0f);
+		if (curLine != null) {
+	        curLine.startColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, 0f);
+	        curLine.endColor = new Color(curLine.startColor.r, curLine.startColor.g, curLine.startColor.b, 0f);
 
-        Destroy(curLine.gameObject);
+	        Destroy(curLine.gameObject);
+		}
     }
 
     public void ClearAll()
