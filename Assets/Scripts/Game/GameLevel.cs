@@ -102,7 +102,8 @@ public class GameLevel : MonoBehaviour
 
     public HitType AttemptHit(Vector3 hitPos)
     {
-        HitType typeHit = HitType.NoHit;
+		Debug.Log ("AttemptHit call!");
+		HitType typeHit = HitType.NoHit;
 
         colliderHit = Physics2D.OverlapPoint(hitPos);
 
@@ -114,6 +115,7 @@ public class GameLevel : MonoBehaviour
                 tempHit = colliderHit;
 
                 hit = colliderHit.GetComponent<Target>().GetID();
+				Debug.Log ("Hit is: " + colliderHit.GetComponent<Target> ().GetID ());
 
                 if (colliderHit.GetComponent<Target>().GetObstacle())
                 {
@@ -122,7 +124,6 @@ public class GameLevel : MonoBehaviour
 
                     hit = (hit * -1) - 1;
 
-                    loggingManager.WriteLog("Obstacle Hit");
                     typeHit = HitType.ObstacleHit;
 
                     //currentTarget = lastValid;
@@ -143,23 +144,12 @@ public class GameLevel : MonoBehaviour
                     for (int i = 0; i < obstacles.Length; i++)
                         if (!obstacles[i].IsRed())
                             obstacles[i].TurnDark();
+					loggingManager.WriteLog("Obstacle Hit");
                 }
                 else
                 {
                     if (hit == currentTarget)
                     {
-
-                        if (hit == targets.Length - 1)
-                        {
-                            loggingManager.WriteLog("Target Hit - Level Complete");
-                            typeHit = HitType.TargetHitLevelComplete;
-                        }
-                        else
-                        {
-                            loggingManager.WriteLog("Target Hit");
-                            typeHit = HitType.TargetHit;
-                        }
-
 						for (int i = 0; i < targets.Length; i++) {
 							if (i > (hit)) {
 								targets [i].SetWhite ();
@@ -167,6 +157,7 @@ public class GameLevel : MonoBehaviour
 								targets [i].SetGreen ();
 							}
 						}
+
                         for (int i = 0; i < targets.Length; i++)
 							targets[i].TurnLight();
                         if (obstacles != null)
@@ -182,14 +173,28 @@ public class GameLevel : MonoBehaviour
                         targets[hit].SetGreenOutline();
                         outset = currentTarget;
                         lastValid = currentTarget;
-                        currentTarget++;
+
+						correctingError = false;
+                        errorsInRow = 0;
+                        correctSound.Play();
+
+						if (hit == targets.Length - 1)
+						{
+							loggingManager.WriteLog("Target Hit - Level Complete");
+							typeHit = HitType.TargetHitLevelComplete;
+						}
+						else
+						{
+							loggingManager.WriteLog("Target Hit");
+							typeHit = HitType.TargetHit;
+						}
+
+						currentTarget++;
 						if (shouldCountTotal) {
 							countTotal++;
 							//print ("countTotal: " + countTotal);
 						}
-                        correctingError = false;
-                        errorsInRow = 0;
-                        correctSound.Play();
+
                     }
                     else if (hit == lastValid)
                     {
@@ -387,6 +392,7 @@ public class GameLevel : MonoBehaviour
         }
 
         currentTarget = 0;
+		Debug.Log ("LoadLevel has been called, resetting currentTarget");
         lastValid = currentTarget;
 
         StartCoroutine(SpawnTargets(targetObjects));
@@ -423,7 +429,7 @@ public class GameLevel : MonoBehaviour
             targets[i] = null;
         }
 
-        if (obstacleObjects == null)
+		if (obstacleObjects == null)
             return;
 
         for (int i = 0; i < obstacleObjects.Length; i++)
@@ -511,6 +517,8 @@ public class GameLevel : MonoBehaviour
             return mainCam.WorldToViewportPoint(obstacleObjects[(inputTargetID + 1) * -1].transform.position);
         else
         {
+			//Debug.Log ("TargetObjects length: " + targetObjects.Length);
+			//Debug.Log ("inputTargetID: " + inputTargetID);
             return mainCam.WorldToViewportPoint(targetObjects[inputTargetID].transform.position);
         }
     }
