@@ -117,11 +117,11 @@ public class GameManager : MonoBehaviour
 
     public void LoadPlayerPrefs()
     {
-
-		sessionLength = PlayerPrefs.GetInt("Settings:Time", 0);
-		minimumLevel = PlayerPrefs.GetInt ("Settings:MinLevel", 0);
-		maximumLevel = PlayerPrefs.GetInt ("Settings:MaxLevel", 0);
-		if (PlayerPrefs.HasKey("userId"))
+		int currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		sessionLength = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Time", 5);
+		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentPlayerID + ":MinLevel", 1);
+		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentPlayerID + ":MaxLevel", 4);
+		/*if (PlayerPrefs.HasKey("userId"))
         {
             playerDat.userID = PlayerPrefs.GetInt("userID");
             playerDat.progressA = PlayerPrefs.GetInt("progressA");
@@ -132,26 +132,26 @@ public class GameManager : MonoBehaviour
 
         }
         else
-        {
-            playerDat.userID = 0;
-            PlayerPrefs.SetInt("userID", playerDat.userID);
+        {*/
+        playerDat.userID = 0;
+        PlayerPrefs.SetInt("userID", playerDat.userID);
 
-            playerDat.progressA = 0;
-            PlayerPrefs.SetInt("progressA", playerDat.progressA);
+        playerDat.progressA = 0;
+        PlayerPrefs.SetInt("progressA", playerDat.progressA);
 
-            playerDat.progressB = 0;
-            PlayerPrefs.SetInt("progressB", playerDat.progressB);
+        playerDat.progressB = 0;
+        PlayerPrefs.SetInt("progressB", playerDat.progressB);
 
-            playerDat.tutorialASeen = false;
-            PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
+        playerDat.tutorialASeen = false;
+        PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
 
-            playerDat.tutorialBSeen = false;
-            PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
+        playerDat.tutorialBSeen = false;
+        PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
 
-            playerDat.orderRow = 0;
-            PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
+        playerDat.orderRow = 0;
+        PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
 
-        }
+   
     }
 
     public void SavePlayerPrefs()

@@ -17,6 +17,9 @@ public class SettingsScreen : MonoBehaviour
     [SerializeField]
     private Sprite til;
 
+	[SerializeField]
+	private ProfileScreen profileScreen;
+
     [SerializeField]
     private Image landingsbaneToggle;
     private UnityEngine.UI.Button landingsbaneButton;
@@ -51,22 +54,38 @@ public class SettingsScreen : MonoBehaviour
 
     private void Awake()
     {
-        landingsbaneButton = landingsbaneToggle.GetComponent<UnityEngine.UI.Button>();
-        pulseButton = pulseToggle.GetComponent<UnityEngine.UI.Button>();
-        stemmeButton = stemmeToggle.GetComponent<UnityEngine.UI.Button>();
+		landingsbaneButton = landingsbaneToggle.GetComponent<UnityEngine.UI.Button>();
+		pulseButton = pulseToggle.GetComponent<UnityEngine.UI.Button>();
+		stemmeButton = stemmeToggle.GetComponent<UnityEngine.UI.Button>();
     }
 
     private void OnEnable()
     {
+
         LoadSettings();
         landingsbaneToggle.sprite = landingsbane ? til : fra;
         pulseToggle.sprite = pulse ? til : fra;
         stemmeToggle.sprite = stemme ? til : fra;
 		trainingSlider.value = (float) trainingTime;
 		circleAmountSlider.value = (float) difficultyLevel;
+		Debug.Log ("Setting slider text");
+		if (trainingMinutesTemplate == null) {
+			trainingMinutesTemplate = trainingMinutes.text;
+		}
+		if (circleAmountNumberTemplate == null) {
+			circleAmountNumberTemplate = circleAmountNumber.text;
+		}
+		trainingMinutes.text = string.Format (trainingMinutesTemplate, trainingTime.ToString());
+		circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString(),circleAmountMax.ToString());
     }
 
+	private void Start()
+	{
+
+	}
+
 	private void DetermineAmountOfCircles () {
+		Debug.Log ("Determining amount of cirlces");
 		switch(difficultyLevel) {
 		case 1:
 			circleAmountMin = 10;
@@ -106,16 +125,6 @@ public class SettingsScreen : MonoBehaviour
 			minimumLevel = 2;
 			break;
 		}		
-	}
-
-	private void Start()
-	{
-		trainingMinutesTemplate = trainingMinutes.text;
-		trainingMinutes.text = string.Format (trainingMinutesTemplate, trainingTime.ToString());
-		circleAmountNumberTemplate = circleAmountNumber.text;
-
-		circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString(),circleAmountMax.ToString());
-
 	}
 
     public void Landingsbane_Click()
@@ -179,13 +188,17 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void LoadSettings()
     {
-        landingsbane = PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1;
-        pulse = PlayerPrefs.GetInt("Settings:Pulse", 0) == 1;
-        stemme = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1;
-		trainingTime = PlayerPrefs.GetInt("Settings:Time", 0);
-		difficultyLevel = PlayerPrefs.GetInt("Settings:DifficultyLevel", 0);
+		int currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		Debug.Log ("Loading Settings for id " + currentPlayerID);
+
+        landingsbane = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1;
+        pulse = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1;
+        stemme = PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1;
+		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentPlayerID +":Time", 5);
+		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":DifficultyLevel", 1);
 		DetermineMinMaxLevel();
 		DetermineAmountOfCircles ();
+		Debug.Log ("AmountOfCircles: " + circleAmountMin + "-" + circleAmountMax);
     }
 
     /// <summary>
@@ -193,12 +206,20 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void SaveSettings()
     {
-        PlayerPrefs.SetInt("Settings:Landingsbane", landingsbane ? 1 : 0);
-        PlayerPrefs.SetInt("Settings:Pulse", pulse ? 1 : 0);
-        PlayerPrefs.SetInt("Settings:Stemme", stemme ? 1 : 0);
-		PlayerPrefs.SetInt ("Settings:Time", trainingTime);
-		PlayerPrefs.SetInt ("Settings:DifficultyLevel", difficultyLevel);
-		PlayerPrefs.SetInt ("Settings:MinLevel", minimumLevel);
-		PlayerPrefs.SetInt ("Settings:MaxLevel", maximumLevel);
+		int currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		if (currentPlayerID == -1) {
+			profileScreen.AddNewProfile ("Gæst");
+			currentPlayerID++;
+			Debug.Log ("No profiles created, creating a guest profile with id " + currentPlayerID);
+		}
+		Debug.Log ("Saving Settings for id " + currentPlayerID);
+
+        PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Landingsbane", landingsbane ? 1 : 0);
+		PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Pulse", pulse ? 1 : 0);
+		PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Stemme", stemme ? 1 : 0);
+		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":Time", trainingTime);
+		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":DifficultyLevel", difficultyLevel);
+		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":MinLevel", minimumLevel);
+		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":MaxLevel", maximumLevel);
     }
 }

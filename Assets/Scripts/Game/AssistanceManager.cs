@@ -132,10 +132,10 @@ public class AssistanceManager : MonoBehaviour {
 
 	public void LoadPlayerPrefs() {
 		toolsOn = 0;
-
-		pulseOn = PlayerPrefs.GetInt("Settings:Pulse", 0) == 1;
-		audioOn = PlayerPrefs.GetInt("Settings:Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
-		laneOn =  PlayerPrefs.GetInt("Settings:Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
+		int currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		pulseOn = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1;
+		audioOn = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
+		laneOn =  PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
 		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
 		laneType = settingsManager.GetSetting (Settings.LaneType);
 

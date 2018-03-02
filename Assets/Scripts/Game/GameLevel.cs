@@ -317,6 +317,9 @@ public class GameLevel : MonoBehaviour
         mainCam = camTransform.GetComponent<Camera>();
 		errorTotal = 0;
 		countTotal = 0;
+		if (gameManager == null) {
+			return;
+		}
         gameA = gameManager.GetGameType();
 
         levelData = gameManager.GetLevelData().text.Split("\n"[0]);
@@ -423,11 +426,12 @@ public class GameLevel : MonoBehaviour
 
     private void DestroyLevel()
     {
-        for (int i = 0; i < targetObjects.Length; i++)
-        {
-            Destroy(targetObjects[i]);
-            targets[i] = null;
-        }
+		if (targetObjects != null) {
+			for (int i = 0; i < targetObjects.Length; i++) {
+				Destroy (targetObjects [i]);
+				targets [i] = null;
+			}
+		}
 
 		if (obstacleObjects == null)
             return;
