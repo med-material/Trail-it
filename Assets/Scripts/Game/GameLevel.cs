@@ -201,7 +201,7 @@ public class GameLevel : MonoBehaviour
 
                         correctingError = false;
                         errorsInRow = 0;
-						correctSound.Play();Target Hit
+						correctSound.Play();
                     }
 					// I would rather have it count as an error than creating a scenario
 					// where an accidental hit completely backtraces your progress.
