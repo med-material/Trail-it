@@ -102,7 +102,6 @@ public class GameLevel : MonoBehaviour
 
     public HitType AttemptHit(Vector3 hitPos)
     {
-		Debug.Log ("AttemptHit call!");
 		HitType typeHit = HitType.NoHit;
 
         colliderHit = Physics2D.OverlapPoint(hitPos);
@@ -115,7 +114,6 @@ public class GameLevel : MonoBehaviour
                 tempHit = colliderHit;
 
                 hit = colliderHit.GetComponent<Target>().GetID();
-				Debug.Log ("Hit is: " + colliderHit.GetComponent<Target> ().GetID ());
 
                 if (colliderHit.GetComponent<Target>().GetObstacle())
                 {
@@ -203,7 +201,7 @@ public class GameLevel : MonoBehaviour
 
                         correctingError = false;
                         errorsInRow = 0;
-                        correctSound.Play();
+						correctSound.Play();Target Hit
                     }
 					// I would rather have it count as an error than creating a scenario
 					// where an accidental hit completely backtraces your progress.
@@ -395,7 +393,6 @@ public class GameLevel : MonoBehaviour
         }
 
         currentTarget = 0;
-		Debug.Log ("LoadLevel has been called, resetting currentTarget");
         lastValid = currentTarget;
 
         StartCoroutine(SpawnTargets(targetObjects));
