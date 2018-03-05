@@ -5,7 +5,7 @@ using System.IO;
 public class LoggingManager : MonoBehaviour {
 
 	private GameManager gameManager;
-	private SettingsManager settingsManager;
+	//private SettingsManager settingsManager;
 	private GameLevel gameLevel;
 	private AssistanceManager assistanceManager;
 	private Tutorial tutorial;
@@ -17,21 +17,24 @@ public class LoggingManager : MonoBehaviour {
 	private string sep = ";";
 	private string currentLine;
 
+	private int currentPlayerID;
 	private string userID;
 	private string playerOrGuest;
 	private string date;
 	private string time;
 
-	private string scene;
-	private string eventLabel;
-	private string testType;
-	private string level;
-	private string laneOn;
-	private string laneType;
-	private string pulseOn;
-	private string audioOn;
-	private string repeatAudio;
-	private string gameTime;
+	private string scene; // "Level" if we are in a level
+	private string eventLabel; // fx "Target Hit" or "Game Loaded"
+	private string testType; // gameA or gameB
+	private string level; // current level (this is determined from difficultyLevel and randomization)
+	private string laneOn; // should arrows in the top and bottom indicate where the patient should look.
+	private string laneType; // are the arrows going left or going right
+	private string pulseOn; // should the buttons pulsate after a while in the game.
+	private string voiceOn; // should a voice help in the game
+	private string repeatVoice; // should voice be repeated - currently always off
+	private string levelTime; // time spent in each level
+	private string trainingTime; // accumulated level time set by therapist for training.
+	private string difficultyLevel; // From 1 (easy) to 3 (hard) corresponding to how many circles are present in the level.
 	private string laneActive;
 	private string pulseActive;
 	private string audioActive;
@@ -43,7 +46,7 @@ public class LoggingManager : MonoBehaviour {
 	private string correctingError;
 	private string errorsInRow;
 
-	private string sessionTime;
+	private string sessionTime; // at what point in time (secs) was this logged
 
 	private Vector2 currentTargetPos;
 	private Vector2 currentHitPos;
@@ -63,7 +66,7 @@ public class LoggingManager : MonoBehaviour {
 	void Start () {
 
 		gameManager = this.GetComponent<GameManager> ();
-		settingsManager = this.GetComponent<SettingsManager> ();
+		//settingsManager = this.GetComponent<SettingsManager> ();
 		sessionManager = this.GetComponent<SessionManager> ();
 
 		directory = Application.persistentDataPath + "/Data/";
@@ -72,30 +75,36 @@ public class LoggingManager : MonoBehaviour {
 			Directory.CreateDirectory(directory);
 		}
 
+		LoadSettings ();
 		NewLog ();
 		WriteLog ("Game Loaded");
 	}
-	
+
+	public void LoadSettings()
+	{
+		currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		userID = currentPlayerID.ToString ();
+		laneOn = (PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1).ToString();
+		pulseOn = (PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1).ToString();
+		voiceOn = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1).ToString();
+		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID +":Time", 5)).ToString();
+		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":DifficultyLevel", 1)).ToString();
+		repeatVoice = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1).ToString();
+	}
+
 	public void WriteLog(string inputEvent) {
 
 		eventLabel = inputEvent;
 		scene = GameManager._CurrentScene; // Was Application.loadedlevelname or something. 
 
-		userID = gameManager.GetUserID().ToString();
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
 		time = System.DateTime.Now.ToString("HH:mm:ss:ffff");
 		sessionTime = sessionManager.GetSessionSeconds ().ToString ();
 
-		if(gameManager.GetPlayer())
+		if(currentPlayerID > -1)//gameManager.GetPlayer())
 			playerOrGuest = "Player";
 		else
 			playerOrGuest = "Guest";
-
-		laneOn = settingsManager.GetSetting(Settings.Lane).ToString();
-		laneType = settingsManager.GetSetting (Settings.LaneType).ToString ();
-		pulseOn = settingsManager.GetSetting(Settings.Pulse).ToString();
-		audioOn = settingsManager.GetSetting(Settings.Voice).ToString();
-		repeatAudio = settingsManager.GetSetting (Settings.Repeat).ToString ();
 
 		if(scene == "Level" || scene == "LevelComplete" || scene == "LevelSelect" ||  scene == "Tutorial") {
 
@@ -133,7 +142,7 @@ public class LoggingManager : MonoBehaviour {
 				assistanceManager = GameObject.Find("GameLevel").GetComponent<AssistanceManager>();
 			}
 
-			gameTime = gameLevel.GetGameTime().ToString();
+			levelTime = gameLevel.GetGameTime().ToString();
 			laneActive = assistanceManager.GetToolActive(Tool.lane).ToString();
 			pulseActive = assistanceManager.GetToolActive(Tool.pulse).ToString();
 			audioActive = assistanceManager.GetToolActive(Tool.audio).ToString();
@@ -166,7 +175,7 @@ public class LoggingManager : MonoBehaviour {
 				tutorial = GameObject.Find("Tutorial").GetComponent<Tutorial>();
 			}
 
-			gameTime = tutorial.GetGameTime().ToString();
+			levelTime = tutorial.GetGameTime().ToString();
 			currentTarget = tutorial.GetCurrent().ToString();
 			currentHit = tutorial.GetHit().ToString();
 			lastValid = tutorial.GetLastValid().ToString();
@@ -190,7 +199,7 @@ public class LoggingManager : MonoBehaviour {
 		}
 		else {
 			
-			gameTime = "";
+			levelTime = "";
 			laneActive = "";
 			pulseActive = "";
 			audioActive = "";
@@ -213,7 +222,7 @@ public class LoggingManager : MonoBehaviour {
 		}
 
 		currentLine = 
-						userID + sep
+						currentPlayerID.ToString() + sep
 						+ playerOrGuest + sep
 						+ date + sep
 						+ time + sep
@@ -225,9 +234,9 @@ public class LoggingManager : MonoBehaviour {
 						+ laneOn + sep
 						+ laneType + sep
 						+ pulseOn + sep
-						+ audioOn + sep
-						+ repeatAudio + sep
-						+ gameTime + sep
+						+ voiceOn + sep
+						+ repeatVoice + sep
+						+ levelTime + sep
 						+ laneActive + sep
 						+ pulseActive + sep
 						+ audioActive + sep
@@ -245,7 +254,9 @@ public class LoggingManager : MonoBehaviour {
 						+ lastValidX + sep
 						+ lastValidY + sep
 						+ currentOutsetX + sep
-						+ currentOutsetY;
+						+ currentOutsetY + sep
+						+ difficultyLevel + sep
+						+ trainingTime + sep;
 
 
 		using (StreamWriter writer = File.AppendText(directory + fileName))
