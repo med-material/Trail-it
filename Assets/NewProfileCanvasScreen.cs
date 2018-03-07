@@ -18,18 +18,25 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	[SerializeField]
 	private InputField nameField;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	[SerializeField]
+	private InputField emailField;
+
+	[SerializeField]
+	private UnityEngine.UI.Button newProfileButton;
+
+	public void Start() {
+		evaluateButtonSensitivity ();
 	}
 
+	public void evaluateButtonSensitivity() {
+		bool buttonSensitivity = (nameField.text != "") && (emailField.text != "");
+		newProfileButton.interactable = buttonSensitivity;
+	}
+
+
+
 	public void SetNameAndCreateProfile() {
-		profileManager.AddNewProfile (nameField.text);
+		profileManager.AddNewProfile (nameField.text, emailField.text);
 		mainMenuScreen.setWelcomeText(nameField.text);
 		nameField.text = "";
 	}

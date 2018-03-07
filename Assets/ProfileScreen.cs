@@ -29,14 +29,13 @@ public class ProfileScreen : MonoBehaviour {
 	[SerializeField]
 	private GameObject profileCreatorTemplate;
 
-
-
 	[SerializeField]
 	private Sprite currentProfileSprite;
 
 	void Awake() {
 
 		profileButtons = new List<GameObject>();
+		currentName = profileManager.GetCurrentName ();
 	}
 
 	private void CreateProfileButton(string name, int id) {

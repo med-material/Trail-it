@@ -27,6 +27,7 @@ public class LoggingManager : MonoBehaviour {
 	private string playerOrGuest;			// IGNORED Whether it's a player or a guest. Shouldn't be necessary if we just have currentPlayerID showing this info to us.
 	private string date;					// The date in the formt YYYY-MM-DD
 	private string time;					// Timestamp in the format HH-MM-SS.MMMM
+	private string email;
 
 	private string scene; 					// has the text "Level" if we are in a level
 	private string eventLabel; 				// fx "Target Hit" or "Game Loaded"
@@ -91,6 +92,7 @@ public class LoggingManager : MonoBehaviour {
 	{
 		currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
 		userID = currentPlayerID.ToString ();
+		email = PlayerPrefs.GetString ("Settings:" + currentPlayerID + ":Email", "No Email");
 		laneOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1);
 		pulseOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1);
 		voiceOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1);
@@ -258,9 +260,11 @@ public class LoggingManager : MonoBehaviour {
 						+ lastValidX + sep
 						+ lastValidY + sep
 						+ difficultyLevel + sep
-						+ trainingTime + sep;
+						+ trainingTime + sep
+						+ email + sep;
 		
 		logEntries.Add (currentLine);
+		Debug.Log (currentLine);
 		using (StreamWriter writer = File.AppendText(directory + fileName))
 		{
 			writer.WriteLine(currentLine);

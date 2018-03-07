@@ -11,6 +11,7 @@ public class ProfileManager : MonoBehaviour {
 	private int currentProfileID = -1;
 	private int highestProfileID = -1; // highestProfileID is the total amount of profiles including deleted profiles
 	private string currentName;
+	private string currentEmail;
 
 
 	public void Awake() {
@@ -26,12 +27,23 @@ public class ProfileManager : MonoBehaviour {
 		Debug.Log ("highest Profile ID is: " + highestProfileID);
 	}
 
-	public void AddNewProfile(string name) {
+	public void AddNewProfile(string name, string email) {
 		// create a new profile in the backend.
 		highestProfileID += 1;
 		currentProfileID = highestProfileID;
 		currentName = name;
+		currentEmail = email;
 		SaveProfiles ();
+	}
+
+	public string GetCurrentName()
+	{
+		return currentName;
+	}
+
+	public string GetCurrentEmail()
+	{
+		return currentEmail;
 	}
 
 	public int GetCurrentProfile()
@@ -59,7 +71,9 @@ public class ProfileManager : MonoBehaviour {
 		PlayerPrefs.SetInt ("Settings:CurrentProfileID", currentProfileID);
 		PlayerPrefs.SetInt ("Settings:HighestProfileID", highestProfileID);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Name", currentName);
+		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Email", currentEmail);
 		PlayerPrefs.SetString ("Settings:Name", currentName);
+		PlayerPrefs.SetString ("Settings:Email", currentEmail);
 		Debug.Log ("saving " + currentName + " in playerprefs under: Settings:" + currentProfileID + ":Name");
 	}
 }
