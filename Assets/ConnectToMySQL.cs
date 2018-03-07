@@ -10,9 +10,6 @@ public class ConnectToMySQL : MonoBehaviour {
 
 	[SerializeField]
 	private myURL serverUrl;
-
-	[SerializeField]
-	private TextAsset securityCodeText;
 	private string securityCode;
 	public static string response = "";
 	public static bool dataReceived = false;
@@ -29,7 +26,7 @@ public class ConnectToMySQL : MonoBehaviour {
 		//wwwHeader["Accept-Encoding"] = "gzip, deflate";
 		//wwwHeader["User-Agent"] = "runscope/0.1";
 
-		securityCode = securityCodeText.text;
+		securityCode = serverUrl.GetSecurityCode ();
 		//string[] splitArray = serverUrl.text.Split(char.Parse(","));
 		//url = "http://" + splitArray [0] + "/" + splitArray [1] + "/" + splitArray [2];
 		url = serverUrl.GetServerUrl();

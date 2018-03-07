@@ -14,6 +14,9 @@ public class LoggingManager : MonoBehaviour {
 	[SerializeField]
 	private ConnectToMySQL mySQL;
 
+	[SerializeField]
+	private ProfileManager profileManager;
+
 	private List<string> logEntries;
 
 	private StreamWriter writer;
@@ -22,9 +25,9 @@ public class LoggingManager : MonoBehaviour {
 	private string sep = ",";
 	private string currentLine;
 
-	private int currentPlayerID; 			// The ID of the current player
+	private string currentProfileID; 			// The ID of the current player
 	private string userID;					// The ID of the current player, converted to a string
-	private string playerOrGuest;			// IGNORED Whether it's a player or a guest. Shouldn't be necessary if we just have currentPlayerID showing this info to us.
+	private string playerOrGuest;			// IGNORED Whether it's a player or a guest. Shouldn't be necessary if we just have currentProfileID showing this info to us.
 	private string date;					// The date in the formt YYYY-MM-DD
 	private string time;					// Timestamp in the format HH-MM-SS.MMMM
 	private string email;
@@ -90,15 +93,14 @@ public class LoggingManager : MonoBehaviour {
 
 	public void LoadSettings()
 	{
-		currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
-		userID = currentPlayerID.ToString ();
-		email = PlayerPrefs.GetString ("Settings:" + currentPlayerID + ":Email", "No Email");
-		laneOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1);
-		pulseOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1);
-		voiceOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1);
-		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID +":Time", 5)).ToString();
-		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":DifficultyLevel", 1)).ToString();
-		repeatVoice = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1);
+		currentProfileID = profileManager.GetCurrentProfileID ();
+		email = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":Email", "No Email");
+		laneOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);
+		pulseOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1);
+		voiceOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1);
+		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5)).ToString();
+		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1)).ToString();
+		repeatVoice = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":GentagStemme", 0) == 1);
 	}
 
 	public void WriteLog(string inputEvent) {
@@ -109,11 +111,6 @@ public class LoggingManager : MonoBehaviour {
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
 		time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		sessionTime = sessionManager.GetSessionSeconds ().ToString ();
-
-		if(currentPlayerID > -1)//gameManager.GetPlayer())
-			playerOrGuest = "Player";
-		else
-			playerOrGuest = "Guest";
 
 		if(scene == "Level" || scene == "LevelComplete" || scene == "LevelSelect" ||  scene == "Tutorial") {
 
@@ -231,7 +228,7 @@ public class LoggingManager : MonoBehaviour {
 		}
 
 		currentLine = 
-						currentPlayerID.ToString() + sep
+						currentProfileID + sep
 						+ date + sep
 						+ time + sep
 						+ sessionTime + sep

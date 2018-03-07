@@ -119,10 +119,10 @@ public class GameManager : MonoBehaviour
 
     public void LoadPlayerPrefs()
     {
-		int currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
-		sessionLength = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Time", 5);
-		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentPlayerID + ":MinLevel", 1);
-		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentPlayerID + ":MaxLevel", 4);
+		int currentProfileID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5);
+		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MinLevel", 1);
+		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MaxLevel", 4);
 		/*if (PlayerPrefs.HasKey("userId"))
         {
             playerDat.userID = PlayerPrefs.GetInt("userID");

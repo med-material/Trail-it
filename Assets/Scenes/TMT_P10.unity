@@ -225,7 +225,7 @@ Prefab:
     - target: {fileID: 224623398584774602, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -130
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224623398584774602, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -235,7 +235,7 @@ Prefab:
     - target: {fileID: 224623398584774602, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 200
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -255,7 +255,7 @@ Prefab:
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -130
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -265,7 +265,7 @@ Prefab:
     - target: {fileID: 224155069172684476, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 200
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224928971901801846, guid: 98cafaf4b9a7b4b25a90918e76661ede,
         type: 2}
@@ -1762,6 +1762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mySQL: {fileID: 235454371}
+  profileManager: {fileID: 235454372}
 --- !u!114 &235454369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1796,7 +1797,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverUrl: {fileID: 235454373}
-  securityCodeText: {fileID: 4900000, guid: 19eeab3fa0fb2403c9250c0908bceab4, type: 3}
 --- !u!114 &235454372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2451,7 +2451,7 @@ Transform:
   m_GameObject: {fileID: 462399590}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1.5, z: 15}
-  m_LocalScale: {x: 0.8707865, y: 0.8707865, z: 0.8707865}
+  m_LocalScale: {x: 0.873591, y: 0.873591, z: 0.873591}
   m_Children: []
   m_Father: {fileID: 1720051833}
   m_RootOrder: 0

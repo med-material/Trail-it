@@ -188,14 +188,14 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void LoadSettings()
     {
-		string currentPlayerID = profileManager.GetCurrentProfileID();
-		Debug.Log ("Loading Settings for id " + currentPlayerID);
+		string currentProfileID = profileManager.GetCurrentProfileID();
+		Debug.Log ("Loading Settings for id " + currentProfileID);
 
-        landingsbane = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1;
-        pulse = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1;
-        stemme = PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1;
-		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentPlayerID +":Time", 5);
-		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":DifficultyLevel", 1);
+        landingsbane = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1;
+        pulse = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
+        stemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1;
+		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5);
+		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
 		DetermineMinMaxLevel();
 		DetermineAmountOfCircles ();
 		Debug.Log ("AmountOfCircles: " + circleAmountMin + "-" + circleAmountMax);
@@ -206,15 +206,15 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void SaveSettings()
     {
-		string currentPlayerID = profileManager.GetCurrentProfileID();
-		Debug.Log ("Saving Settings for id " + currentPlayerID);
+		string currentProfileID = profileManager.GetCurrentProfileID();
+		Debug.Log ("Saving Settings for id " + currentProfileID);
 
-        PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Landingsbane", landingsbane ? 1 : 0);
-		PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Pulse", pulse ? 1 : 0);
-		PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Stemme", stemme ? 1 : 0);
-		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":Time", trainingTime);
-		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":DifficultyLevel", difficultyLevel);
-		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":MinLevel", minimumLevel);
-		PlayerPrefs.SetInt ("Settings:"+currentPlayerID +":MaxLevel", maximumLevel);
+        PlayerPrefs.SetInt("Settings:"+currentProfileID +":Landingsbane", landingsbane ? 1 : 0);
+		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Pulse", pulse ? 1 : 0);
+		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Stemme", stemme ? 1 : 0);
+		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":Time", trainingTime);
+		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":DifficultyLevel", difficultyLevel);
+		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MinLevel", minimumLevel);
+		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MaxLevel", maximumLevel);
     }
 }
