@@ -338,7 +338,7 @@ public class GameManager : MonoBehaviour
 		UpdateEndScreenClock ();
 		TimerPause ();
         SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
-
+		loggingManager.UploadLog ();
         //while (t < 0.8f)
         //{
         //    bgPanel.color = new Color(col.r, col.g, col.b, t);

@@ -249,6 +249,7 @@ public class AssistanceManager : MonoBehaviour {
 		//Debug.Log ("Lane is Drawing!");
 		gameCanvas.SetActive (true);
 		//GameObject arrowObject; // Declared, but never used
+		//Debug.Log("LaneRight: " + laneRight);
 		if (laneRight) {
 			//Debug.Log ("Activating RightArrowObjects!");
 			for (int i = 0; i < RightArrowObjects.Count; i++) {
@@ -313,6 +314,17 @@ public class AssistanceManager : MonoBehaviour {
 				LeftArrowObjects [i].GetComponent<FadeOut> ().startNow = true;
 			}
 		}
+	}
+
+	public string GetLaneType () {
+		if (laneRight && laneActive) {
+			return "Look Right";
+		} else if (!laneRight && laneActive) {
+			return "Look Left";
+		} else {
+			return "";
+		}
+
 	}
 
 	public void ResetTimer () {

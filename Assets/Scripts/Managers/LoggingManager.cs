@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+using System.Collections.Generic;
 
 public class LoggingManager : MonoBehaviour {
 
@@ -10,61 +11,67 @@ public class LoggingManager : MonoBehaviour {
 	private AssistanceManager assistanceManager;
 	private Tutorial tutorial;
 	private SessionManager sessionManager;
+	[SerializeField]
+	private ConnectToMySQL mySQL;
+
+	private List<string> logEntries;
 
 	private StreamWriter writer;
 	private string directory;
 	private string fileName;
-	private string sep = ";";
+	private string sep = ",";
 	private string currentLine;
 
-	private int currentPlayerID;
-	private string userID;
-	private string playerOrGuest;
-	private string date;
-	private string time;
+	private int currentPlayerID; 			// The ID of the current player
+	private string userID;					// The ID of the current player, converted to a string
+	private string playerOrGuest;			// IGNORED Whether it's a player or a guest. Shouldn't be necessary if we just have currentPlayerID showing this info to us.
+	private string date;					// The date in the formt YYYY-MM-DD
+	private string time;					// Timestamp in the format HH-MM-SS.MMMM
 
-	private string scene; // "Level" if we are in a level
-	private string eventLabel; // fx "Target Hit" or "Game Loaded"
-	private string testType; // gameA or gameB
-	private string level; // current level (this is determined from difficultyLevel and randomization)
-	private string laneOn; // should arrows in the top and bottom indicate where the patient should look.
-	private string laneType; // are the arrows going left or going right
-	private string pulseOn; // should the buttons pulsate after a while in the game.
-	private string voiceOn; // should a voice help in the game
-	private string repeatVoice; // should voice be repeated - currently always off
-	private string levelTime; // time spent in each level
-	private string trainingTime; // accumulated level time set by therapist for training.
-	private string difficultyLevel; // From 1 (easy) to 3 (hard) corresponding to how many circles are present in the level.
-	private string laneActive;
-	private string pulseActive;
-	private string audioActive;
-	private string audioShots;
-	private string currentTarget;
-	private string currentHit;
-	private string lastValid;
-	private string currentOutset;
-	private string correctingError;
-	private string errorsInRow;
+	private string scene; 					// has the text "Level" if we are in a level
+	private string eventLabel; 				// fx "Target Hit" or "Game Loaded"
+	private string testType; 				// gameA or gameB
+	private string level; 					// current level (this is determined from difficultyLevel and randomization)
+	private string laneOn; 					// should arrows in the top and bottom indicate where the patient should look.
+	private string laneType; 				// are the arrows going left or going right
+	private string pulseOn; 				// should the buttons pulsate after a while in the game.
+	private string voiceOn; 				// should a voice help in the game
+	private string repeatVoice; 			// should voice be repeated - currently always off
+	private string levelTime; 				// time spent in each level
+	private string trainingTime; 			// accumulated level time set by therapist for training.
+	private string difficultyLevel; 		// From 1 (easy) to 3 (hard) corresponding to how many circles are present in the level.
+	private string laneActive; 				// is the lane Active in this moment
+	private string pulseActive; 			// is the pulse Active in this moment
+	private string audioActive; 			// is the audio active in this moment
+	private string audioShots; 				// how many times has the audio been played 
+	private string currentTarget; 			// returns the index of the current target. in GameA pressing 1-2-5 outputs "0,1,2". the target the user is supposed to hit.
+	private string currentHit; 				// returns the circle which was currently hit. in GameA pressing 1-2-5 outputs "0,1,4". In GameB pressing "1-A-B" outputs "0,1,3"
+	private string lastValid; 				// returns the last correctly pressed circle. Pressing "1,A,4" in GameB yields "0,1,1".
+	private string currentOutset; 			// IGNORED same as lastValid
+	private string correctingError; 		// IGNORED outputs False all the time
+	private string errorsInRow; 			// if the patient has made more than one error, this is logged. "1" corresponds to 2 in a row. "2" corresponds to 3 in a row. etc.
 
-	private string sessionTime; // at what point in time (secs) was this logged
+	// TODO: E-mail Address
 
-	private Vector2 currentTargetPos;
+	private string sessionTime; 			// at what point in time (secs) was this logged
+
+	private Vector2 currentTargetPos;		
 	private Vector2 currentHitPos;
 	private Vector2 lastValidPos;
 	private Vector2 currentOutsetPos;
 
-	private string currentTargetX;
-	private string currentTargetY;
-	private string currentHitX;
-	private string currentHitY;
-	private string lastValidX;
-	private string lastValidY;
-	private string currentOutsetX;
-	private string currentOutsetY;
+	private string currentTargetX;			// X coordinates of the current target position
+	private string currentTargetY;			// Y coordinates of the current target position
+	private string currentHitX;				// X coordinates of the current hit position
+	private string currentHitY;				// Y coordinates of the current hit position
+	private string lastValidX;				// X coordinates of the last valid position
+	private string lastValidY;				// Y coordinates of the last valid position
+	private string currentOutsetX;			// ???
+	private string currentOutsetY;			// ???
 
 	// Use this for initialization
 	void Start () {
-
+		logEntries = new List<string>();
 		gameManager = this.GetComponent<GameManager> ();
 		//settingsManager = this.GetComponent<SettingsManager> ();
 		sessionManager = this.GetComponent<SessionManager> ();
@@ -84,12 +91,12 @@ public class LoggingManager : MonoBehaviour {
 	{
 		currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
 		userID = currentPlayerID.ToString ();
-		laneOn = (PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1).ToString();
-		pulseOn = (PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1).ToString();
-		voiceOn = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1).ToString();
+		laneOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1);
+		pulseOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1);
+		voiceOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1);
 		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID +":Time", 5)).ToString();
 		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":DifficultyLevel", 1)).ToString();
-		repeatVoice = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1).ToString();
+		repeatVoice = BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1);
 	}
 
 	public void WriteLog(string inputEvent) {
@@ -98,7 +105,7 @@ public class LoggingManager : MonoBehaviour {
 		scene = GameManager._CurrentScene; // Was Application.loadedlevelname or something. 
 
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
-		time = System.DateTime.Now.ToString("HH:mm:ss:ffff");
+		time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		sessionTime = sessionManager.GetSessionSeconds ().ToString ();
 
 		if(currentPlayerID > -1)//gameManager.GetPlayer())
@@ -143,9 +150,10 @@ public class LoggingManager : MonoBehaviour {
 			}
 
 			levelTime = gameLevel.GetGameTime().ToString();
-			laneActive = assistanceManager.GetToolActive(Tool.lane).ToString();
-			pulseActive = assistanceManager.GetToolActive(Tool.pulse).ToString();
-			audioActive = assistanceManager.GetToolActive(Tool.audio).ToString();
+			laneActive = BoolToNumberString(assistanceManager.GetToolActive(Tool.lane));
+			laneType = assistanceManager.GetLaneType ();
+			pulseActive = BoolToNumberString(assistanceManager.GetToolActive(Tool.pulse));
+			audioActive = BoolToNumberString(assistanceManager.GetToolActive(Tool.audio));
 			audioShots = assistanceManager.GetAudioShots().ToString();
 			currentTarget = gameLevel.GetCurrent().ToString();
 			currentHit = gameLevel.GetHit().ToString();
@@ -171,7 +179,6 @@ public class LoggingManager : MonoBehaviour {
 		else if(scene == "Tutorial") {
 
 			if(tutorial == null) {
-				
 				tutorial = GameObject.Find("Tutorial").GetComponent<Tutorial>();
 			}
 
@@ -223,7 +230,6 @@ public class LoggingManager : MonoBehaviour {
 
 		currentLine = 
 						currentPlayerID.ToString() + sep
-						+ playerOrGuest + sep
 						+ date + sep
 						+ time + sep
 						+ sessionTime + sep
@@ -244,8 +250,6 @@ public class LoggingManager : MonoBehaviour {
 						+ currentHit + sep
 						+ currentTarget + sep
 						+ lastValid + sep
-						+ currentOutset + sep
-						+ correctingError + sep
 						+ errorsInRow + sep
 						+ currentHitX + sep
 						+ currentHitY + sep
@@ -253,12 +257,10 @@ public class LoggingManager : MonoBehaviour {
 						+ currentTargetY + sep
 						+ lastValidX + sep
 						+ lastValidY + sep
-						+ currentOutsetX + sep
-						+ currentOutsetY + sep
 						+ difficultyLevel + sep
 						+ trainingTime + sep;
-
-
+		
+		logEntries.Add (currentLine);
 		using (StreamWriter writer = File.AppendText(directory + fileName))
 		{
 			writer.WriteLine(currentLine);
@@ -270,5 +272,17 @@ public class LoggingManager : MonoBehaviour {
 		fileName = "User" + gameManager.GetUserID().ToString() + " - " + System.DateTime.Now.ToString() + ".txt";
 		fileName = fileName.Replace ('/', '-');
 		fileName = fileName.Replace (':', '-');
+	}
+
+	public string BoolToNumberString(bool booleanValue) {
+		if (booleanValue) {
+			return "1";
+		} else {
+			return "0";
+		}
+	}
+
+	public void UploadLog() {
+		mySQL.UploadLog (logEntries);
 	}
 }
