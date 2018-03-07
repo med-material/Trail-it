@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class ProfileButton : MonoBehaviour {
 
 	[SerializeField]
-	private ProfileScreen profileScreen;
+	private ProfileManager profileManager;
 
 	[SerializeField]
 	private GameObject nameText;
@@ -27,7 +27,7 @@ public class ProfileButton : MonoBehaviour {
 	}
 
 	public void setAsProfile() {
-		profileScreen.SetCurrentProfile (id);
+		profileManager.SetCurrentProfile (id);
 		Debug.Log ("ProfileID: " + id + " Name: " + nameText.GetComponent<Text> ().text + " is now set as profile");
 	}
 

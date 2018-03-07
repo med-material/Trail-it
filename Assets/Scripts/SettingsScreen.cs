@@ -18,7 +18,7 @@ public class SettingsScreen : MonoBehaviour
     private Sprite til;
 
 	[SerializeField]
-	private ProfileScreen profileScreen;
+	private ProfileManager profileManager;
 
     [SerializeField]
     private Image landingsbaneToggle;
@@ -188,7 +188,7 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void LoadSettings()
     {
-		int currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		int currentPlayerID = profileManager.GetCurrentProfile();
 		Debug.Log ("Loading Settings for id " + currentPlayerID);
 
         landingsbane = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1;
@@ -206,12 +206,7 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void SaveSettings()
     {
-		int currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
-		if (currentPlayerID == -1) {
-			profileScreen.AddNewProfile ("Gæst");
-			currentPlayerID++;
-			Debug.Log ("No profiles created, creating a guest profile with id " + currentPlayerID);
-		}
+		int currentPlayerID = profileManager.GetCurrentProfile();
 		Debug.Log ("Saving Settings for id " + currentPlayerID);
 
         PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Landingsbane", landingsbane ? 1 : 0);

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class NewProfileCanvasScreen : MonoBehaviour {
 
 	[SerializeField]
-	private ProfileScreen profileScreen;
+	private ProfileManager profileManager;
 
 	[SerializeField]
 	private MainMenuScreen mainMenuScreen;
@@ -29,7 +29,7 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	}
 
 	public void SetNameAndCreateProfile() {
-		profileScreen.AddNewProfile (nameField.text); // -1 means just use the highest profile ID.
+		profileManager.AddNewProfile (nameField.text);
 		mainMenuScreen.setWelcomeText(nameField.text);
 		nameField.text = "";
 	}

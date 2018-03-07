@@ -10,57 +10,36 @@ using UnityEngine.UI;
 public class ProfileScreen : MonoBehaviour {
 
 	[SerializeField]
+	private ProfileManager profileManager;
+	[SerializeField]
 	private GameObject newProfileTemplate;
-	[SerializeField]
-	private GameObject profileCreatorTemplate;
-	[SerializeField]
-	private Transform parentTransform;
-
-	[SerializeField]
-	private MainMenuScreen mainMenuScreen;
-
-	[SerializeField]
-	private Sprite currentProfileSprite;
-
-	[SerializeField]
-	private SettingsScreen settingsScreen;
-
-	[SerializeField]
-	private InputField setProfileNameInputField;
 
 	private GameObject newProfile;
 	private GameObject profileCreatorButton;
 
-	private List<GameObject> profileButtons;
+	[SerializeField]
+	private Transform parentTransform;
 
-	private string currentName;
 	private int currentProfileID = -1;
 	private int highestProfileID = -1; // highestProfileID is the total amount of profiles including deleted profiles
+	private string currentName;
 
-	// Use this for initialization
+	private List<GameObject> profileButtons;
+
+	[SerializeField]
+	private GameObject profileCreatorTemplate;
+
+
+
+	[SerializeField]
+	private Sprite currentProfileSprite;
 
 	void Awake() {
 
 		profileButtons = new List<GameObject>();
 	}
 
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-	public void AddNewProfile(string name) {
-		// create a new profile in the backend.
-		highestProfileID += 1;
-		currentProfileID = highestProfileID;
-		currentName = name;
-		SaveProfiles ();
-	}
-
-	public void CreateProfileButton(string name, int id) {
+	private void CreateProfileButton(string name, int id) {
 		newProfile = (GameObject)Instantiate (newProfileTemplate, newProfileTemplate.transform);
 		newProfile.GetComponent<Transform> ().SetParent (parentTransform);
 		if (id != -1) {
@@ -73,22 +52,7 @@ public class ProfileScreen : MonoBehaviour {
 		profileButtons.Add (newProfile);
 	}
 
-	public void SetCurrentProfile(int newProfileID)
-	{
-		currentProfileID = newProfileID;
-		currentName = PlayerPrefs.GetString("Settings:" + newProfileID + ":Name", "Gæst");
-		Debug.Log ("current profile set as id " + currentProfileID + " with name " + currentName);
-		mainMenuScreen.setWelcomeText (currentName);
-		// Call SettingsScreen.UpdateSettings(profileID); or just make it read the CurrentProfileID.
-		SaveProfiles ();
-	}
-
-	public int GetCurrentProfile()
-	{
-		return currentProfileID;
-	}
-
-	public void LoadProfiles()
+	public void LoadProfileButtons()
 	{
 		if (profileButtons != null && profileButtons.Count > 0) {
 			foreach (var profile in profileButtons) {
@@ -99,10 +63,8 @@ public class ProfileScreen : MonoBehaviour {
 			Debug.Log ("Profile Buttons cleared");
 		}
 
-		currentProfileID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
-		highestProfileID = PlayerPrefs.GetInt("Settings:HighestProfileID", -1);
-		Debug.Log ("currentProfileID is: " + currentProfileID);
-		Debug.Log ("highest Profile ID is: " + highestProfileID);
+		currentProfileID = profileManager.GetCurrentProfile();
+		highestProfileID = profileManager.GetHighestProfile();
 
 		if (highestProfileID > -1) {
 			string name;
@@ -134,13 +96,6 @@ public class ProfileScreen : MonoBehaviour {
 	//	SaveProfiles ();
 	//}
 
-	public void SaveProfiles()
-	{
-		PlayerPrefs.SetInt ("Settings:CurrentProfileID", currentProfileID);
-		PlayerPrefs.SetInt ("Settings:HighestProfileID", highestProfileID);
-		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Name", currentName);
-		PlayerPrefs.SetString ("Settings:Name", currentName);
-		Debug.Log ("saving " + currentName + " in playerprefs under: Settings:" + currentProfileID + ":Name");
-	}
+
 
 }
