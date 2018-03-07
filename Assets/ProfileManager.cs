@@ -8,31 +8,37 @@ public class ProfileManager : MonoBehaviour {
 	[SerializeField]
 	private MainMenuScreen mainMenuScreen;
 
-	private int currentProfileID = -1;
-	private int highestProfileID = -1; // highestProfileID is the total amount of profiles including deleted profiles
+	private string currentProfileID = "Gæst";
 	private string currentName;
 	private string currentEmail;
+	private List<string> profiles = new List<string> ();
+	private string sep = ";";
 
 
 	public void Awake() {
-		currentProfileID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
-		highestProfileID = PlayerPrefs.GetInt("Settings:HighestProfileID", -1);
-
-		if (currentProfileID == -1) {
-			currentName = "Gæst";
-			Debug.Log ("No profiles created, creating a guest profile with id " + currentProfileID);
+		string profileString = PlayerPrefs.GetString ("Settings:ProfileIDs", "Gæst");
+		if (profileString.Contains (sep)) {
+			string[] profilesArray = profileString.Split (char.Parse (sep));
+			for (int i = 0; i < profilesArray.Length; i++) {
+				profiles.Add (profilesArray [i]);
+			}
+		} else {
+			profiles.Add (profileString);
 		}
+		Debug.Log("Profiles loaded: " + (profiles.Count).ToString());
 
-		Debug.Log ("currentProfileID is: " + currentProfileID);
-		Debug.Log ("highest Profile ID is: " + highestProfileID);
+		currentProfileID = PlayerPrefs.GetString ("Settings:CurrentProfileID", "Gæst");
+		Debug.Log ("Current Profile ID Loaded: " + currentProfileID);
+
 	}
 
 	public void AddNewProfile(string name, string email) {
-		// create a new profile in the backend.
-		highestProfileID += 1;
-		currentProfileID = highestProfileID;
+		string newProfileID = Utils.Md5Sum(email);
+		currentProfileID = newProfileID;
 		currentName = name;
 		currentEmail = email;
+		profiles.Add (newProfileID);
+		Debug.Log ("Adding " + newProfileID + "to profiles list.");
 		SaveProfiles ();
 	}
 
@@ -46,17 +52,23 @@ public class ProfileManager : MonoBehaviour {
 		return currentEmail;
 	}
 
-	public int GetCurrentProfile()
+	public string GetCurrentProfileID()
 	{
 		return currentProfileID;
 	}
 
-	public int GetHighestProfile()
+	public int GetProfileAmount()
 	{
-		return highestProfileID;
+		int profileAmount = profiles.Count;
+		return profileAmount;
 	}
 
-	public void SetCurrentProfile(int newProfileID)
+	public List<string> GetProfileList()
+	{
+		return profiles;
+	}
+
+	public void SetCurrentProfile(string newProfileID)
 	{
 		currentProfileID = newProfileID;
 		currentName = PlayerPrefs.GetString("Settings:" + newProfileID + ":Name", "Gæst");
@@ -68,12 +80,15 @@ public class ProfileManager : MonoBehaviour {
 
 	public void SaveProfiles()
 	{
-		PlayerPrefs.SetInt ("Settings:CurrentProfileID", currentProfileID);
-		PlayerPrefs.SetInt ("Settings:HighestProfileID", highestProfileID);
+		Debug.Log ("Saving Profiles..");
+		string[] profileArray = profiles.ToArray ();
+		string profileString = string.Join (sep, profileArray);
+		Debug.Log (profileString);
+		PlayerPrefs.SetString ("Settings:ProfileIDs", profileString);
+		PlayerPrefs.SetString ("Settings:CurrentProfileID", currentProfileID);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Name", currentName);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Email", currentEmail);
 		PlayerPrefs.SetString ("Settings:Name", currentName);
 		PlayerPrefs.SetString ("Settings:Email", currentEmail);
-		Debug.Log ("saving " + currentName + " in playerprefs under: Settings:" + currentProfileID + ":Name");
 	}
 }

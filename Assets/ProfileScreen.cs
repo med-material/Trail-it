@@ -20,8 +20,7 @@ public class ProfileScreen : MonoBehaviour {
 	[SerializeField]
 	private Transform parentTransform;
 
-	private int currentProfileID = -1;
-	private int highestProfileID = -1; // highestProfileID is the total amount of profiles including deleted profiles
+	private string currentProfileID = "Gæst";
 	private string currentName;
 
 	private List<GameObject> profileButtons;
@@ -36,16 +35,13 @@ public class ProfileScreen : MonoBehaviour {
 
 		profileButtons = new List<GameObject>();
 		currentName = profileManager.GetCurrentName ();
+		currentProfileID = profileManager.GetCurrentProfileID ();
 	}
 
-	private void CreateProfileButton(string name, int id) {
+	private void CreateProfileButton(string name, string id) {
 		newProfile = (GameObject)Instantiate (newProfileTemplate, newProfileTemplate.transform);
 		newProfile.GetComponent<Transform> ().SetParent (parentTransform);
-		if (id != -1) {
-			newProfile.GetComponent<ProfileButton> ().SetID (id);
-		} else {
-			newProfile.GetComponent<ProfileButton> ().SetID (highestProfileID);
-		}
+		newProfile.GetComponent<ProfileButton> ().SetID (id);
 		newProfile.GetComponent<ProfileButton> ().SetName (name);
 		newProfile.SetActive (true);
 		profileButtons.Add (newProfile);
@@ -54,28 +50,27 @@ public class ProfileScreen : MonoBehaviour {
 	public void LoadProfileButtons()
 	{
 		if (profileButtons != null && profileButtons.Count > 0) {
-			foreach (var profile in profileButtons) {
-				Destroy(profile);
+			foreach (var profileButton in profileButtons) {
+				Destroy(profileButton);
 			}
 
 			profileButtons.Clear ();
 			Debug.Log ("Profile Buttons cleared");
 		}
 
-		currentProfileID = profileManager.GetCurrentProfile();
-		highestProfileID = profileManager.GetHighestProfile();
+		currentProfileID = profileManager.GetCurrentProfileID();
+		List<string> profileIDs = profileManager.GetProfileList();
+		string name;
 
-		if (highestProfileID > -1) {
-			string name;
-			for (int i = 0; i <= highestProfileID; i++) {
-				Debug.Log ("creating profile for ID: " + i);
-				name = PlayerPrefs.GetString("Settings:" + i + ":Name", "Gæst");
-				Debug.Log ("loaded name for id " + i + ": " + name);
-				CreateProfileButton(name, i);
-				if (i == currentProfileID) {
-					newProfile.GetComponent<Image> ().sprite = currentProfileSprite;
-					currentName = name;
-				}
+		foreach (var profileID in profileIDs) {
+			Debug.Log ("creating profile for ID: " + profileID);
+			name = PlayerPrefs.GetString("Settings:" + profileID + ":Name", "Gæst");
+			Debug.Log ("loaded name for id " + profileID + ": " + name);
+			CreateProfileButton(name, profileID);
+
+			if (profileID == currentProfileID) {
+				newProfile.GetComponent<Image> ().sprite = currentProfileSprite;
+				currentName = name;
 			}
 		}
 
@@ -83,9 +78,7 @@ public class ProfileScreen : MonoBehaviour {
 		profileCreatorButton.transform.SetParent (parentTransform);
 		profileCreatorButton.SetActive (true);
 		profileButtons.Add (profileCreatorButton);
-
 		// Tell SettingsScreen to load settings
-
 
 	}
 

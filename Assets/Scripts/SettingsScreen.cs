@@ -188,7 +188,7 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void LoadSettings()
     {
-		int currentPlayerID = profileManager.GetCurrentProfile();
+		string currentPlayerID = profileManager.GetCurrentProfileID();
 		Debug.Log ("Loading Settings for id " + currentPlayerID);
 
         landingsbane = PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1;
@@ -206,7 +206,7 @@ public class SettingsScreen : MonoBehaviour
     /// </summary>
     public void SaveSettings()
     {
-		int currentPlayerID = profileManager.GetCurrentProfile();
+		string currentPlayerID = profileManager.GetCurrentProfileID();
 		Debug.Log ("Saving Settings for id " + currentPlayerID);
 
         PlayerPrefs.SetInt("Settings:"+currentPlayerID +":Landingsbane", landingsbane ? 1 : 0);

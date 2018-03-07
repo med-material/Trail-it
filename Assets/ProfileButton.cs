@@ -15,23 +15,14 @@ public class ProfileButton : MonoBehaviour {
 	[SerializeField]
 	private GameObject nameText;
 
-	private int id = -1;
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	private string id = "Gæst";
 
 	public void setAsProfile() {
 		profileManager.SetCurrentProfile (id);
 		Debug.Log ("ProfileID: " + id + " Name: " + nameText.GetComponent<Text> ().text + " is now set as profile");
 	}
 
-	public void SetID(int newID) {
+	public void SetID(string newID) {
 		id = newID;
 	}
 
