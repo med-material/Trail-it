@@ -1621,6 +1621,7 @@ GameObject:
   - component: {fileID: 235454371}
   - component: {fileID: 235454372}
   - component: {fileID: 235454373}
+  - component: {fileID: 235454374}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1761,6 +1762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mySQL: {fileID: 235454371}
+  utils: {fileID: 235454374}
 --- !u!114 &235454369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1795,6 +1797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverUrl: {fileID: 235454373}
+  utils: {fileID: 235454374}
   securityCodeText: {fileID: 4900000, guid: 19eeab3fa0fb2403c9250c0908bceab4, type: 3}
 --- !u!114 &235454372
 MonoBehaviour:
@@ -1817,6 +1820,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a3744711b6ed46b5ad50f30505ab376, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &235454374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 235454363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a9a2805238204e50a66ce82a54e7b54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &236359635

@@ -12,6 +12,9 @@ public class ConnectToMySQL : MonoBehaviour {
 	private myURL serverUrl;
 
 	[SerializeField]
+	private Utils utils;
+
+	[SerializeField]
 	private TextAsset securityCodeText;
 	private string securityCode;
 	public static string response = "";
@@ -35,7 +38,7 @@ public class ConnectToMySQL : MonoBehaviour {
 		url = serverUrl.GetServerUrl();
 		WWWForm testForm = new WWWForm ();
 		testForm.AddField ("purposePost", "connectionTest");
-		hash = Md5Sum (securityCode);
+		hash = utils.Md5Sum (securityCode);
 		testForm.AddField ("hashPost", hash);
 
 		if (instance == null) {
@@ -117,26 +120,4 @@ public class ConnectToMySQL : MonoBehaviour {
 
 	//	StartCoroutine (SubmitLogs (playerID, playerOrGuest, date, currentHitX));
 	//}
-
-
-	public  string Md5Sum(string strToEncrypt)
-	{
-		System.Text.UTF8Encoding ue = new System.Text.UTF8Encoding();
-		byte[] bytes = ue.GetBytes(strToEncrypt);
-
-		// encrypt bytes
-		System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-		byte[] hashBytes = md5.ComputeHash(bytes);
-
-		// Convert the encrypted bytes back to a string (base 16)
-		string hashString = "";
-
-		for (int i = 0; i < hashBytes.Length; i++)
-		{
-			hashString += System.Convert.ToString(hashBytes[i], 16).PadLeft(2, '0');
-		}
-
-		return hashString.PadLeft(32, '0');
-	}
-
 }

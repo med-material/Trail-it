@@ -14,6 +14,10 @@ public class LoggingManager : MonoBehaviour {
 	[SerializeField]
 	private ConnectToMySQL mySQL;
 
+	[SerializeField]
+	private Utils utils;
+
+
 	private List<string> logEntries;
 
 	private StreamWriter writer;
@@ -93,12 +97,12 @@ public class LoggingManager : MonoBehaviour {
 		currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
 		userID = currentPlayerID.ToString ();
 		email = PlayerPrefs.GetString ("Settings:" + currentPlayerID + ":Email", "No Email");
-		laneOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1);
-		pulseOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1);
-		voiceOn = BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1);
+		laneOn = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1);
+		pulseOn = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1);
+		voiceOn = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1);
 		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID +":Time", 5)).ToString();
 		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":DifficultyLevel", 1)).ToString();
-		repeatVoice = BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1);
+		repeatVoice = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1);
 	}
 
 	public void WriteLog(string inputEvent) {
@@ -152,10 +156,10 @@ public class LoggingManager : MonoBehaviour {
 			}
 
 			levelTime = gameLevel.GetGameTime().ToString();
-			laneActive = BoolToNumberString(assistanceManager.GetToolActive(Tool.lane));
+			laneActive = utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.lane));
 			laneType = assistanceManager.GetLaneType ();
-			pulseActive = BoolToNumberString(assistanceManager.GetToolActive(Tool.pulse));
-			audioActive = BoolToNumberString(assistanceManager.GetToolActive(Tool.audio));
+			pulseActive = utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.pulse));
+			audioActive = utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.audio));
 			audioShots = assistanceManager.GetAudioShots().ToString();
 			currentTarget = gameLevel.GetCurrent().ToString();
 			currentHit = gameLevel.GetHit().ToString();
@@ -276,14 +280,6 @@ public class LoggingManager : MonoBehaviour {
 		fileName = "User" + gameManager.GetUserID().ToString() + " - " + System.DateTime.Now.ToString() + ".txt";
 		fileName = fileName.Replace ('/', '-');
 		fileName = fileName.Replace (':', '-');
-	}
-
-	public string BoolToNumberString(bool booleanValue) {
-		if (booleanValue) {
-			return "1";
-		} else {
-			return "0";
-		}
 	}
 
 	public void UploadLog() {
