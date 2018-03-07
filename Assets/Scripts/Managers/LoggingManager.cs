@@ -14,10 +14,6 @@ public class LoggingManager : MonoBehaviour {
 	[SerializeField]
 	private ConnectToMySQL mySQL;
 
-	[SerializeField]
-	private Utils utils;
-
-
 	private List<string> logEntries;
 
 	private StreamWriter writer;
@@ -97,12 +93,12 @@ public class LoggingManager : MonoBehaviour {
 		currentPlayerID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
 		userID = currentPlayerID.ToString ();
 		email = PlayerPrefs.GetString ("Settings:" + currentPlayerID + ":Email", "No Email");
-		laneOn = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1);
-		pulseOn = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1);
-		voiceOn = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1);
+		laneOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Landingsbane", 0) == 1);
+		pulseOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentPlayerID + ":Pulse", 0) == 1);
+		voiceOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":Stemme", 0) == 1);
 		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID +":Time", 5)).ToString();
 		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":DifficultyLevel", 1)).ToString();
-		repeatVoice = utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1);
+		repeatVoice = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentPlayerID + ":GentagStemme", 0) == 1);
 	}
 
 	public void WriteLog(string inputEvent) {
@@ -156,10 +152,10 @@ public class LoggingManager : MonoBehaviour {
 			}
 
 			levelTime = gameLevel.GetGameTime().ToString();
-			laneActive = utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.lane));
+			laneActive = Utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.lane));
 			laneType = assistanceManager.GetLaneType ();
-			pulseActive = utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.pulse));
-			audioActive = utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.audio));
+			pulseActive = Utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.pulse));
+			audioActive = Utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.audio));
 			audioShots = assistanceManager.GetAudioShots().ToString();
 			currentTarget = gameLevel.GetCurrent().ToString();
 			currentHit = gameLevel.GetHit().ToString();

@@ -12,9 +12,6 @@ public class ConnectToMySQL : MonoBehaviour {
 	private myURL serverUrl;
 
 	[SerializeField]
-	private Utils utils;
-
-	[SerializeField]
 	private TextAsset securityCodeText;
 	private string securityCode;
 	public static string response = "";
@@ -38,7 +35,7 @@ public class ConnectToMySQL : MonoBehaviour {
 		url = serverUrl.GetServerUrl();
 		WWWForm testForm = new WWWForm ();
 		testForm.AddField ("purposePost", "connectionTest");
-		hash = utils.Md5Sum (securityCode);
+		hash = Utils.Md5Sum (securityCode);
 		testForm.AddField ("hashPost", hash);
 
 		if (instance == null) {

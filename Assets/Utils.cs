@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Utils : MonoBehaviour {
 
-	public string BoolToNumberString(bool booleanValue) {
+	public static string BoolToNumberString(bool booleanValue) {
 		if (booleanValue) {
 			return "1";
 		} else {
@@ -12,7 +12,7 @@ public class Utils : MonoBehaviour {
 		}
 	}
 
-	public  string Md5Sum(string strToEncrypt)
+	public static string Md5Sum(string strToEncrypt)
 	{
 		System.Text.UTF8Encoding ue = new System.Text.UTF8Encoding();
 		byte[] bytes = ue.GetBytes(strToEncrypt);
