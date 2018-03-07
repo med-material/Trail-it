@@ -7,8 +7,10 @@ using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
+	[SerializeField]
+	public LoggingManager loggingManager;
 
-    public TextAsset[] allLevelsA;
+	public TextAsset[] allLevelsA;
     public TextAsset[] allLevelsB;
 
     private int currentLevel;
