@@ -35,6 +35,9 @@ public class AssistanceManager : MonoBehaviour {
 	private List <GameObject> LeftArrowObjects = new List<GameObject>();
 	private List <GameObject> RightArrowObjects = new List<GameObject>();
 
+	[SerializeField]
+	private ProfileManager profileManager;
+
 	//private Camera mainCam; // Never used
 
 	//private float nativeWidth = 1024; // Never used
@@ -132,7 +135,7 @@ public class AssistanceManager : MonoBehaviour {
 
 	public void LoadPlayerPrefs() {
 		toolsOn = 0;
-		int currentProfileID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		string currentProfileID = profileManager.GetCurrentProfileID();
 		pulseOn = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
 		audioOn = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
 		laneOn =  PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);

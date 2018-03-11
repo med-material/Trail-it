@@ -12,9 +12,6 @@ public class MainMenuScreen : MonoBehaviour {
 	[SerializeField]
 	private Text welcomeText;
 
-	[SerializeField]
-	private Text startButtonText;
-
 	private string welcomeTextTemplate;
 
 	private string currentName;
@@ -33,5 +30,9 @@ public class MainMenuScreen : MonoBehaviour {
 
 	public void setWelcomeText(string name) {
 		welcomeText.text = string.Format (welcomeTextTemplate, name);
+	}
+
+	public void setPauseText() {
+		welcomeText.text = "Spillet er på Pause.";
 	}
 }

@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	public MainMenuScreen mainMenuScreen;
 
+	[SerializeField]
+	public ProfileManager profileManager;
+
 	public TextAsset[] allLevelsA;
     public TextAsset[] allLevelsB;
 
@@ -103,6 +106,22 @@ public class GameManager : MonoBehaviour
         input = gameObject.AddComponent<InputHandler>();
 
         LoadPlayerPrefs();
+
+		playerDat.progressA = 0;
+		PlayerPrefs.SetInt("progressA", playerDat.progressA);
+
+		playerDat.progressB = 0;
+		PlayerPrefs.SetInt("progressB", playerDat.progressB);
+
+		playerDat.tutorialASeen = false;
+		PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
+
+		playerDat.tutorialBSeen = false;
+		PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
+
+		playerDat.orderRow = 0;
+		PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
+
         //DontDestroyOnLoad (this); // Technically not needed anymore. 
 
         if (IsGuest)
@@ -113,49 +132,17 @@ public class GameManager : MonoBehaviour
 
     public void GameOverlay_MainMenuButton_Click()
     {
-        // TODO: Go to main menu
-        //menuCanvas.gameObject.SetActive(true);
-        //gameOverlayCanvas.gameObject.SetActive(false);
-		//levelActive = false;
-		//TimerPause ();
+        menuCanvas.gameObject.SetActive(true);
+        gameOverlayCanvas.gameObject.SetActive(false);
+		TimerPause ();
     }
 
     public void LoadPlayerPrefs()
     {
-		int currentProfileID = PlayerPrefs.GetInt("Settings:CurrentProfileID", -1);
+		string currentProfileID = profileManager.GetCurrentProfileID ();
 		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5);
 		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MinLevel", 1);
 		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MaxLevel", 4);
-		/*if (PlayerPrefs.HasKey("userId"))
-        {
-            playerDat.userID = PlayerPrefs.GetInt("userID");
-            playerDat.progressA = PlayerPrefs.GetInt("progressA");
-            playerDat.progressB = PlayerPrefs.GetInt("progressB");
-            playerDat.tutorialASeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialASeen"));
-            playerDat.tutorialBSeen = Convert.ToBoolean(PlayerPrefs.GetString("tutorialBSeen"));
-            playerDat.orderRow = PlayerPrefs.GetInt("orderRow");
-
-        }
-        else
-        {*/
-        playerDat.userID = 0;
-        PlayerPrefs.SetInt("userID", playerDat.userID);
-
-        playerDat.progressA = 0;
-        PlayerPrefs.SetInt("progressA", playerDat.progressA);
-
-        playerDat.progressB = 0;
-        PlayerPrefs.SetInt("progressB", playerDat.progressB);
-
-        playerDat.tutorialASeen = false;
-        PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
-
-        playerDat.tutorialBSeen = false;
-        PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
-
-        playerDat.orderRow = 0;
-        PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
-
    
     }
 
@@ -384,12 +371,17 @@ public class GameManager : MonoBehaviour
 		pauseTime = Time.time;
 		levelActive = false;
 		loggingManager.WriteLog ("Game Paused");
+		mainMenuScreen.setPauseText ();
 	}
 
 	public void TimerResume()
 	{
 		startGameTime += (Time.time - pauseTime);
 		levelActive = true;
+		activeLevelAssistance.LoadPlayerPrefs ();
+		LoadPlayerPrefs ();
+		SetNextLevel(GetProgressA());
+		activeLevel.ReloadLevel ();
 		loggingManager.WriteLog ("Game Resumed");
 	}
 
