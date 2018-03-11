@@ -12,6 +12,9 @@ public class MainMenuScreen : MonoBehaviour {
 	[SerializeField]
 	private Text welcomeText;
 
+	[SerializeField]
+	private Text startButtonText;
+
 	private string welcomeTextTemplate;
 
 	private string currentName;

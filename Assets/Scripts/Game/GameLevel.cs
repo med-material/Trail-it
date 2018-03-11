@@ -41,7 +41,7 @@ public class GameLevel : MonoBehaviour
     private Camera mainCam;
 
     private int outset;
-    private int currentTarget;
+    private int currentTarget = 0;
     private int hit;
     private int lastValid;
     private bool correctingError;
@@ -73,7 +73,12 @@ public class GameLevel : MonoBehaviour
     private AudioClip[] spawnTargetsSounds; 
 
     private AudioSource audioSource; 
-    
+
+	public void ResetInit()
+	{
+		_DidInit = false;
+	}
+
     public void Init(GameManager gm)
     {
         if (_DidInit)
@@ -87,6 +92,7 @@ public class GameLevel : MonoBehaviour
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false; 
        
+		Debug.Log ("gameLevel init: LoadLevel");
         LoadLevel();
 
         correctSound = gameObject.AddComponent<AudioSource>();

@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	public LoggingManager loggingManager;
 
+	[SerializeField]
+	public MainMenuScreen mainMenuScreen;
+
 	public TextAsset[] allLevelsA;
     public TextAsset[] allLevelsB;
 
@@ -111,10 +114,10 @@ public class GameManager : MonoBehaviour
     public void GameOverlay_MainMenuButton_Click()
     {
         // TODO: Go to main menu
-        menuCanvas.gameObject.SetActive(true);
-        gameOverlayCanvas.gameObject.SetActive(false);
-		levelActive = false;
-		TimerPause ();
+        //menuCanvas.gameObject.SetActive(true);
+        //gameOverlayCanvas.gameObject.SetActive(false);
+		//levelActive = false;
+		//TimerPause ();
     }
 
     public void LoadPlayerPrefs()
@@ -380,12 +383,20 @@ public class GameManager : MonoBehaviour
 	{
 		pauseTime = Time.time;
 		levelActive = false;
+		loggingManager.WriteLog ("Game Paused");
 	}
 
 	public void TimerResume()
 	{
 		startGameTime += (Time.time - pauseTime);
 		levelActive = true;
+		loggingManager.WriteLog ("Game Resumed");
+	}
+
+	public void ResetGame() {
+		loggingManager.WriteLog ("Game Reset!");
+		loggingManager.UploadLog ();
+		SceneManager.LoadSceneAsync("TMT_P10");
 	}
 
     public bool GetGameType()
