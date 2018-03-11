@@ -74,11 +74,6 @@ public class GameLevel : MonoBehaviour
 
     private AudioSource audioSource; 
 
-	public void ResetInit()
-	{
-		_DidInit = false;
-	}
-
     public void Init(GameManager gm)
     {
         if (_DidInit)

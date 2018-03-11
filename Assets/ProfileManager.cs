@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class ProfileManager : MonoBehaviour {
@@ -81,9 +82,11 @@ public class ProfileManager : MonoBehaviour {
 		currentName = PlayerPrefs.GetString("Settings:" + newProfileID + ":Name", "Gæst");
 		shouldUpload = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":UploadData", 0) == 1);
 		Debug.Log ("current profile set as id " + currentProfileID + " with name " + currentName + " and shouldUpload " + shouldUpload);
-		mainMenuScreen.setWelcomeText (currentName);
+
+		//mainMenuScreen.setWelcomeText (currentName);
 		// Call SettingsScreen.UpdateSettings(profileID); or just make it read the CurrentProfileID.
 		SaveProfiles ();
+		SceneManager.LoadSceneAsync ("TMT_P10");
 	}
 
 	public void SaveProfiles()

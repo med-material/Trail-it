@@ -95,6 +95,7 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+		GameLevel._DidInit = false;
         // Get template string for end level message
 		endLevelTimeTemplate = endLevelTime.text;
 		endLevelAmountTemplate = endLevelAmount.text;
@@ -388,6 +389,7 @@ public class GameManager : MonoBehaviour
 	public void ResetGame() {
 		loggingManager.WriteLog ("Game Reset!");
 		loggingManager.UploadLog ();
+		//GameLevel._DidInit = false;
 		SceneManager.LoadSceneAsync("TMT_P10");
 	}
 
