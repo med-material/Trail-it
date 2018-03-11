@@ -11,6 +11,7 @@ public class ProfileManager : MonoBehaviour {
 	private string currentProfileID = "Gæst";
 	private string currentName;
 	private string currentEmail;
+	private bool shouldUpload;
 	private List<string> profiles = new List<string> ();
 	private string sep = ";";
 
@@ -32,13 +33,14 @@ public class ProfileManager : MonoBehaviour {
 
 	}
 
-	public void AddNewProfile(string name, string email) {
+	public void AddNewProfile(string name, string email, bool uploadPolicy) {
 		string newProfileID = Utils.Md5Sum(email);
 		currentProfileID = newProfileID;
 		currentName = name;
 		currentEmail = email;
+		shouldUpload = uploadPolicy;
 		profiles.Add (newProfileID);
-		Debug.Log ("Adding " + newProfileID + "to profiles list.");
+		Debug.Log ("Adding " + newProfileID + "to profiles list with shouldUpload " + uploadPolicy);
 		SaveProfiles ();
 	}
 
@@ -50,6 +52,11 @@ public class ProfileManager : MonoBehaviour {
 	public string GetCurrentEmail()
 	{
 		return currentEmail;
+	}
+
+	public bool GetUploadPolicy()
+	{
+		return shouldUpload;
 	}
 
 	public string GetCurrentProfileID()
@@ -72,7 +79,8 @@ public class ProfileManager : MonoBehaviour {
 	{
 		currentProfileID = newProfileID;
 		currentName = PlayerPrefs.GetString("Settings:" + newProfileID + ":Name", "Gæst");
-		Debug.Log ("current profile set as id " + currentProfileID + " with name " + currentName);
+		shouldUpload = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":UploadData", 0) == 1);
+		Debug.Log ("current profile set as id " + currentProfileID + " with name " + currentName + " and shouldUpload " + shouldUpload);
 		mainMenuScreen.setWelcomeText (currentName);
 		// Call SettingsScreen.UpdateSettings(profileID); or just make it read the CurrentProfileID.
 		SaveProfiles ();
@@ -88,7 +96,9 @@ public class ProfileManager : MonoBehaviour {
 		PlayerPrefs.SetString ("Settings:CurrentProfileID", currentProfileID);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Name", currentName);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Email", currentEmail);
+		PlayerPrefs.SetInt("Settings:" + currentProfileID + ":UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
 		PlayerPrefs.SetString ("Settings:Name", currentName);
 		PlayerPrefs.SetString ("Settings:Email", currentEmail);
+		PlayerPrefs.SetInt ("Settings:UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
 	}
 }

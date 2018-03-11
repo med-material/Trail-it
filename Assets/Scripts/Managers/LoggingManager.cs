@@ -25,7 +25,7 @@ public class LoggingManager : MonoBehaviour {
 	private string sep = ",";
 	private string currentLine;
 
-	private string currentProfileID; 			// The ID of the current player
+	private string currentProfileID; 		// The ID of the current player
 	private string userID;					// The ID of the current player, converted to a string
 	private string playerOrGuest;			// IGNORED Whether it's a player or a guest. Shouldn't be necessary if we just have currentProfileID showing this info to us.
 	private string date;					// The date in the formt YYYY-MM-DD
@@ -104,7 +104,6 @@ public class LoggingManager : MonoBehaviour {
 	}
 
 	public void WriteLog(string inputEvent) {
-
 		eventLabel = inputEvent;
 		scene = GameManager._CurrentScene; // Was Application.loadedlevelname or something. 
 
@@ -276,6 +275,11 @@ public class LoggingManager : MonoBehaviour {
 	}
 
 	public void UploadLog() {
+		bool shouldUpload = profileManager.GetUploadPolicy ();
+		if (!shouldUpload) {
+			return;
+		}
+
 		mySQL.UploadLog (logEntries);
 	}
 }

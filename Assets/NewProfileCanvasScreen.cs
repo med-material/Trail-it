@@ -24,6 +24,9 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	[SerializeField]
 	private UnityEngine.UI.Button newProfileButton;
 
+	[SerializeField]
+	private Toggle shouldUpload;
+
 	public void Start() {
 		evaluateButtonSensitivity ();
 	}
@@ -33,10 +36,8 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 		newProfileButton.interactable = buttonSensitivity;
 	}
 
-
-
 	public void SetNameAndCreateProfile() {
-		profileManager.AddNewProfile (nameField.text, emailField.text);
+		profileManager.AddNewProfile (nameField.text, emailField.text, shouldUpload.isOn);
 		mainMenuScreen.setWelcomeText(nameField.text);
 		nameField.text = "";
 	}
