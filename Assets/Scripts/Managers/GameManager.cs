@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
 	private int levelErrors = 0;
 	private int totalErrors = 0;
 	private float pauseTime = 0;
-
+	private bool intro = false;
 	private int minimumLevel = 7;
 	private int maximumLevel = 12;
 
@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour
 		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MinLevel", 1);
 		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MaxLevel", 4);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "GameA");
+		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 0) == 1;
    
     }
 
@@ -181,24 +182,24 @@ public class GameManager : MonoBehaviour
 		levelActive = true;
         gameOverlayCanvas.gameObject.SetActive(true);
 
-        if (isGameTypeA)
+		if (intro) {//playerDat.tutorialASeen || SkipTutorial)
+			GameObject tutObj = Instantiate (Resources.Load ("Tutorial/Tutorial")) as GameObject;
+			tutObj.GetComponent<Tutorial> ().Init (this);
+			tutObj.name = "Tutorial";
+			_CurrentScene = "Tutorial";
+			Debug.Log ("Load tutorial"); 
+			//SetTutorialASeen(true);
+		} else {
+			startGameTime = Time.time;
+			SetNextLevel(0); // GetProgressA()
+			LoadNextLevel();
+		}
+
+		menuCanvas.gameObject.SetActive(false);
+
+        /*if (isGameTypeA)
         {
-            if (playerDat.tutorialASeen || SkipTutorial)
-            {
-                //Debug.Log("Load level select");
-				startGameTime = Time.time;
-                SetNextLevel(GetProgressA());
-                LoadNextLevel();
-            }
-            else
-            {
-                GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject;
-                tutObj.GetComponent<Tutorial>().Init(this);
-                tutObj.name = "Tutorial";
-                _CurrentScene = "Tutorial";
-                //Debug.Log ("Load tutorial"); 
-                SetTutorialASeen(true);
-            }
+			
         }
         else
         {
@@ -211,15 +212,14 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                //Debug.Log ("Load tutorial for type B"); 
+                Debug.Log ("Load tutorial for type B"); 
                 GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject;
                 tutObj.GetComponent<Tutorial>().Init(this);
                 tutObj.name = "Tutorial";
                 _CurrentScene = "Tutorial";
                 SetTutorialBSeen(true);
             }
-        }
-        menuCanvas.gameObject.SetActive(false);
+        }*/
     }
 
     public GameLevel activeLevel;
@@ -310,7 +310,7 @@ public class GameManager : MonoBehaviour
         SavePlayerPrefs();
     }
 
-    IEnumerator ShowEndLevelCanvas()
+    public IEnumerator ShowEndLevelCanvas()
     {
         yield return new WaitForSeconds(1f);
         Image bgPanel = endLevelCanvas.GetComponentInChildren<Image>();

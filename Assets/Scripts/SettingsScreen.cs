@@ -38,6 +38,9 @@ public class SettingsScreen : MonoBehaviour
     [SerializeField]
     private Image stemmeToggle;
     private UnityEngine.UI.Button stemmeButton;
+	[SerializeField]
+	private Image introToggle;
+	private UnityEngine.UI.Button introButton;
 
 	[SerializeField]
 	private Text trainingMinutes;
@@ -62,6 +65,7 @@ public class SettingsScreen : MonoBehaviour
     private bool landingsbane;
     private new bool pulse;
     private bool stemme;
+	private bool intro;
 	private int trainingTime = 8;
 	private int difficultyLevel = 3;
 	private int minimumLevel = 7;
@@ -164,6 +168,13 @@ public class SettingsScreen : MonoBehaviour
         SaveSettings();
     }
 
+	public void Intro_Click()
+	{
+		intro = !intro;
+		introToggle.sprite = intro ? til : fra;
+		SaveSettings();
+	}
+
 	public void TrainingTimeSlider_OnValueChanged()
 	{
 		int val = (int) trainingSlider.value;
@@ -211,6 +222,7 @@ public class SettingsScreen : MonoBehaviour
         landingsbane = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1;
         pulse = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
         stemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1;
+		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 0) == 1;
 		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
@@ -230,6 +242,7 @@ public class SettingsScreen : MonoBehaviour
         PlayerPrefs.SetInt("Settings:"+currentProfileID +":Landingsbane", landingsbane ? 1 : 0);
 		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Pulse", pulse ? 1 : 0);
 		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Stemme", stemme ? 1 : 0);
+		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Intro", intro ? 1 : 0);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":Time", trainingTime);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":DifficultyLevel", difficultyLevel);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MinLevel", minimumLevel);
@@ -242,14 +255,11 @@ public class SettingsScreen : MonoBehaviour
 			settingsPanel.SetActive (true);
 			passwordPanel.SetActive (false);
 			passwordInput.text = "";
-			Debug.Log ("Getprotectsettings: " + profileManager.GetProtectSettings ());
 		} else if (passwordInput.text != "") {
-			Debug.Log ("Password was written but it was wrong.");
 			wrongPassword.SetActive (true);
 			passwordPanel.SetActive (true);
 			settingsPanel.SetActive (false);
 		} else {
-			Debug.Log ("No password given, setting password panel active");
 			passwordPanel.SetActive (true);
 			settingsPanel.SetActive (false);
 		}

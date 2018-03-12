@@ -111,7 +111,7 @@ public class Tutorial : MonoBehaviour {
 
 		LoadSounds ();
 
-		StartStage0 ();
+		StartStage0 (); 
 	}
 
 	
@@ -286,7 +286,7 @@ public class Tutorial : MonoBehaviour {
 		phase2Menu.SetActive (true);
 		phase1A.SetActive (false);
 		phase1B.SetActive (false);
-		gameManager.LoadNextLevel (); 
+		gameManager.LoadNextLevel ();
 	}
 
 	private void RunGame() {
