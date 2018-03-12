@@ -34,7 +34,8 @@ public class GameLevel : MonoBehaviour
     private Target[] obstacles;
 
     private GameManager gameManager;
-    private bool gameA;
+	private bool gameA;
+	private string gameType;
     public string[] levelData;
 
     private Transform camTransform;
@@ -319,7 +320,7 @@ public class GameLevel : MonoBehaviour
 		if (gameManager == null) {
 			return;
 		}
-        gameA = gameManager.GetGameType();
+        gameType = gameManager.GetGameType();
 
         levelData = gameManager.GetLevelData().text.Split("\n"[0]);
 
@@ -364,7 +365,7 @@ public class GameLevel : MonoBehaviour
 
 			targets[i].SetID(i);
             targets[i].SetObstacle(false);
-            if (gameA)
+            if (gameType == "gameA")
             {
                 targets[i].SetLabel(labelsA[i]);
             }

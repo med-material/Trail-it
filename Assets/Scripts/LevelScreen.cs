@@ -46,7 +46,7 @@ public class LevelScreen : MonoBehaviour {
 		gameManager = GameObject.Find("Managers").GetComponent<GameManager>();
 		loggingManager = GameObject.Find("Managers").GetComponent<LoggingManager>();
 
-		gameA = gameManager.GetGameType ();
+		gameA = gameManager.GetGameType () == "gameA";
 
 		if(gameA) {
 

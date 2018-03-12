@@ -29,6 +29,7 @@ public class Tutorial : MonoBehaviour {
 	private LoggingManager loggingManager;
 	private GameManager gameManager;
 	private bool gameA;
+	private string gameType;
 	private int stage;
 	private bool delay;
 
@@ -95,7 +96,7 @@ public class Tutorial : MonoBehaviour {
 
 		mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> ();
 
-		gameA = gameManager.GetGameType ();
+		gameType = gameManager.GetGameType ();
 
 /*		if(gameA) {
 
@@ -197,7 +198,7 @@ public class Tutorial : MonoBehaviour {
 		targets [0].SetID (0);
 		targets [1].SetID (1);
 		
-		if(gameA) {
+		if(gameType == "gameA") {
 
 			targets[0].SetLabel("1");
 			targets[1].SetLabel("2");
@@ -245,7 +246,7 @@ public class Tutorial : MonoBehaviour {
 		targets [2].SetID (2);
 		targets [3].SetID (3);
 		
-		if(gameA) {
+		if(gameType == "gameA") {
 
 			targets [0].SetLabel("1");
 			targets [1].SetLabel("2");

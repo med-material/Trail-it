@@ -34,7 +34,7 @@ public class LoggingManager : MonoBehaviour {
 
 	private string scene; 					// has the text "Level" if we are in a level
 	private string eventLabel; 				// fx "Target Hit" or "Game Loaded"
-	private string testType; 				// gameA or gameB
+	private string gameType; 				// gameA or gameB
 	private string level; 					// current level (this is determined from difficultyLevel and randomization)
 	private string laneOn; 					// should arrows in the top and bottom indicate where the patient should look.
 	private string laneType; 				// are the arrows going left or going right
@@ -96,6 +96,7 @@ public class LoggingManager : MonoBehaviour {
 		laneOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);
 		pulseOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1);
 		voiceOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1);
+		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5)).ToString();
 		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1)).ToString();
 		repeatVoice = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":GentagStemme", 0) == 1);
@@ -108,18 +109,6 @@ public class LoggingManager : MonoBehaviour {
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
 		time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		sessionTime = sessionManager.GetSessionSeconds ().ToString ();
-
-		if(scene == "Level" || scene == "LevelComplete" || scene == "LevelSelect" ||  scene == "Tutorial") {
-
-			if(gameManager.GetGameType())
-				testType = "A";
-			else
-				testType = "B";
-		}
-		else {
-
-			testType = "";
-		}
 
 		if(scene == "Level" || scene == "LevelComplete") {
 			
@@ -231,7 +220,7 @@ public class LoggingManager : MonoBehaviour {
 						+ sessionTime + sep
 						+ scene + sep
 						+ eventLabel + sep
-						+ testType + sep
+						+ gameType + sep
 						+ level + sep
 						+ laneOn + sep
 						+ laneType + sep

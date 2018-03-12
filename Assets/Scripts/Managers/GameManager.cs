@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     private bool player;
     //private int userID;
     private bool gameA;
+	private string gameType;
     private int nextLevel;
     //private int progressA;
     //private int progressB;
@@ -144,6 +145,7 @@ public class GameManager : MonoBehaviour
 		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5);
 		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MinLevel", 1);
 		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MaxLevel", 4);
+		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "GameA");
    
     }
 
@@ -173,7 +175,6 @@ public class GameManager : MonoBehaviour
     public void StartGame(bool isGameTypeA)
     {
 		LoadPlayerPrefs ();
-		SetGameType (false);//isGameTypeA);
 		//TODO: Insert: 	       else
 				//loggingManager.WriteLog ("Guest Profile Selected");
 
@@ -291,7 +292,7 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(ShowEndLevelCanvas());
 
-        if (gameA)
+		if (gameType == "gameA")
         {
             if (currentLevel == GetProgressA())
             {
@@ -362,9 +363,9 @@ public class GameManager : MonoBehaviour
 		}
     }
 
-    public void SetGameType(bool inputGameA)
+    public void SetGameType(string newGameType)
     {
-        gameA = inputGameA;
+		gameType = newGameType;
     }
 
 	public void TimerPause()
@@ -393,9 +394,9 @@ public class GameManager : MonoBehaviour
 		SceneManager.LoadSceneAsync("TMT_P10");
 	}
 
-    public bool GetGameType()
+    public string GetGameType()
     {
-        return gameA;
+        return gameType;
     }
 
 	public void QuitGame()
@@ -458,11 +459,11 @@ public class GameManager : MonoBehaviour
 
         nextLevel = inputLevel;
 
-        if (gameA && nextLevel >= allLevelsA.Length - 1)
+		if (gameType == "gameA" && nextLevel >= allLevelsA.Length - 1)
         {
             nextLevel = allLevelsA.Length - 1;
         }
-        else if (!gameA && nextLevel >= allLevelsB.Length - 1)
+		else if (gameType == "gameB" && nextLevel >= allLevelsB.Length - 1)
         {
             nextLevel = allLevelsB.Length - 1;
         }
@@ -508,7 +509,7 @@ public class GameManager : MonoBehaviour
 
     public TextAsset GetLevelData()
     {
-        if (gameA)
+        if (gameType == "gameA")
         {
             return allLevelsA[nextLevel];
         }

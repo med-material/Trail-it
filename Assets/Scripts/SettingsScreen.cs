@@ -48,6 +48,16 @@ public class SettingsScreen : MonoBehaviour
 	[SerializeField]
 	private UnityEngine.UI.Slider circleAmountSlider;
 
+	[SerializeField]
+	private Image gameAButton;
+	[SerializeField]
+	private Image gameBButton;
+
+	[SerializeField]
+	private Sprite selectedButtonSprite;
+
+	[SerializeField]
+	private Sprite regularButtonSprite;
 
     private bool landingsbane;
     private new bool pulse;
@@ -60,6 +70,7 @@ public class SettingsScreen : MonoBehaviour
 	private int circleAmountMax = 2;
 	private string circleAmountNumberTemplate;
 	private string trainingMinutesTemplate;
+	private string gameType;
 
     private void Awake()
     {
@@ -79,6 +90,7 @@ public class SettingsScreen : MonoBehaviour
 		circleAmountSlider.value = (float) difficultyLevel;
 		Debug.Log ("Setting slider text");
 		if (trainingMinutesTemplate == null) {
+			
 			trainingMinutesTemplate = trainingMinutes.text;
 		}
 		if (circleAmountNumberTemplate == null) {
@@ -87,11 +99,6 @@ public class SettingsScreen : MonoBehaviour
 		trainingMinutes.text = string.Format (trainingMinutesTemplate, trainingTime.ToString());
 		circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString(),circleAmountMax.ToString());
     }
-
-	private void Start()
-	{
-
-	}
 
 	private void DetermineAmountOfCircles () {
 		Debug.Log ("Determining amount of cirlces");
@@ -138,58 +145,59 @@ public class SettingsScreen : MonoBehaviour
 
     public void Landingsbane_Click()
     {
-        if (passwordInput.text == password)
-        {
-            landingsbane = !landingsbane;
-            landingsbaneToggle.sprite = landingsbane ? til : fra;
-            SaveSettings();
-        }
+        landingsbane = !landingsbane;
+        landingsbaneToggle.sprite = landingsbane ? til : fra;
+        SaveSettings();
     }
 
     public void Animation_Click()
     {
-        if (passwordInput.text == password)
-        {
-            pulse = !pulse;
-            pulseToggle.sprite = pulse ? til : fra;
-            SaveSettings();
-        }
+        pulse = !pulse;
+        pulseToggle.sprite = pulse ? til : fra;
+        SaveSettings();
     }
 
     public void Stemme_Click()
     {
-        if (passwordInput.text == password)
-        {
-            stemme = !stemme;
-            stemmeToggle.sprite = stemme ? til : fra;
-            SaveSettings();
-        }
+        stemme = !stemme;
+        stemmeToggle.sprite = stemme ? til : fra;
+        SaveSettings();
     }
 
 	public void TrainingTimeSlider_OnValueChanged()
 	{
-		if (passwordInput.text == password) {
-			int val = (int) trainingSlider.value;
+		int val = (int) trainingSlider.value;
+		if (val != null && trainingMinutesTemplate != null) {
 			trainingTime = val;
-			trainingMinutes.text = string.Format (trainingMinutesTemplate, val.ToString());
+			trainingMinutes.text = string.Format (trainingMinutesTemplate, val.ToString ());
 			SaveSettings ();
-		} else {
-			trainingSlider.value = (float) trainingTime;
 		}
 	}
 
 	public void CircleSlider_OnValueChanged()
 	{
-		if (passwordInput.text == password) {
-			int val = (int) circleAmountSlider.value;
+		int val = (int) circleAmountSlider.value;
+		if (val != null && circleAmountNumberTemplate != null) {
 			difficultyLevel = val;
 			DetermineAmountOfCircles ();
-			circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString(),circleAmountMax.ToString());
-			DetermineMinMaxLevel();
+			circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString (), circleAmountMax.ToString ());
+			DetermineMinMaxLevel ();
 			SaveSettings ();
-		} else {
-			circleAmountSlider.value = (float) difficultyLevel;
 		}
+	}
+
+	public void switchToGameA() {
+		gameAButton.sprite = selectedButtonSprite;
+		gameBButton.sprite = regularButtonSprite;
+		gameType = "gameA";
+		SaveSettings ();
+	}
+
+	public void switchToGameB() {
+		gameBButton.sprite = selectedButtonSprite;
+		gameAButton.sprite = regularButtonSprite;
+		gameType = "gameB";
+		SaveSettings ();
 	}
 
     /// <summary>
@@ -204,6 +212,7 @@ public class SettingsScreen : MonoBehaviour
         pulse = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
         stemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1;
 		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5);
+		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
 		DetermineMinMaxLevel();
 		DetermineAmountOfCircles ();
@@ -225,6 +234,7 @@ public class SettingsScreen : MonoBehaviour
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":DifficultyLevel", difficultyLevel);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MinLevel", minimumLevel);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MaxLevel", maximumLevel);
+		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":GameType", gameType);
     }
 
 	public void CheckPassword() {

@@ -77,6 +77,7 @@ public class AssistanceManager : MonoBehaviour {
 	private string[] orderStrings;
 
 	private bool gameA;
+	private string gameType;
 
 	private AudioSource chime;
 	private AudioSource voice;
@@ -121,7 +122,7 @@ public class AssistanceManager : MonoBehaviour {
 			LeftArrowObjects.Add (arrowObject);
 		}
 
-		gameA = gameManager.GetGameType ();
+		gameType = gameManager.GetGameType ();
 		orderRow = gameManager.GetOrderRow ();
 
 		voice = gameObject.AddComponent<AudioSource>();
@@ -142,7 +143,7 @@ public class AssistanceManager : MonoBehaviour {
 		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
 		laneType = settingsManager.GetSetting (Settings.LaneType);
 
-		gameA = gameManager.GetGameType ();
+		gameType = gameManager.GetGameType ();
 		orderRow = gameManager.GetOrderRow ();
 
 		if(pulseOn)
@@ -200,7 +201,7 @@ public class AssistanceManager : MonoBehaviour {
 		audioActive = true;
 		repeatStartTime = Time.time;
 
-		if(gameA) {
+		if(gameType == "gameA") {
 			
 			voice.clip = voiceClipsA[currentTarget.GetID()];
 		}
