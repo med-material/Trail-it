@@ -6,6 +6,9 @@ using System;
 
 public class ConnectToMySQL : MonoBehaviour {
 	
+	[SerializeField]
+	private LoggingManager loggingManager;
+
 	private string url;
 
 	[SerializeField]
@@ -57,8 +60,8 @@ public class ConnectToMySQL : MonoBehaviour {
 				Debug.LogError(www.error);
 				yield return new WaitForSeconds(2.0f);
 				retries++;
-				if(retries < 3) {
-					StartCoroutine(ConnectToServer(form));
+				if (retries < 3) {
+					StartCoroutine (ConnectToServer (form));
 				}
 			}
 		} else {
@@ -87,7 +90,7 @@ public class ConnectToMySQL : MonoBehaviour {
 	}
 
 	IEnumerator SubmitLogs(WWWForm form) {
-
+		Debug.Log ("Submitting logs..");
 		WWW www = new WWW (url, form);
 
 		yield return www;
@@ -95,12 +98,12 @@ public class ConnectToMySQL : MonoBehaviour {
 		if (www.error == null) {
 			Debug.Log ("Posted successfully");
 		} else {
-			Debug.LogError (www.error);
-		}
-	
-		if (www.error != null) {
 			Debug.Log ("log submission error: " + www.error);
+			Debug.LogError ("Dumping Log To Disk For Later Uploading");
+			loggingManager.DumpCurrentLog ();
 		}
+
+		loggingManager.ClearLogEntries ();
 	}
 		
 	//public void UploadData(string playerID, string playerOrGuest, string date, string currentHitX) {

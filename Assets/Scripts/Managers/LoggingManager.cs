@@ -54,9 +54,6 @@ public class LoggingManager : MonoBehaviour {
 	private string currentOutset; 			// IGNORED same as lastValid
 	private string correctingError; 		// IGNORED outputs False all the time
 	private string errorsInRow; 			// if the patient has made more than one error, this is logged. "1" corresponds to 2 in a row. "2" corresponds to 3 in a row. etc.
-
-	// TODO: E-mail Address
-
 	private string sessionTime; 			// at what point in time (secs) was this logged
 
 	private Vector2 currentTargetPos;		
@@ -87,6 +84,7 @@ public class LoggingManager : MonoBehaviour {
 		}
 
 		LoadSettings ();
+		DetectDumpedLogs ();
 		NewLog ();
 		WriteLog ("Game Loaded");
 	}
@@ -276,10 +274,44 @@ public class LoggingManager : MonoBehaviour {
 
 	public void UploadLog() {
 		bool shouldUpload = profileManager.GetUploadPolicy ();
+		Debug.Log ("UploadPolicy: " + shouldUpload);
 		if (!shouldUpload) {
 			return;
 		}
-
+		Debug.Log ("Uploading logs");
 		mySQL.UploadLog (logEntries);
+	}
+
+	public void ClearLogEntries() {
+		logEntries.Clear ();
+	}
+
+	public void DumpCurrentLog() {
+		for(int i = 0; i < logEntries.Count; i++) {
+			Debug.Log ("Dumping log as: " + directory + "offlinelogs");
+			using (StreamWriter writer = File.AppendText(directory + "offlinelogs"))
+			{
+				writer.WriteLine(logEntries[i]);
+			}
+		}
+	}
+
+	public void DetectDumpedLogs() {
+		Debug.Log ("Detecting dumped logs for upload..");
+		if (File.Exists (directory + "offlinelogs")) {
+			Debug.Log ("Detected: " + directory + "offlinelogs");
+
+			string line;
+			List<string> offlineLogs = new List<string>();
+			using (StreamReader reader = new StreamReader(directory + "offlinelogs")) {
+				while((line = reader.ReadLine()) != null)  
+				{  
+					offlineLogs.Add (line);
+				}
+			}
+			File.Delete (directory + "offlinelogs");
+			mySQL.UploadLog (offlineLogs);
+		}
+
 	}
 }
