@@ -12,6 +12,7 @@ public class ProfileManager : MonoBehaviour {
 	private string currentName;
 	private string currentEmail;
 	private bool shouldUpload;
+	private bool shouldProtectSettings;
 	private List<string> profiles = new List<string> ();
 	private string sep = ";";
 
@@ -34,12 +35,24 @@ public class ProfileManager : MonoBehaviour {
 
 	}
 
-	public void AddNewProfile(string name, string email, bool uploadPolicy) {
-		string newProfileID = Utils.Md5Sum(email);
+	public void AddNewProfile(string name, string email, bool uploadPolicy, bool protectSettings) {
+		
+		if (name != "") {
+			currentName = name;
+		} else {
+			currentName = "Gæst";
+		}
+
+		if (email != "") {
+			currentEmail = email;
+		} else {
+			currentEmail = "No Email";
+		}
+
+		string newProfileID = Utils.Md5Sum(currentName + currentEmail);
 		currentProfileID = newProfileID;
-		currentName = name;
-		currentEmail = email;
 		shouldUpload = uploadPolicy;
+		shouldProtectSettings = protectSettings;
 		profiles.Add (newProfileID);
 		Debug.Log ("Adding " + newProfileID + "to profiles list with shouldUpload " + uploadPolicy);
 		SaveProfiles ();
@@ -58,6 +71,11 @@ public class ProfileManager : MonoBehaviour {
 	public bool GetUploadPolicy()
 	{
 		return shouldUpload;
+	}
+
+	public bool GetProtectSettings()
+	{
+		return shouldProtectSettings;
 	}
 
 	public string GetCurrentProfileID()
@@ -82,6 +100,7 @@ public class ProfileManager : MonoBehaviour {
 		currentName = PlayerPrefs.GetString("Settings:" + newProfileID + ":Name", "Gæst");
 		currentEmail = PlayerPrefs.GetString ("Settings:" + newProfileID + ":Email", "No Email");
 		shouldUpload = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":UploadData", 0) == 1);
+		shouldProtectSettings = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":ProtectSettings", 0) == 1);
 		Debug.Log ("current profile set as id " + currentProfileID + " with name " + currentName + " and shouldUpload " + shouldUpload);
 
 		//mainMenuScreen.setWelcomeText (currentName);
@@ -100,8 +119,10 @@ public class ProfileManager : MonoBehaviour {
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Name", currentName);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Email", currentEmail);
 		PlayerPrefs.SetInt("Settings:" + currentProfileID + ":UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
+		PlayerPrefs.SetInt("Settings:" + currentProfileID + ":ProtectSettings", int.Parse((Utils.BoolToNumberString(shouldProtectSettings))));
 		PlayerPrefs.SetString ("Settings:Name", currentName);
 		PlayerPrefs.SetString ("Settings:Email", currentEmail);
 		PlayerPrefs.SetInt ("Settings:UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
+		PlayerPrefs.SetInt ("Settings:ProtectSettings", int.Parse((Utils.BoolToNumberString(shouldProtectSettings))));
 	}
 }

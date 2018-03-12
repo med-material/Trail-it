@@ -27,18 +27,14 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	[SerializeField]
 	private Toggle shouldUpload;
 
-	public void Start() {
-		evaluateButtonSensitivity ();
-	}
-
-	public void evaluateButtonSensitivity() {
-		bool buttonSensitivity = (nameField.text != "") && (emailField.text != "");
-		newProfileButton.interactable = buttonSensitivity;
-	}
+	[SerializeField]
+	private Toggle shouldProtectSettings;
 
 	public void SetNameAndCreateProfile() {
-		profileManager.AddNewProfile (nameField.text, emailField.text, shouldUpload.isOn);
-		mainMenuScreen.setWelcomeText(nameField.text);
+		Debug.Log ("shouldProtect: " + shouldProtectSettings.isOn);
+		profileManager.AddNewProfile (nameField.text, emailField.text, shouldUpload.isOn, shouldProtectSettings.isOn);
+		mainMenuScreen.setWelcomeText(nameField.text); 
 		nameField.text = "";
+		emailField.text = "";
 	}
 }

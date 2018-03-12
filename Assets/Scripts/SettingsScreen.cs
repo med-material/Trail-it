@@ -10,12 +10,21 @@ using UnityEngine.UI;
 public class SettingsScreen : MonoBehaviour
 {
     [SerializeField]
-    private Text passwordInput;
+    private InputField passwordInput;
     private const string password = "hello";
     [SerializeField]
     private Sprite fra;
     [SerializeField]
     private Sprite til;
+
+	[SerializeField]
+	private GameObject settingsPanel;
+
+	[SerializeField]
+	private GameObject passwordPanel;
+
+	[SerializeField]
+	private GameObject wrongPassword;
 
 	[SerializeField]
 	private ProfileManager profileManager;
@@ -217,4 +226,23 @@ public class SettingsScreen : MonoBehaviour
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MinLevel", minimumLevel);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MaxLevel", maximumLevel);
     }
+
+	public void CheckPassword() {
+		if (!profileManager.GetProtectSettings () || passwordInput.text == password) {
+			settingsPanel.SetActive (true);
+			passwordPanel.SetActive (false);
+			passwordInput.text = "";
+			Debug.Log ("Getprotectsettings: " + profileManager.GetProtectSettings ());
+		} else if (passwordInput.text != "") {
+			Debug.Log ("Password was written but it was wrong.");
+			wrongPassword.SetActive (true);
+			passwordPanel.SetActive (true);
+			settingsPanel.SetActive (false);
+		} else {
+			Debug.Log ("No password given, setting password panel active");
+			passwordPanel.SetActive (true);
+			settingsPanel.SetActive (false);
+		}
+
+	}
 }
