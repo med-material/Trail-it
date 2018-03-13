@@ -191,7 +191,7 @@ public class GameManager : MonoBehaviour
 			//SetTutorialASeen(true);
 		} else {
 			startGameTime = Time.time;
-			SetNextLevel(0); // GetProgressA()
+			SetNextLevel(GetProgressA()); // GetProgressA()
 			LoadNextLevel();
 		}
 

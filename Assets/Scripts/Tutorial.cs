@@ -282,7 +282,7 @@ public class Tutorial : MonoBehaviour {
 		b2Sound.Stop();
 		hand.transform.position = new Vector3(0, -5, 0);
 		hand.GetComponent<Renderer> ().enabled = false; 
-		gameManager.SetNextLevel (0);
+		gameManager.SetNextLevel (gameManager.GetProgressA());
 		phase2Menu.SetActive (true);
 		phase1A.SetActive (false);
 		phase1B.SetActive (false);
