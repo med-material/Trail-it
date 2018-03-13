@@ -38,6 +38,11 @@ public class SettingsScreen : MonoBehaviour
     [SerializeField]
     private Image stemmeToggle;
     private UnityEngine.UI.Button stemmeButton;
+
+	[SerializeField]
+	private GameObject gentagStemmeToggle;
+	private UnityEngine.UI.Button gentagStemmeButton;
+
 	[SerializeField]
 	private Image introToggle;
 	private UnityEngine.UI.Button introButton;
@@ -65,6 +70,7 @@ public class SettingsScreen : MonoBehaviour
     private bool landingsbane;
     private new bool pulse;
     private bool stemme;
+	private bool gentagStemme;
 	private bool intro;
 	private int trainingTime = 8;
 	private int difficultyLevel = 3;
@@ -90,6 +96,16 @@ public class SettingsScreen : MonoBehaviour
         landingsbaneToggle.sprite = landingsbane ? til : fra;
         pulseToggle.sprite = pulse ? til : fra;
         stemmeToggle.sprite = stemme ? til : fra;
+		introToggle.sprite = intro ? til : fra;
+		gentagStemmeToggle.SetActive (stemme);
+		gentagStemmeToggle.GetComponent<Toggle> ().isOn = gentagStemme;
+		if (gameType == "gameA") {
+			gameAButton.sprite = selectedButtonSprite;
+			gameBButton.sprite = regularButtonSprite;
+		} else {
+			gameBButton.sprite = selectedButtonSprite;
+			gameAButton.sprite = regularButtonSprite;
+		}
 		trainingSlider.value = (float) trainingTime;
 		circleAmountSlider.value = (float) difficultyLevel;
 		Debug.Log ("Setting slider text");
@@ -165,8 +181,15 @@ public class SettingsScreen : MonoBehaviour
     {
         stemme = !stemme;
         stemmeToggle.sprite = stemme ? til : fra;
+		gentagStemmeToggle.SetActive (stemme ? true : false);
         SaveSettings();
     }
+
+	public void GentagStemme_Click()
+	{
+		gentagStemme = !gentagStemme;
+		SaveSettings();
+	}
 
 	public void Intro_Click()
 	{
@@ -222,6 +245,7 @@ public class SettingsScreen : MonoBehaviour
         landingsbane = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1;
         pulse = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
         stemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1;
+		gentagStemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":GentagStemme", 0) == 1;
 		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 0) == 1;
 		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
@@ -242,6 +266,7 @@ public class SettingsScreen : MonoBehaviour
         PlayerPrefs.SetInt("Settings:"+currentProfileID +":Landingsbane", landingsbane ? 1 : 0);
 		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Pulse", pulse ? 1 : 0);
 		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Stemme", stemme ? 1 : 0);
+		PlayerPrefs.SetInt("Settings:"+currentProfileID +":GentagStemme", gentagStemme ? 1 : 0);
 		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Intro", intro ? 1 : 0);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":Time", trainingTime);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":DifficultyLevel", difficultyLevel);

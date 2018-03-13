@@ -15,7 +15,7 @@ public class AssistanceManager : MonoBehaviour {
 	public AudioClip chimeClip;
 	public AudioClip[] voiceClipsA;
 	public AudioClip[] voiceClipsB;
-	public bool laneType;
+	//public bool laneType;
 
 	public GameObject gameCanvas;
 	public GameObject arrowLeftTop;
@@ -140,8 +140,8 @@ public class AssistanceManager : MonoBehaviour {
 		pulseOn = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
 		audioOn = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1; //settingsManager.GetSetting (Settings.Voice);
 		laneOn =  PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1; //settingsManager.GetSetting (Settings.Lane);
-		repeatAudio = settingsManager.GetSetting (Settings.Repeat);
-		laneType = settingsManager.GetSetting (Settings.LaneType);
+		repeatAudio = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1;
+		//laneType = settingsManager.GetSetting (Settings.LaneType);
 
 		gameType = gameManager.GetGameType ();
 		orderRow = gameManager.GetOrderRow ();
