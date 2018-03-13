@@ -4,6 +4,7 @@ using System;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -32,6 +33,9 @@ public class GameManager : MonoBehaviour
     //private bool tutorialBSeen = false;
     private float levelCompletionTime = -1;
 	private float startGameTime = -1;
+	private float startLevelTime = -1;
+	private float lastHitTime = -1;
+	private float sessionTime = 0;
 	private bool sessionActive = true;
 	private bool levelActive = false;
 	private int amountOfTargets = -1;
@@ -46,6 +50,9 @@ public class GameManager : MonoBehaviour
     private PlayerData playerDat;
 
     private InputHandler input;
+	float bestCompletionTime = 0.0f;
+	private List<float> HitTimeLeft = new List<float>();
+	private List<float> HitTimeRight = new List<float>();
 
     // Canvas Stuff
     [SerializeField]
@@ -70,6 +77,12 @@ public class GameManager : MonoBehaviour
 	private Text totalAmount;
 	[SerializeField]
 	private Text endSessionAmount;
+	[SerializeField]
+	private Text bestCompletionTimeText;
+	[SerializeField]
+	private Text reactionTimeRightText;
+	[SerializeField]
+	private Text reactionTimeLeftText;
 	//[SerializeField]
 	//private Text levelErrorsText;
 	//[SerializeField]
@@ -78,6 +91,9 @@ public class GameManager : MonoBehaviour
 	private string endLevelAmountTemplate;
 	private string endLevelAverageTemplate;
 	private string totalAmountTemplate;
+	private string bestCompletionTimeTemplate;
+	private string reactionTimeRightTemplate;
+	private string reactionTimeLeftTemplate;
 	//private string levelErrorsTemplate;
 	//private string totalErrorsTemplate;
 	private int sessionLength;
@@ -102,6 +118,9 @@ public class GameManager : MonoBehaviour
 		endLevelAmountTemplate = endLevelAmount.text;
 		endLevelAverageTemplate = endLevelAverage.text;
 		totalAmountTemplate = totalAmount.text;
+		bestCompletionTimeTemplate = bestCompletionTimeText.text;
+		reactionTimeLeftTemplate = reactionTimeLeftText.text;
+		reactionTimeRightTemplate = reactionTimeRightText.text;
 		//levelErrorsTemplate = levelErrorsText.text;
 		//totalErrorsTemplate = totalErrorsText.text;
 
@@ -243,8 +262,27 @@ public class GameManager : MonoBehaviour
             if (input.TouchActive)
             {
                 HitType hitType = activeLevel.AttemptHit(input.TouchPos);
+				Debug.Log (input.TouchPos);
+				Debug.Log (hitType);
                 LD.DrawLine(input.TouchPos, hitType);
+				if (hitType == HitType.TargetHit) {
+					float time = Time.time;
 
+					if (lastHitTime == -1) {
+						Debug.Log ("initializing lastHitTime!");
+						lastHitTime = startLevelTime;
+					}
+
+					if (input.TouchPos.x > 0) {
+						Debug.Log ("Adding HitTime " + (Time.time - lastHitTime).ToString() + " to HitTimeRight!");
+						HitTimeRight.Add (Time.time - lastHitTime);
+					} else {
+						Debug.Log ("Adding HitTime " + (Time.time - lastHitTime).ToString() + " to HitTimeLeft!");
+						HitTimeLeft.Add (Time.time - lastHitTime);
+					}
+					lastHitTime = Time.time;
+
+				}
                 //TODO: Write around this. I just wanted a quick fix for the time being :D 
 				//activeLevelAssistance.UpdateAssistance();
 				//GameObject.Find("GameLevel").SendMessage("UpdateAssistance"); // The pinnacle of all programming
@@ -273,7 +311,8 @@ public class GameManager : MonoBehaviour
         if (!GameLevel._DidInit)
         {
             GameObject.Find("GameLevel").GetComponent<GameLevel>().Init(this);
-            _CurrentScene = "Level";
+			_CurrentScene = "Level";
+			startLevelTime = Time.time;
         }
     }
 
@@ -343,7 +382,8 @@ public class GameManager : MonoBehaviour
 
 	private void UpdateEndScreenClock()
 	{
-		var timeSpan = TimeSpan.FromSeconds(Time.time - startGameTime);
+		sessionTime = Time.time - startGameTime;
+		var timeSpan = TimeSpan.FromSeconds(sessionTime);
 		endLevelDuration.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
 		endSessionAmount.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
 	}
@@ -353,12 +393,23 @@ public class GameManager : MonoBehaviour
     {	
 		if (sessionActive) {
 			endLevelTime.text = string.Format (endLevelTimeTemplate, levelCompletionSeconds);
+			if (bestCompletionTime < levelCompletionSeconds) {
+				bestCompletionTime = levelCompletionSeconds;
+			}
 			endLevelAmount.text = string.Format (endLevelAmountTemplate, totalTargets);
 			float average = (float)levelCompletionSeconds / (float)amountOfTargets;
+			//averagesList.Add (average);
 			endLevelAverage.text = string.Format (endLevelAverageTemplate, average.ToString ("n2"));
 			//levelErrorsText.text = string.Format (levelErrorsTemplate, levelErrors);
 		} else {
 			totalAmount.text = string.Format (totalAmountTemplate, totalTargets);
+			bestCompletionTimeText.text = string.Format (bestCompletionTimeTemplate, bestCompletionTime);
+
+			string hitTimeLeftAverage = HitTimeLeft.Average(item => (float) item).ToString("0.00");;
+			string hitTimeRightAverage = HitTimeRight.Average (item => (float) item).ToString("0.00");;
+
+			reactionTimeLeftText.text = string.Format (reactionTimeLeftTemplate, hitTimeLeftAverage);
+			reactionTimeRightText.text = string.Format (reactionTimeRightTemplate, hitTimeRightAverage);
 			//totalErrorsText.text = string.Format (totalErrorsTemplate, totalErrors); 
 		}
     }
