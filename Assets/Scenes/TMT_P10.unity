@@ -3461,8 +3461,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 462399590}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 15}
-  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
+  m_LocalPosition: {x: 0, y: 0.29999995, z: 15}
+  m_LocalScale: {x: 0.6333333, y: 0.6333333, z: 0.6333333}
   m_Children: []
   m_Father: {fileID: 1720051833}
   m_RootOrder: 0
@@ -3498,7 +3498,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: -15
-  m_Sprite: {fileID: 21300000, guid: 9680836e0cd6c4d0d8a07691d2bf8384, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 34e5ff06a91b34744984f5099ad551ff, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3513,8 +3513,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 854f0518fa6a74761963dde4350ed469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scale: 0.1
-  offset: {x: 0, y: 1.5, z: 15}
+  scale: 0.095
+  offset: {x: 0, y: 0.3, z: 15}
 --- !u!1 &462707723
 GameObject:
   m_ObjectHideFlags: 0
@@ -4547,7 +4547,7 @@ Prefab:
     - target: {fileID: 224258347293698024, guid: 730a98b6e3feb4bbdb264089d4691419,
         type: 2}
       propertyPath: m_SizeDelta.x
-      value: -2450
+      value: -1621
       objectReference: {fileID: 0}
     - target: {fileID: 224258347293698024, guid: 730a98b6e3feb4bbdb264089d4691419,
         type: 2}
@@ -14054,6 +14054,16 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1949374029210224, guid: 968ce7bb267784a37bcb2aab9f601bae, type: 2}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000841116471920, guid: 968ce7bb267784a37bcb2aab9f601bae,
+        type: 2}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000841116471920, guid: 968ce7bb267784a37bcb2aab9f601bae,
+        type: 2}
+      propertyPath: m_ScreenMatchMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
