@@ -21,8 +21,8 @@ public class Target : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 
-		sprite = transform.FindChild("Circle").GetComponent<SpriteRenderer>();
-		pulse = transform.FindChild("Circle").GetComponent<Animation>();
+		sprite = transform.Find("Circle").GetComponent<SpriteRenderer>();
+		pulse = transform.Find("Circle").GetComponent<Animation>();
 		targetLabel = transform.GetChild (0).GetComponent<TextMesh> ();
 
 		if(transform.position.x - GameObject.Find("Main Camera").transform.position.x > 0) {

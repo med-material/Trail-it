@@ -41,7 +41,7 @@ public class LineDrawer : MonoBehaviour
         tmpLR.endColor = normalColor;
 
         vertexIndex = 0;
-        tmpLR.numPositions++;
+        tmpLR.positionCount++;
         tmpLR.SetPosition(vertexIndex, startPos);
         _lines.Add(tmpLR);
     }
@@ -53,7 +53,7 @@ public class LineDrawer : MonoBehaviour
         linePos.z = 1f; // This is kinda hacky, I know, but we want the line to appear behind the targets. 
 
         vertexIndex++;
-        _lines[curIndex].numPositions++;
+        _lines[curIndex].positionCount++;
         _lines[curIndex].SetPosition(vertexIndex, linePos);
 
         // If hit is a correct hit
