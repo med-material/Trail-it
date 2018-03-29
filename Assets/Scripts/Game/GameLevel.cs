@@ -19,6 +19,10 @@ public class GameLevel : MonoBehaviour
 {
 
     public GameObject targetPrefab;
+
+	[SerializeField]
+	private GameObject gameCanvas;
+
     public string[] labelsA;
     public string[] labelsB;
     public string[] obstacleLabels;
@@ -361,6 +365,7 @@ public class GameLevel : MonoBehaviour
 			//Debug.Log (" k is: " + k);
             targetObjects[i] = (GameObject)Instantiate(targetPrefab, new Vector3(float.Parse(levelData[j * 6 + 5]), float.Parse(levelData[j * 6 + 6]), float.Parse(levelData[j * 6 + 7])), Quaternion.identity);
             targetObjects[i].transform.localScale = new Vector3(float.Parse(levelData[j * 6 + 8]), float.Parse(levelData[j * 6 + 9]), float.Parse(levelData[j * 6 + 10]));
+			targetObjects[i].transform.parent = gameCanvas.transform;
             targets[i] = targetObjects[i].GetComponent<Target>();
 
 			targets[i].SetID(i);
