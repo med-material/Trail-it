@@ -111,7 +111,7 @@ public class LineDrawer : MonoBehaviour
     public void ClearAll()
     {
         //alreadyHit = 0;
-		if (_lines.Count > 0 && transform != null) {
+		if (_lines != null && _lines.Count > 0 && transform != null) {
 			StopCoroutine ("FadeLine"); 
 			_lines.Clear ();
 			for (int i = 0; i < transform.childCount; i++) {
