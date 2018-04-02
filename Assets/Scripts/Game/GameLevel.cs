@@ -66,7 +66,7 @@ public class GameLevel : MonoBehaviour
     public static bool _DidInit = false;
 
     [Range(0.001f, 1.0f)]
-    public float TargetSpawnDelay = 0.015f;
+    public float TargetSpawnDelay = 0.02f;
 
     [SerializeField]
     private AudioClip[] spawnTargetsSounds; 
@@ -377,12 +377,12 @@ public class GameLevel : MonoBehaviour
 
         GameObject[] sorted = objsToSpawn;
 
-        Array.Sort(sorted, delegate (GameObject x, GameObject y) { return x.transform.position.x.CompareTo(y.transform.position.x); });
-
+        //Array.Sort(sorted, delegate (GameObject x, GameObject y) { return x.transform.position.x.CompareTo(y.transform.position.x); });
+		audioSource.PlayOneShot(spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)]);
         for (int i = 0; i < sorted.Length; i++)
         {
-            if (i % 2 == 0)
-                audioSource.PlayOneShot(spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)]);
+            //if (i % 2 == 0)
+            //    audioSource.PlayOneShot(spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)]);
 
             sorted[i].GetComponent<Animator>().Play("TargetSpawn");
             sorted[i].SetActive(true);
