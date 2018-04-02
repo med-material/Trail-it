@@ -106,6 +106,21 @@ public class ProfileManager : MonoBehaviour {
 		SaveProfiles ();
 	}
 
+	public void RemoveProfile(string idToRemove) {
+		List<string> newProfileList = new List<string>();
+		foreach (var id in profiles) {
+
+			if (id == idToRemove)
+			{
+				Debug.Log("id " + id + "found and removed");
+			}
+			if (id != idToRemove) {
+				newProfileList.Add(id);
+			}
+		}
+		profiles = newProfileList;
+	}
+
 	public void SaveProfiles()
 	{
 		string[] profileArray = profiles.ToArray ();

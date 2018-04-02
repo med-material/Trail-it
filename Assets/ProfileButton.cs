@@ -13,17 +13,30 @@ public class ProfileButton : MonoBehaviour {
 	private ProfileManager profileManager;
 
 	[SerializeField]
+	private ProfileScreen profileScreen;
+
+	[SerializeField]
 	private GameObject nameText;
 
 	private string id = "Gæst";
 
-	public void setAsProfile() {
-		profileManager.SetCurrentProfile (id);
-		Debug.Log ("ProfileID: " + id + " Name: " + nameText.GetComponent<Text> ().text + " is now set as profile");
+	public void buttonClick()
+	{
+		profileScreen.ProfileButtonClick(this);
 	}
 
 	public void SetID(string newID) {
 		id = newID;
+	}
+
+	public string GetID()
+	{
+		return id;
+	}
+
+	public string GetName()
+	{
+		return nameText.GetComponent<Text>().text;
 	}
 
 	public void SetName(string newName) {

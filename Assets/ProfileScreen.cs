@@ -11,6 +11,10 @@ public class ProfileScreen : MonoBehaviour {
 
 	[SerializeField]
 	private ProfileManager profileManager;
+
+	[SerializeField]
+	private GameManager gameManager;
+
 	[SerializeField]
 	private GameObject newProfileTemplate;
 
@@ -18,22 +22,48 @@ public class ProfileScreen : MonoBehaviour {
 	private GameObject profileCreatorButton;
 
 	[SerializeField]
+	private GameObject mainMenuButton;
+
+	[SerializeField]
+	private GameObject finishDeletionButton;
+
+	[SerializeField]
 	private Transform parentTransform;
 
 	private string currentProfileID = "Gæst";
 
 	private List<GameObject> profileButtons;
+	private List<string> profilesForRemoval;
 
 	[SerializeField]
 	private GameObject profileCreatorTemplate;
 
 	[SerializeField]
+	private Text removeProfileButtonText;
+	private string removeProfileButtonTextTemplate;
+
+	[SerializeField]
+	private Text profileTitleText;
+	private string profileTitleTextTemplate;
+
+	[SerializeField]
 	private Sprite currentProfileSprite;
+
+	[SerializeField]
+	private Sprite primaryButtonSprite;
+
+	[SerializeField]
+	private Sprite destroyProfileSprite;
+
+	private bool removeModeActive = false;
 
 	void Awake() {
 
 		profileButtons = new List<GameObject>();
+		profilesForRemoval = new List<string>();
 		currentProfileID = profileManager.GetCurrentProfileID ();
+		removeProfileButtonTextTemplate = removeProfileButtonText.text;
+		profileTitleTextTemplate = profileTitleText.text;
 	}
 
 	private void CreateProfileButton(string name, string id) {
@@ -79,6 +109,75 @@ public class ProfileScreen : MonoBehaviour {
 
 	}
 
+	public void ToggleRemoveMode()
+	{
+		if (!removeModeActive)
+		{
+			Destroy(profileCreatorButton);
+			removeModeActive = true;
+			foreach (var profileButton in profileButtons)
+			{
+				profileButton.GetComponent<Image>().sprite = destroyProfileSprite;
+			}
+			removeProfileButtonText.text = "Fortryd";
+			profileTitleText.text = "Slet en Profil";
+			mainMenuButton.SetActive(false);
+			finishDeletionButton.SetActive(true);
+
+			// Change behavior of Profile Buttons, to remove themselves
+
+		}
+		else
+		{
+			removeModeActive = false;
+			removeProfileButtonText.text = removeProfileButtonTextTemplate;
+			profileTitleText.text = profileTitleTextTemplate;
+			LoadProfileButtons();
+			finishDeletionButton.SetActive(false);
+			mainMenuButton.SetActive(true);
+		}
+
+	}
+
+	public void ProfileButtonClick(ProfileButton button)
+	{
+		if (removeModeActive)
+		{
+			profilesForRemoval.Add(button.GetID());
+			Destroy(button.gameObject);
+			Debug.Log("button with ID " + button.GetID() + " Name: " + button.GetName() + " destroyed.");
+
+		}
+		else
+		{
+			profileManager.SetCurrentProfile(button.GetID());
+			Debug.Log("ProfileID: " + button.GetID() + " Name: " + button.GetName() + " is now set as profile");
+			gameManager.ResetGame();
+
+		}
+	}
+
+	public void CompleteRemoval()
+	{
+		foreach (var id in profilesForRemoval)
+		{
+			profileManager.RemoveProfile(id);
+
+			if (id == currentProfileID)
+			{
+				profileManager.SetCurrentProfile("Gæst");
+			}
+
+		}
+		removeProfileButtonText.text = removeProfileButtonTextTemplate;
+		profileTitleText.text = profileTitleTextTemplate;
+		removeModeActive = false;
+		finishDeletionButton.SetActive(false);
+		mainMenuButton.SetActive(true);
+
+		LoadProfileButtons();
+
+	}
 
 	//public void SetCurrentName() {
 	//	currentName = setProfileNameInputField.text;
