@@ -352,7 +352,7 @@ public class GameManager : MonoBehaviour
 
 	private int ChooseLevel()
 	{
-		int count = (maximumLevel - minimumLevel) + 1;
+		int count = (maximumLevel - minimumLevel);
 		int[] randomID = Enumerable.Range(minimumLevel, count).ToArray();
 		Utils.ShuffleArray<int>(randomID);
 		int levelID = randomID[0];
