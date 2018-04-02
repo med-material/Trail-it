@@ -31,21 +31,16 @@ public class SettingsScreen : MonoBehaviour
 
     [SerializeField]
     private Image landingsbaneToggle;
-    private UnityEngine.UI.Button landingsbaneButton;
     [SerializeField]
     private Image pulseToggle;
-    private UnityEngine.UI.Button pulseButton;
     [SerializeField]
     private Image stemmeToggle;
-    private UnityEngine.UI.Button stemmeButton;
 
 	[SerializeField]
 	private GameObject gentagStemmeToggle;
-	private UnityEngine.UI.Button gentagStemmeButton;
 
 	[SerializeField]
 	private Image introToggle;
-	private UnityEngine.UI.Button introButton;
 
 	[SerializeField]
 	private Text trainingMinutes;
@@ -68,7 +63,7 @@ public class SettingsScreen : MonoBehaviour
 	private Sprite regularButtonSprite;
 
     private bool landingsbane;
-    private new bool pulse;
+    private bool pulse;
     private bool stemme;
 	private bool gentagStemme;
 	private bool intro;
@@ -81,13 +76,6 @@ public class SettingsScreen : MonoBehaviour
 	private string circleAmountNumberTemplate;
 	private string trainingMinutesTemplate;
 	private string gameType;
-
-    private void Awake()
-    {
-		landingsbaneButton = landingsbaneToggle.GetComponent<UnityEngine.UI.Button>();
-		pulseButton = pulseToggle.GetComponent<UnityEngine.UI.Button>();
-		stemmeButton = stemmeToggle.GetComponent<UnityEngine.UI.Button>();
-    }
 
     private void OnEnable()
     {
@@ -199,7 +187,7 @@ public class SettingsScreen : MonoBehaviour
 	public void TrainingTimeSlider_OnValueChanged()
 	{
 		int val = (int) trainingSlider.value;
-		if (val != null && trainingMinutesTemplate != null) {
+		if (trainingMinutesTemplate != null) {
 			trainingTime = val;
 			trainingMinutes.text = string.Format (trainingMinutesTemplate, val.ToString ());
 			SaveSettings ();
@@ -209,7 +197,7 @@ public class SettingsScreen : MonoBehaviour
 	public void CircleSlider_OnValueChanged()
 	{
 		int val = (int) circleAmountSlider.value;
-		if (val != null && circleAmountNumberTemplate != null) {
+		if (circleAmountNumberTemplate != null) {
 			difficultyLevel = val;
 			DetermineAmountOfCircles ();
 			circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString (), circleAmountMax.ToString ());

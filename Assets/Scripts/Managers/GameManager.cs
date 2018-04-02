@@ -283,7 +283,6 @@ public class GameManager : MonoBehaviour
 		sessionTimeCurrent = (levelTimeEnd - sessionTimeStart);
 		sessionTimeRemaining = (sessionLength * 60) - levelTimeEnd;
 		SetLevelCompletionTime(levelTimeEnd - levelTimeStart);
-		GameLevel gameLevel = GameObject.Find ("GameLevel").GetComponent<GameLevel> ();
 		sessionHitsTotal += levelHitsTotal;
 		sessionErrorTotal -= levelErrorsTotal;
 		levelReactionTime = levelReactionTimesList.Average(item => (float)item);
@@ -336,7 +335,6 @@ public class GameManager : MonoBehaviour
 				bestCompletionTime = levelCompletionSeconds;
 			}
 			endLevelAmount.text = string.Format (endLevelAmountTemplate, sessionHitsTotal);
-			float average = (float)levelCompletionSeconds / (float)levelHitsTotal;
 			endLevelAverage.text = string.Format (endLevelAverageTemplate, levelReactionTime.ToString("0.00"));
 		} else {
 			totalAmount.text = string.Format (totalAmountTemplate, sessionHitsTotal);
@@ -407,12 +405,11 @@ public class GameManager : MonoBehaviour
 		currentLevel = ChooseLevel();
 		gameOverlayCanvas.gameObject.SetActive(true);
 		_CurrentScene = "Level";
-		GameLevel gameLevel = GameObject.Find("GameLevel").GetComponent<GameLevel>();
 		activeLevelAssistance.resetAssistanceWasActive();
 		currentProgress += 1;
 		levelTimeStart = Time.time;
 		levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
-		gameLevel.LoadNextLevel();
+		activeLevel.LoadNextLevel();
 	}
 
 	public void GameOverlay_MainMenuButton_Click()

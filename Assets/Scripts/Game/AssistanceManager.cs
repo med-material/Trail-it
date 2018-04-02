@@ -45,7 +45,6 @@ public class AssistanceManager : MonoBehaviour {
 
 	private float toolStartTime;
 	private float repeatStartTime;
-	private float offsetStartTime;
 
 	private bool audioActive = false;
 	private bool laneActive = false;
@@ -54,7 +53,6 @@ public class AssistanceManager : MonoBehaviour {
 	private int lastStarter;
 	private int audioShots;
 	private bool assistanceWasActive = false;
-	private int currentProgress = 0;
 
 	private int currentFrame;
 	private int currentColor;
@@ -88,7 +86,6 @@ public class AssistanceManager : MonoBehaviour {
 		//mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> (); // Never used
 
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-		loggingManager = gameManager.GetComponent<LoggingManager>();
 		gameLevel = this.GetComponent<GameLevel>();
 
 		LoadPlayerPrefs ();		
@@ -340,7 +337,6 @@ public class AssistanceManager : MonoBehaviour {
 	public void ResetTimer () {
 		//Debug.Log ("ResetTimer is called");
 		toolStartTime = Time.time;
-		offsetStartTime = -1;
 		audioActive = false;
 		if (laneActive) {
 			StopLane ();

@@ -52,8 +52,6 @@ public class GameLevel : MonoBehaviour
     private bool correctingError;
     private int errorsInRow;
 
-	private bool withinTrainingTime = true;
-
     //private bool levelComplete = false; // Assigned to but never used
     //private float completionTime; Never used
 
@@ -64,12 +62,11 @@ public class GameLevel : MonoBehaviour
     private AudioSource errorSound;
 
     private AssistanceManager assistanceManager;
-    private LoggingManager loggingManager;
 
     public static bool _DidInit = false;
 
     [Range(0.001f, 1.0f)]
-    public float TargetSpawnDelay = 0.01f;
+    public float TargetSpawnDelay = 0.015f;
 
     [SerializeField]
     private AudioClip[] spawnTargetsSounds; 
@@ -82,7 +79,6 @@ public class GameLevel : MonoBehaviour
             return;
 
         gameManager = gm;
-        loggingManager = gm.GetComponent<LoggingManager>();
         assistanceManager = this.GetComponent<AssistanceManager>();
 
         // Audio source for spawning targets
@@ -288,11 +284,6 @@ public class GameLevel : MonoBehaviour
         }
         return typeHit;
     }
-
-	public void SetWithinTrainingTime(bool inputValue)
-	{
-		withinTrainingTime = inputValue;
-	}
 
     public void LoadNextLevel()
     {

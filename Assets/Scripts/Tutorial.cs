@@ -26,7 +26,6 @@ public class Tutorial : MonoBehaviour {
 	public float handStillTime;
 	public LineDrawer lineDrawer;
 
-	private LoggingManager loggingManager;
 	private GameManager gameManager;
 	private bool gameA;
 	private string gameType;
@@ -92,7 +91,6 @@ public class Tutorial : MonoBehaviour {
 	public void Init (GameManager gm) {
 
 		gameManager = gm;
-		loggingManager = gm.gameObject.GetComponent<LoggingManager>();
 
 		mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> ();
 

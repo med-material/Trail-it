@@ -21,7 +21,6 @@ public class ProfileScreen : MonoBehaviour {
 	private Transform parentTransform;
 
 	private string currentProfileID = "Gæst";
-	private string currentName;
 
 	private List<GameObject> profileButtons;
 
@@ -34,7 +33,6 @@ public class ProfileScreen : MonoBehaviour {
 	void Awake() {
 
 		profileButtons = new List<GameObject>();
-		currentName = profileManager.GetCurrentName ();
 		currentProfileID = profileManager.GetCurrentProfileID ();
 	}
 
@@ -70,7 +68,6 @@ public class ProfileScreen : MonoBehaviour {
 
 			if (profileID == currentProfileID) {
 				newProfile.GetComponent<Image> ().sprite = currentProfileSprite;
-				currentName = name;
 			}
 		}
 
