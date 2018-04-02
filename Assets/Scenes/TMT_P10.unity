@@ -1708,8 +1708,6 @@ GameObject:
   - component: {fileID: 235454364}
   - component: {fileID: 235454365}
   - component: {fileID: 235454368}
-  - component: {fileID: 235454366}
-  - component: {fileID: 235454369}
   - component: {fileID: 235454370}
   - component: {fileID: 235454371}
   - component: {fileID: 235454372}
@@ -1749,6 +1747,8 @@ MonoBehaviour:
   loggingManager: {fileID: 235454368}
   mainMenuScreen: {fileID: 2031854039}
   profileManager: {fileID: 235454372}
+  activeLevel: {fileID: 808461630}
+  activeLevelAssistance: {fileID: 36167942}
   allLevelsA:
   - {fileID: 4900000, guid: afcc34514622fd444ba80fbbacd30406, type: 3}
   - {fileID: 4900000, guid: 6b214256fd0530d44910251168573641, type: 3}
@@ -1819,24 +1819,7 @@ MonoBehaviour:
   bestCompletionTimeText: {fileID: 1232901663}
   reactionTimeRightText: {fileID: 742334084}
   reactionTimeLeftText: {fileID: 1536379266}
-  SkipTutorial: 1
-  IsGuest: 1
   LD: {fileID: 1864533673}
-  activeLevel: {fileID: 808461630}
-  activeLevelAssistance: {fileID: 36167942}
---- !u!114 &235454366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 235454363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09c820df0ac19974587f79484443cf8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  totalSessionTime: 8
-  resetTime: 20
 --- !u!114 &235454368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1851,17 +1834,6 @@ MonoBehaviour:
   assistanceManager: {fileID: 36167942}
   mySQL: {fileID: 235454371}
   profileManager: {fileID: 235454372}
---- !u!114 &235454369
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 235454363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d875fa0612697a24ab57ac19627826b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &235454370
 MonoBehaviour:
   m_ObjectHideFlags: 0
