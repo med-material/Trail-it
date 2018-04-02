@@ -192,7 +192,6 @@ public class GameManager : MonoBehaviour
 
 	public void Update()
 	{
-
 		Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
 		if (_CurrentScene == "Level")
 		{

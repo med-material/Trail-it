@@ -60,6 +60,7 @@ public class GameLevel : MonoBehaviour
 
     private AudioSource correctSound;
     private AudioSource errorSound;
+	private AudioSource spawnSound;
 
     private AssistanceManager assistanceManager;
 
@@ -71,19 +72,17 @@ public class GameLevel : MonoBehaviour
     [SerializeField]
     private AudioClip[] spawnTargetsSounds; 
 
-    private AudioSource audioSource; 
-
     public void Init(GameManager gm)
     {
         if (_DidInit)
             return;
-
+		Debug.Log("initing..");
         gameManager = gm;
         assistanceManager = this.GetComponent<AssistanceManager>();
 
-        // Audio source for spawning targets
-        audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.playOnAwake = false; 
+		spawnSound = gameObject.AddComponent<AudioSource>();
+		spawnSound.clip = spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)];
+		spawnSound.playOnAwake = false;
        
 		Debug.Log ("gameLevel init: LoadLevel");
         LoadLevel();
@@ -367,7 +366,7 @@ public class GameLevel : MonoBehaviour
 
         currentTarget = 0;
         lastValid = currentTarget;
-
+		spawnSound.clip = spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)];
         StartCoroutine(SpawnTargets(targetObjects));
     }
 
@@ -377,8 +376,8 @@ public class GameLevel : MonoBehaviour
 
         GameObject[] sorted = objsToSpawn;
 
-        //Array.Sort(sorted, delegate (GameObject x, GameObject y) { return x.transform.position.x.CompareTo(y.transform.position.x); });
-		audioSource.PlayOneShot(spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)]);
+		//Array.Sort(sorted, delegate (GameObject x, GameObject y) { return x.transform.position.x.CompareTo(y.transform.position.x); });
+		spawnSound.Play();
         for (int i = 0; i < sorted.Length; i++)
         {
             //if (i % 2 == 0)
