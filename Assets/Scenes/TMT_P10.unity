@@ -5538,7 +5538,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Remove Profile
+  m_Text: Fjern Profil
 --- !u!222 &657884725
 CanvasRenderer:
   m_ObjectHideFlags: 0
