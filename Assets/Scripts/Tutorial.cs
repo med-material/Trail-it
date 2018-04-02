@@ -282,11 +282,10 @@ public class Tutorial : MonoBehaviour {
 		b2Sound.Stop();
 		hand.transform.position = new Vector3(0, -5, 0);
 		hand.GetComponent<Renderer> ().enabled = false; 
-		gameManager.SetNextLevel (gameManager.GetProgressA());
 		phase2Menu.SetActive (true);
 		phase1A.SetActive (false);
 		phase1B.SetActive (false);
-		gameManager.LoadNextLevel ();
+		gameManager.StartGame();
 	}
 
 	private void RunGame() {
@@ -306,13 +305,13 @@ public class Tutorial : MonoBehaviour {
 					if(hit == currentTarget) {
 
 						if(hit == targets.Length-1){
-							loggingManager.WriteLog("Target Hit - Level Complete");
+							//loggingManager.WriteLog("Target Hit - Level Complete");
 							completionTime = Time.time;
 							delay = true;
 							stage++;
 						}
 						else {
-							loggingManager.WriteLog("Target Hit");
+							//loggingManager.WriteLog("Target Hit");
 						}
 						
 						for(int i = hit + 1; i < targets.Length; i++)
@@ -331,14 +330,14 @@ public class Tutorial : MonoBehaviour {
 					}
 					else if(hit == lastValid) {
 
-						loggingManager.WriteLog("LastValid Hit");
+						//loggingManager.WriteLog("LastValid Hit");
 						correctingError = false;
 						errorsInRow = 0;
 						correctSound.Play();
 					}
 					else if(hit < lastValid) {
 
-						loggingManager.WriteLog("Backtracking");
+						//loggingManager.WriteLog("Backtracking");
 
 						for(int i = hit + 1; i < targets.Length; i++)
 							targets[i].SetWhite();
@@ -354,7 +353,7 @@ public class Tutorial : MonoBehaviour {
 					}
 					else if(hit > currentTarget) {
 
-						loggingManager.WriteLog("Wrong Target Hit");
+						//loggingManager.WriteLog("Wrong Target Hit");
 
 						targets[hit].SetRed();
 						targets[hit].TurnLight();

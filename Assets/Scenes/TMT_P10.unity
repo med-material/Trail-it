@@ -1848,6 +1848,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7593cb7069cc0147af4ea58fa56dea0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  assistanceManager: {fileID: 36167942}
   mySQL: {fileID: 235454371}
   profileManager: {fileID: 235454372}
 --- !u!114 &235454369
@@ -4318,7 +4319,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 235454365}
         m_MethodName: StartGame
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

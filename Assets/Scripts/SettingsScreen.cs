@@ -108,7 +108,6 @@ public class SettingsScreen : MonoBehaviour
 		}
 		trainingSlider.value = (float) trainingTime;
 		circleAmountSlider.value = (float) difficultyLevel;
-		Debug.Log ("Setting slider text");
 		if (trainingMinutesTemplate == null) {
 			
 			trainingMinutesTemplate = trainingMinutes.text;
@@ -121,7 +120,6 @@ public class SettingsScreen : MonoBehaviour
     }
 
 	private void DetermineAmountOfCircles () {
-		Debug.Log ("Determining amount of cirlces");
 		switch(difficultyLevel) {
 		case 1:
 			circleAmountMin = 10;
@@ -154,11 +152,11 @@ public class SettingsScreen : MonoBehaviour
 			break;
 		case 3:
 			minimumLevel = 18;
-			minimumLevel = 27;
+			maximumLevel = 27;
 			break;
 		default:
 			minimumLevel = 1;
-			minimumLevel = 2;
+			maximumLevel = 2;
 			break;
 		}		
 	}
@@ -240,7 +238,6 @@ public class SettingsScreen : MonoBehaviour
     public void LoadSettings()
     {
 		string currentProfileID = profileManager.GetCurrentProfileID();
-		Debug.Log ("Loading Settings for id " + currentProfileID);
 
         landingsbane = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1;
         pulse = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
@@ -252,7 +249,6 @@ public class SettingsScreen : MonoBehaviour
 		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
 		DetermineMinMaxLevel();
 		DetermineAmountOfCircles ();
-		Debug.Log ("AmountOfCircles: " + circleAmountMin + "-" + circleAmountMax);
     }
 
     /// <summary>
@@ -261,7 +257,6 @@ public class SettingsScreen : MonoBehaviour
     public void SaveSettings()
     {
 		string currentProfileID = profileManager.GetCurrentProfileID();
-		Debug.Log ("Saving Settings for id " + currentProfileID);
 
         PlayerPrefs.SetInt("Settings:"+currentProfileID +":Landingsbane", landingsbane ? 1 : 0);
 		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Pulse", pulse ? 1 : 0);

@@ -53,6 +53,8 @@ public class AssistanceManager : MonoBehaviour {
 	private bool oneShot = false;
 	private int lastStarter;
 	private int audioShots;
+	private bool assistanceWasActive = false;
+	private int currentProgress = 0;
 
 	private int currentFrame;
 	private int currentColor;
@@ -63,7 +65,6 @@ public class AssistanceManager : MonoBehaviour {
 
 	private GameLevel gameLevel;
 	private GameManager gameManager;
-	private SettingsManager settingsManager;
 	private LoggingManager loggingManager;
 
 	private bool pulseOn = false;
@@ -71,7 +72,6 @@ public class AssistanceManager : MonoBehaviour {
 	private bool laneOn = false;
 
 	private int toolsOn;
-	private int orderRow;
 	private int orderColumn;
 	private int[,] orderMatrix;
 	private string[] orderStrings;
@@ -88,7 +88,6 @@ public class AssistanceManager : MonoBehaviour {
 		//mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> (); // Never used
 
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-		settingsManager = gameManager.GetComponent<SettingsManager> ();
 		loggingManager = gameManager.GetComponent<LoggingManager>();
 		gameLevel = this.GetComponent<GameLevel>();
 
@@ -123,7 +122,6 @@ public class AssistanceManager : MonoBehaviour {
 		}
 
 		gameType = gameManager.GetGameType ();
-		orderRow = gameManager.GetOrderRow ();
 
 		voice = gameObject.AddComponent<AudioSource>();
 		voice.playOnAwake = false;
@@ -144,7 +142,6 @@ public class AssistanceManager : MonoBehaviour {
 		//laneType = settingsManager.GetSetting (Settings.LaneType);
 
 		gameType = gameManager.GetGameType ();
-		orderRow = gameManager.GetOrderRow ();
 
 		if(pulseOn)
 			toolsOn++;
@@ -159,7 +156,6 @@ public class AssistanceManager : MonoBehaviour {
 
 		if (gameManager.GetLevelActive ()) {
 			if (toolsOn > 0 && Time.time - toolStartTime > toolDelay) {
-
 				if (currentTarget == null) {
 					currentTarget = gameLevel.GetCurrentTarget ();
 				}
@@ -186,14 +182,24 @@ public class AssistanceManager : MonoBehaviour {
 
 				if (laneOn && !laneActive) {
 					ActivateLane ();
-					//currentFrame = (int)(Time.time * laneFramerate) % arrowColors.Length;
 				}
 
-				// removed a big chunk of code here that we do not use. Go find it in P8 folder if you really need it.
+				assistanceWasActive = true;
+
 			}
 		} else {
-			ResetTimer ();
+			ResetTimer();
 		}
+	}
+
+	public void resetAssistanceWasActive()
+	{
+		assistanceWasActive = false;
+	}
+
+	public bool GetAssistanceWasActive()
+	{
+		return assistanceWasActive;
 	}
 
 	private void ActivateAudio () {
@@ -215,7 +221,7 @@ public class AssistanceManager : MonoBehaviour {
 
 		audioShots++;
 
-		loggingManager.WriteLog ("Voice Activated");
+		//loggingManager.WriteLog ("Voice Activated");
 	}
 
 	private void ActivateLane () {
@@ -235,7 +241,7 @@ public class AssistanceManager : MonoBehaviour {
 
 		//targetX = mainCam.WorldToScreenPoint (new Vector3 (currentTarget.GetX (), 0, 0)).x / Screen.width * nativeWidth; // Assigned to butn never used
 		StartLane();
-		loggingManager.WriteLog ("Lane Activated");
+		//loggingManager.WriteLog ("Lane Activated");
 		//Debug.Log ("Lane Activated");
 	}
 
@@ -245,7 +251,7 @@ public class AssistanceManager : MonoBehaviour {
 
 		currentTarget.PlayPulse();
 
-		loggingManager.WriteLog ("Pulse Activated");
+		//loggingManager.WriteLog ("Pulse Activated");
 	}
 
 	private void StartLane () {
@@ -346,14 +352,7 @@ public class AssistanceManager : MonoBehaviour {
 		audioShots = 0;
 
 		if(orderColumn > 0) {
-
 			orderColumn = 0;
-			orderRow++;
-
-			if(orderRow >= 6)
-				orderRow = 0;
-
-			gameManager.SetOrderRow (orderRow);
 		}
 
 		if(currentTarget != null) {

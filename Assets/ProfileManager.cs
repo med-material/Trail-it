@@ -27,11 +27,9 @@ public class ProfileManager : MonoBehaviour {
 		} else {
 			profiles.Add (profileString);
 		}
-		Debug.Log("Profiles loaded: " + (profiles.Count).ToString());
 
 		currentProfileID = PlayerPrefs.GetString ("Settings:CurrentProfileID", "Gæst");
 		SetCurrentProfile (currentProfileID);
-		Debug.Log ("Current Profile ID Loaded: " + currentProfileID);
 
 	}
 
@@ -110,10 +108,8 @@ public class ProfileManager : MonoBehaviour {
 
 	public void SaveProfiles()
 	{
-		Debug.Log ("Saving Profiles..");
 		string[] profileArray = profiles.ToArray ();
 		string profileString = string.Join (sep, profileArray);
-		Debug.Log (profileString);
 		PlayerPrefs.SetString ("Settings:ProfileIDs", profileString);
 		PlayerPrefs.SetString ("Settings:CurrentProfileID", currentProfileID);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Name", currentName);

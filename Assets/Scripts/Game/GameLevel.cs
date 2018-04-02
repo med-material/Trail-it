@@ -51,9 +51,9 @@ public class GameLevel : MonoBehaviour
     private int lastValid;
     private bool correctingError;
     private int errorsInRow;
-	private int errorTotal = 0;
-	public bool shouldCountTotal = true;
-	private int countTotal = 0;
+
+	private bool withinTrainingTime = true;
+
     //private bool levelComplete = false; // Assigned to but never used
     //private float completionTime; Never used
 
@@ -65,9 +65,6 @@ public class GameLevel : MonoBehaviour
 
     private AssistanceManager assistanceManager;
     private LoggingManager loggingManager;
-
-    private float startTime;
-    public float StartTime { get { return startTime; } }
 
     public static bool _DidInit = false;
 
@@ -133,76 +130,86 @@ public class GameLevel : MonoBehaviour
                     //currentTarget = lastValid;
                     outset = hit;
                     errorsInRow++;
-					if (errorsInRow == 1) {
-						errorTotal++;
-						print ("incrementing errorTotal");
-					}
                     correctingError = true;
                     errorSound.Play();
-
-                    for (int i = 0; i < targets.Length; i++)
-                    {
-                        if (!targets[i].IsRed() && i != currentTarget)
-                            targets[i].TurnDark();
-                    }
-                    for (int i = 0; i < obstacles.Length; i++)
-                        if (!obstacles[i].IsRed())
-                            obstacles[i].TurnDark();
-					loggingManager.WriteLog("Obstacle Hit");
+					if (targets != null)
+					{
+						for (int i = 0; i < targets.Length; i++)
+						{
+							if (!targets[i].IsRed() && i != currentTarget)
+								targets[i].TurnDark();
+						}
+					}
+					if (obstacles != null)
+					{
+						for (int i = 0; i < obstacles.Length; i++)
+						{
+							if (!obstacles[i].IsRed())
+								obstacles[i].TurnDark();
+						}
+					}
+					//loggingManager.WriteLog("Obstacle Hit");
                 }
                 else
                 {
                     if (hit == currentTarget)
                     {
-						for (int i = 0; i < targets.Length; i++) {
-							if (i > (hit)) {
-								targets [i].SetWhite ();
-							} else if (targets [i].IsRed ()) {
-								targets [i].SetGreen ();
+						if (targets != null)
+						{
+							for (int i = 0; i < targets.Length; i++)
+							{
+								if (i > (hit))
+								{
+									targets[i].SetWhite();
+								}
+								else if (targets[i].IsRed())
+								{
+									targets[i].SetGreen();
+								}
 							}
+
+							for (int i = 0; i < targets.Length; i++)
+							{
+								targets[i].TurnLight();
+							}
+
+							targets[lastValid].SetGreen();
+							targets[hit].SetGreenOutline();
+							outset = currentTarget;
+							lastValid = currentTarget;
+
+							correctingError = false;
+							errorsInRow = 0;
+							correctSound.Play();
+
+							if (hit == targets.Length - 1)
+							{
+								//loggingManager.WriteLog("Target Hit - Level Complete");
+								typeHit = HitType.TargetHitLevelComplete;
+							}
+							else
+							{
+								//loggingManager.WriteLog("Target Hit");
+								typeHit = HitType.TargetHit;
+							}
+
 						}
 
-                        for (int i = 0; i < targets.Length; i++)
-							targets[i].TurnLight();
                         if (obstacles != null)
                         {
-                            for (int i = 0; i < obstacles.Length; i++)
+							for (int i = 0; i < obstacles.Length; i++)
                             {
                                 obstacles[i].SetWhite();
                                 obstacles[i].TurnLight();
 							}
                         }
 
-                        targets[lastValid].SetGreen();
-                        targets[hit].SetGreenOutline();
-                        outset = currentTarget;
-                        lastValid = currentTarget;
-
-						correctingError = false;
-                        errorsInRow = 0;
-                        correctSound.Play();
-
-						if (hit == targets.Length - 1)
-						{
-							loggingManager.WriteLog("Target Hit - Level Complete");
-							typeHit = HitType.TargetHitLevelComplete;
-						}
-						else
-						{
-							loggingManager.WriteLog("Target Hit");
-							typeHit = HitType.TargetHit;
-						}
-
 						currentTarget++;
-						if (shouldCountTotal) {
-							countTotal++;
-							//print ("countTotal: " + countTotal);
-						}
 
                     }
                     else if (hit == lastValid)
                     {
-                        loggingManager.WriteLog("LastValid Hit");
+                        //loggingManager.WriteLog("LastValid Hit");
                         typeHit = HitType.LastValidHit;
 
                         correctingError = false;
@@ -251,7 +258,7 @@ public class GameLevel : MonoBehaviour
 					else //if (hit > currentTarget || hit < lastValid)
                     {
 
-                        loggingManager.WriteLog("Wrong Target Hit");
+                        //loggingManager.WriteLog("Wrong Target Hit");
                         typeHit = HitType.WrongTargetHit;
 
                         targets[hit].SetRed();
@@ -260,10 +267,6 @@ public class GameLevel : MonoBehaviour
                         outset = hit;
                         correctingError = true;
                         errorsInRow++;
-						if (errorsInRow == 1) {
-							errorTotal++;
-							//print ("incrementing errorTotal");
-						}
                         errorSound.Play();
 
                         for (int i = 0; i < targets.Length; i++)
@@ -286,41 +289,21 @@ public class GameLevel : MonoBehaviour
         return typeHit;
     }
 
+	public void SetWithinTrainingTime(bool inputValue)
+	{
+		withinTrainingTime = inputValue;
+	}
+
     public void LoadNextLevel()
     {
         LoadLevel();
-        //levelComplete = false; // Assigned to but never used
     }
-
-	public static void ShuffleArray<T>(T[] arr) {
-		for (int i = arr.Length - 1; i > 0; i--) {
-			int r = UnityEngine.Random.Range(0, i);
-			T tmp = arr[i];
-			arr[i] = arr[r];
-			arr[r] = tmp;
-		}
-	}
-		
-	public static void Shuffle<T>(IList<T> list)  
-	{  
-		System.Random rng = new System.Random();
-		int n = list.Count;  
-		while (n > 1) {  
-			n--;  
-			int k = rng.Next(n + 1);  
-			T value = list[k];  
-			list[k] = list[n];  
-			list[n] = value;  
-		}  
-	}
-
 
     private void LoadLevel()
     {
         camTransform = GameObject.Find("Main Camera").transform;
         mainCam = camTransform.GetComponent<Camera>();
-		errorTotal = 0;
-		countTotal = 0;
+		Debug.Log("LoadLevel called");
 		if (gameManager == null) {
 			return;
 		}
@@ -331,7 +314,6 @@ public class GameLevel : MonoBehaviour
         camTransform.position = new Vector3(float.Parse(levelData[0]), float.Parse(levelData[1]), float.Parse(levelData[2]));
         mainCam.orthographicSize = float.Parse(levelData[3]);
 
-
         if (targetObjects != null && targetObjects.Length > 0)
         {
             DestroyLevel();
@@ -341,6 +323,7 @@ public class GameLevel : MonoBehaviour
 
         targetObjects = new GameObject[int.Parse(levelData[4])];
         targets = new Target[targetObjects.Length];
+		obstacles = null;
 
 		int[] randomID = Enumerable.Range(0, targetObjects.Length).ToArray();
 		List<int> randomLevel = new List<int>();
@@ -348,21 +331,13 @@ public class GameLevel : MonoBehaviour
 		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
 		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
 		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
-		/*Debug.Log("inital level = " +String.Join("",
-			new List<int>(randomID)
-			.ConvertAll(i => i.ToString())
-			.ToArray()));*/
-		ShuffleArray<int>(randomID);
-		Shuffle<int>(randomLevel);
-		/*Debug.Log("shuffled level = " +String.Join("",
-			new List<int>(randomID)
-			.ConvertAll(i => i.ToString())
-			.ToArray()));*/
+		Utils.ShuffleArray<int>(randomID);
+		Utils.Shuffle<int>(randomLevel);
+
         for (int j = 0; j < targetObjects.Length; j++)
         {
 			int i = randomID [j];
 			int k = randomLevel [j];
-			//Debug.Log (" k is: " + k);
             targetObjects[i] = (GameObject)Instantiate(targetPrefab, new Vector3(float.Parse(levelData[j * 6 + 5]), float.Parse(levelData[j * 6 + 6]), float.Parse(levelData[j * 6 + 7])), Quaternion.identity);
             targetObjects[i].transform.localScale = new Vector3(float.Parse(levelData[j * 6 + 8]), float.Parse(levelData[j * 6 + 9]), float.Parse(levelData[j * 6 + 10]));
 			targetObjects[i].transform.parent = gameCanvas.transform;
@@ -403,8 +378,6 @@ public class GameLevel : MonoBehaviour
         lastValid = currentTarget;
 
         StartCoroutine(SpawnTargets(targetObjects));
-
-        StartLevelTimer();
     }
 
     IEnumerator SpawnTargets(GameObject[] objsToSpawn)
@@ -433,18 +406,17 @@ public class GameLevel : MonoBehaviour
 		if (targetObjects != null) {
 			for (int i = 0; i < targetObjects.Length; i++) {
 				Destroy (targetObjects [i]);
-				targets [i] = null;
 			}
 		}
 
-		if (obstacleObjects == null)
-            return;
+		if (obstacleObjects != null)
+		{
+			for (int i = 0; i < obstacleObjects.Length; i++)
+			{
+				Destroy(obstacleObjects[i]);
+			}
+		}
 
-        for (int i = 0; i < obstacleObjects.Length; i++)
-        {
-            Destroy(obstacleObjects[i]);
-            obstacles[i] = null;
-        }
     }
 
     public void ReloadLevel()
@@ -457,12 +429,6 @@ public class GameLevel : MonoBehaviour
     {
         return targets[currentTarget];
     }
-
-	public int GetErrorTotal()
-	{
-
-		return errorTotal;
-	}
 
     public int GetCurrent()
     {
@@ -480,16 +446,6 @@ public class GameLevel : MonoBehaviour
         return lastValid;
     }
 
-	public int GetTotalCount()
-	{
-		//int total = 0;
-		//if (targets != null)
-		//	total += targets.Length;
-		//if (obstacles != null)
-		//	total += obstacles.Length;
-		return countTotal;
-	}
-
     public int GetOutset()
     {
 
@@ -499,17 +455,6 @@ public class GameLevel : MonoBehaviour
     {
 
         return correctingError;
-    }
-
-    public void StartLevelTimer()
-    {
-        startTime = Time.time;
-    }
-
-    public float GetGameTime()
-    {
-
-        return Time.time - startTime;
     }
 
     public int GetErrorsInRow()

@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	public ProfileManager profileManager;
 
+	public GameLevel activeLevel;
+	public AssistanceManager activeLevelAssistance;
+
 	public TextAsset[] allLevelsA;
     public TextAsset[] allLevelsB;
 
@@ -25,34 +28,59 @@ public class GameManager : MonoBehaviour
     //private int userID;
     private bool gameA;
 	private string gameType;
-    private int nextLevel;
+	private bool tutorialSeen = false;
     //private int progressA;
     //private int progressB;
     //private int orderRow;
     //private bool tutorialASeen = false;
     //private bool tutorialBSeen = false;
     private float levelCompletionTime = -1;
-	private float startGameTime = -1;
-	private float startLevelTime = -1;
 	private float lastHitTime = -1;
-	private float sessionTime = 0;
 	private bool sessionActive = true;
 	private bool levelActive = false;
-	private int amountOfTargets = -1;
-	private int totalTargets = 0;
-	private int levelErrors = 0;
-	private int totalErrors = 0;
 	private float pauseTime = 0;
 	private bool intro = false;
 	private int minimumLevel = 7;
 	private int maximumLevel = 12;
-
-    private PlayerData playerDat;
+	private int currentProgress = 0;
 
     private InputHandler input;
+
+	// Counters for Statistics
+
+	// Per-Level Counters 
+	private int levelHitsTotal = 0;
+	private int levelHitsLeft = 0;
+	private int levelHitsRight = 0;
+
+	private int levelErrorsTotal = 0;
+	private int levelErrorsLeft = 0;
+	private int levelErrorsRight = 0;
+
+	private List<float> levelReactionTimesList = new List<float>();
+	private List<float> levelReactionTimesLeftList = new List<float>();
+	private List<float> levelReactionTimesRightList = new List<float>();
+	private float levelReactionTime = 0.0f;
+	private float levelReactionTimeLeft = 0.0f;
+	private float levelReactionTimeRight = 0.0f;
+
+	private float levelTimeStart = -1;		 // used for calculations (Time.time based)
+	private float levelTimeEnd = -1;		 // used for calculations (Time.time based)
+	private string levelTimestampStart = ""; // used for logging (System.Datetime.now based)
+	private string levelTimestampEnd = "";   // used for logging (System.Datetime.now based)
+
+	// Per-Training-Session Counters
+	// TODO: Do we need these to be static? Think, if game pauses.
 	float bestCompletionTime = 0.0f;
 	private List<float> HitTimeLeft = new List<float>();
 	private List<float> HitTimeRight = new List<float>();
+	private int sessionHitsTotal = 0;
+	private int sessionErrorTotal = 0;
+
+	private int sessionLength;
+	private float sessionTimeStart = -1;
+	private float sessionTimeCurrent = -1; 		// current time formatted in seconds
+	private float sessionTimeRemaining = -1;	// remaining time formatted in seconds
 
     // Canvas Stuff
     [SerializeField]
@@ -83,10 +111,6 @@ public class GameManager : MonoBehaviour
 	private Text reactionTimeRightText;
 	[SerializeField]
 	private Text reactionTimeLeftText;
-	//[SerializeField]
-	//private Text levelErrorsText;
-	//[SerializeField]
-	//private Text totalErrorsText;
 	private string endLevelTimeTemplate;
 	private string endLevelAmountTemplate;
 	private string endLevelAverageTemplate;
@@ -94,26 +118,18 @@ public class GameManager : MonoBehaviour
 	private string bestCompletionTimeTemplate;
 	private string reactionTimeRightTemplate;
 	private string reactionTimeLeftTemplate;
-	//private string levelErrorsTemplate;
-	//private string totalErrorsTemplate;
-	private int sessionLength;
 
 
     // Since we're doing everything in one scene now, we're just adding this to figure out 
     // the state we're in. 
     public static string _CurrentScene = "";
 
-    // Can be set in the inspector in case you don't want to finish the Tutorial
-    public bool SkipTutorial = false;
-    public bool IsGuest = true;
-
     public LineDrawer LD;
 
-    // Use this for initialization
     void Start()
     {
 		GameLevel._DidInit = false;
-        // Get template string for end level message
+
 		endLevelTimeTemplate = endLevelTime.text;
 		endLevelAmountTemplate = endLevelAmount.text;
 		endLevelAverageTemplate = endLevelAverage.text;
@@ -121,41 +137,12 @@ public class GameManager : MonoBehaviour
 		bestCompletionTimeTemplate = bestCompletionTimeText.text;
 		reactionTimeLeftTemplate = reactionTimeLeftText.text;
 		reactionTimeRightTemplate = reactionTimeRightText.text;
-		//levelErrorsTemplate = levelErrorsText.text;
-		//totalErrorsTemplate = totalErrorsText.text;
 
         input = gameObject.AddComponent<InputHandler>();
 
         LoadPlayerPrefs();
 
-		playerDat.progressA = 0;
-		PlayerPrefs.SetInt("progressA", playerDat.progressA);
-
-		playerDat.progressB = 0;
-		PlayerPrefs.SetInt("progressB", playerDat.progressB);
-
-		playerDat.tutorialASeen = false;
-		PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
-
-		playerDat.tutorialBSeen = false;
-		PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
-
-		playerDat.orderRow = 0;
-		PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
-
-        //DontDestroyOnLoad (this); // Technically not needed anymore. 
-
-        if (IsGuest)
-            SetPlayer(false); // Sets player to guest if IsGuest is set in the inspector.
-
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-    }
-
-    public void GameOverlay_MainMenuButton_Click()
-    {
-        menuCanvas.gameObject.SetActive(true);
-        gameOverlayCanvas.gameObject.SetActive(false);
-		TimerPause ();
     }
 
     public void LoadPlayerPrefs()
@@ -169,187 +156,144 @@ public class GameManager : MonoBehaviour
    
     }
 
-    public void SavePlayerPrefs()
-    {
-        PlayerPrefs.SetInt("userID", playerDat.userID);
-        PlayerPrefs.SetInt("progressA", playerDat.progressA);
-        PlayerPrefs.SetInt("progressB", playerDat.progressB);
-        PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
-        PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
-        PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
-    }
-
-    public void SetPlayer(bool inputPlayer)
-    {
-        //TODO: Redo this so we don't use the setter to go to menu. 
-        player = inputPlayer;
-        setupCanvas.gameObject.SetActive(false);
-        menuCanvas.gameObject.SetActive(true);
-    }
-    public bool GetPlayer()
-    {
-
-        return player;
-    }
-
-    public void StartGame(bool isGameTypeA)
+    public void StartGame()
     {
 		LoadPlayerPrefs ();
-		//TODO: Insert: 	       else
-				//loggingManager.WriteLog ("Guest Profile Selected");
 
 		levelActive = true;
         gameOverlayCanvas.gameObject.SetActive(true);
 
-		if (intro) {//playerDat.tutorialASeen || SkipTutorial)
-			GameObject tutObj = Instantiate (Resources.Load ("Tutorial/Tutorial")) as GameObject;
-			tutObj.GetComponent<Tutorial> ().Init (this);
+		if (intro && !tutorialSeen)
+		{
+			GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject;
+			tutObj.GetComponent<Tutorial>().Init(this);
 			tutObj.name = "Tutorial";
 			_CurrentScene = "Tutorial";
-			Debug.Log ("Load tutorial"); 
-			//SetTutorialASeen(true);
-		} else {
-			startGameTime = Time.time;
-			SetNextLevel(GetProgressA()); // GetProgressA()
-			LoadNextLevel();
+			tutorialSeen = true;
+		} else
+		{
+			sessionTimeStart = Time.time;
+			levelTimeStart = sessionTimeStart;
+			levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
+
+			currentLevel = ChooseLevel();
+			currentProgress += 1;
+
+			if (!GameLevel._DidInit)
+			{
+				GameObject.Find("GameLevel").GetComponent<GameLevel>().Init(this);
+				_CurrentScene = "Level";
+			}
+
 		}
 
 		menuCanvas.gameObject.SetActive(false);
-
-        /*if (isGameTypeA)
-        {
-			
-        }
-        else
-        {
-            if (playerDat.tutorialBSeen || SkipTutorial)
-            {
-                Debug.Log("Load level select for type B");
-                SetNextLevel(0);
-                LoadNextLevel();
-				startGameTime = Time.time;
-            }
-            else
-            {
-                Debug.Log ("Load tutorial for type B"); 
-                GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject;
-                tutObj.GetComponent<Tutorial>().Init(this);
-                tutObj.name = "Tutorial";
-                _CurrentScene = "Tutorial";
-                SetTutorialBSeen(true);
-            }
-        }*/
     }
 
-    public GameLevel activeLevel;
-	public AssistanceManager activeLevelAssistance;
-
-    public void Update()
-    {
+	public void Update()
+	{
 
 		Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
-        if (_CurrentScene == "Level")
-        {
-            if (input.TouchDown)
-            {
-                LD.StartLine(input.TouchPos);
-            }
-
-			if (Time.time - startGameTime > sessionLength * 60 && sessionActive) {
-				activeLevel.shouldCountTotal = false;
+		if (_CurrentScene == "Level")
+		{
+			if (input.TouchDown)
+			{
+				LD.StartLine(input.TouchPos);
 			}
 
-            if (input.TouchActive)
-            {
-                HitType hitType = activeLevel.AttemptHit(input.TouchPos);
-				Debug.Log (input.TouchPos);
-				Debug.Log (hitType);
-                LD.DrawLine(input.TouchPos, hitType);
-				if (hitType == HitType.TargetHit) {
+			if (input.TouchActive)
+			{
+				HitType hitType = activeLevel.AttemptHit(input.TouchPos);
+				LD.DrawLine(input.TouchPos, hitType);
+				if (hitType == HitType.TargetHit)
+				{
 					float time = Time.time;
 
-					if (lastHitTime == -1) {
-						Debug.Log ("initializing lastHitTime!");
-						lastHitTime = startLevelTime;
+					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
+					{
+						if (lastHitTime == -1)
+						{
+							lastHitTime = levelTimeStart;
+						}
+
+						levelHitsTotal += 1;
+						levelReactionTimesList.Add(Time.time - lastHitTime);
+
+						if (input.TouchPos.x > 0)
+						{
+							HitTimeRight.Add(Time.time - lastHitTime);
+							levelReactionTimesRightList.Add(Time.time - lastHitTime);
+							levelHitsRight++;
+						}
+						else
+						{
+							HitTimeLeft.Add(Time.time - lastHitTime);
+							levelReactionTimesLeftList.Add(Time.time - lastHitTime);
+							levelHitsLeft++;
+						}
+
+						lastHitTime = Time.time;
+					}
+				} 
+				else if (hitType == HitType.TargetHitLevelComplete)
+				{
+					LevelEnded();
+				} 
+				else if (hitType == HitType.WrongTargetHit)
+				{
+					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
+					{
+						levelErrorsTotal++;
 					}
 
-					if (input.TouchPos.x > 0) {
-						Debug.Log ("Adding HitTime " + (Time.time - lastHitTime).ToString() + " to HitTimeRight!");
-						HitTimeRight.Add (Time.time - lastHitTime);
-					} else {
-						Debug.Log ("Adding HitTime " + (Time.time - lastHitTime).ToString() + " to HitTimeLeft!");
-						HitTimeLeft.Add (Time.time - lastHitTime);
+					if (input.TouchPos.x > 0)
+					{
+						levelErrorsRight++;
 					}
-					lastHitTime = Time.time;
-
+					else
+					{
+						levelErrorsLeft++;
+					}
 				}
-                //TODO: Write around this. I just wanted a quick fix for the time being :D 
-				//activeLevelAssistance.UpdateAssistance();
-				//GameObject.Find("GameLevel").SendMessage("UpdateAssistance"); // The pinnacle of all programming
 
-                if (hitType == HitType.TargetHitLevelComplete)
-                {
-                    LevelEnded();
-                }
-            }
-            else if (input.TouchUp)
-            {
-                activeLevel.TempHit = null;
-                LD.EndLine();
-            }
-		} else if (_CurrentScene == "LevelComplete") {
+			} else if (input.TouchUp)
+			{
+				activeLevel.TempHit = null;
+				LD.EndLine();
+			}
+		}
+		else if (_CurrentScene == "LevelComplete")
+		{
 			SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
 		}
 
-		if (Input.GetKeyDown (KeyCode.R)) {
-			GameObject.Find ("GameLevel").GetComponent<GameLevel> ().ReloadLevel ();
-		} 
-    }
-
-    public void LoadNextLevel()
-    {
-        if (!GameLevel._DidInit)
-        {
-            GameObject.Find("GameLevel").GetComponent<GameLevel>().Init(this);
-			_CurrentScene = "Level";
-			startLevelTime = Time.time;
-        }
-    }
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			GameObject.Find("GameLevel").GetComponent<GameLevel>().ReloadLevel();
+		}
+	}
 
     private void LevelEnded()
     {
 		levelActive = false;
 		gameOverlayCanvas.gameObject.SetActive(false);
         _CurrentScene = "LevelComplete";
-        SetLevelCompletionTime(Time.time - activeLevel.StartTime);
+		levelTimeEnd = Time.time;
+		levelTimestampEnd = System.DateTime.Now.ToString("HH:mm:ss.ffff");
+		sessionTimeCurrent = (levelTimeEnd - sessionTimeStart);
+		sessionTimeRemaining = (sessionLength * 60) - levelTimeEnd;
+		SetLevelCompletionTime(levelTimeEnd - levelTimeStart);
 		GameLevel gameLevel = GameObject.Find ("GameLevel").GetComponent<GameLevel> ();
-		amountOfTargets = gameLevel.GetTotalCount();
-		totalTargets += amountOfTargets;
-		//print ("totalTargets: " + totalTargets);
-		levelErrors = gameLevel.GetErrorTotal ();
-		totalTargets -= levelErrors;
-
-        StartCoroutine(ShowEndLevelCanvas());
-
-		if (gameType == "gameA")
-        {
-            if (currentLevel == GetProgressA())
-            {
-                SetProgressA(GetProgressA() + 1);
-            }
-        }
-        else
-        {
-            if (currentLevel == GetProgressB())
-            {
-                SetProgressB(GetProgressB() + 1);
-            }
-        }
-
-        SavePlayerPrefs();
+		sessionHitsTotal += levelHitsTotal;
+		sessionErrorTotal -= levelErrorsTotal;
+		levelReactionTime = levelReactionTimesList.Average(item => (float)item);
+		levelReactionTimeLeft = levelReactionTimesLeftList.Average(item => (float)item);
+		levelReactionTimeRight = levelReactionTimesRightList.Average(item => (float)item);
+		loggingManager.WriteAggregateLog("Level " + currentProgress.ToString() + " Completed!");
+		StartCoroutine(ShowEndLevelCanvas());
     }
 
-    public IEnumerator ShowEndLevelCanvas()
+    private IEnumerator ShowEndLevelCanvas()
     {
         yield return new WaitForSeconds(1f);
         Image bgPanel = endLevelCanvas.GetComponentInChildren<Image>();
@@ -360,18 +304,14 @@ public class GameManager : MonoBehaviour
 
         endLevelCanvas.gameObject.SetActive(true);
 		gameOverlayCanvas.gameObject.SetActive (false);
-		if (Time.time - startGameTime > sessionLength*60 && sessionActive) {
-			//print ("time is up!" + (Time.time - startGameTime));
+		if (Time.time - sessionTimeStart > sessionLength*60 && sessionActive) {
 			endSessionCanvas.gameObject.SetActive(true);
-
-
-
+			loggingManager.UploadLog();
 			sessionActive = false;
 		}
 		UpdateEndScreenClock ();
 		TimerPause ();
         SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
-		loggingManager.UploadLog ();
         //while (t < 0.8f)
         //{
         //    bgPanel.color = new Color(col.r, col.g, col.b, t);
@@ -382,8 +322,7 @@ public class GameManager : MonoBehaviour
 
 	private void UpdateEndScreenClock()
 	{
-		sessionTime = Time.time - startGameTime;
-		var timeSpan = TimeSpan.FromSeconds(sessionTime);
+		var timeSpan = TimeSpan.FromSeconds(Time.time - sessionTimeStart);
 		endLevelDuration.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
 		endSessionAmount.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
 	}
@@ -396,53 +335,106 @@ public class GameManager : MonoBehaviour
 			if (bestCompletionTime < levelCompletionSeconds) {
 				bestCompletionTime = levelCompletionSeconds;
 			}
-			endLevelAmount.text = string.Format (endLevelAmountTemplate, totalTargets);
-			float average = (float)levelCompletionSeconds / (float)amountOfTargets;
-			//averagesList.Add (average);
-			endLevelAverage.text = string.Format (endLevelAverageTemplate, average.ToString ("n2"));
-			//levelErrorsText.text = string.Format (levelErrorsTemplate, levelErrors);
+			endLevelAmount.text = string.Format (endLevelAmountTemplate, sessionHitsTotal);
+			float average = (float)levelCompletionSeconds / (float)levelHitsTotal;
+			endLevelAverage.text = string.Format (endLevelAverageTemplate, levelReactionTime.ToString("0.00"));
 		} else {
-			totalAmount.text = string.Format (totalAmountTemplate, totalTargets);
+			totalAmount.text = string.Format (totalAmountTemplate, sessionHitsTotal);
 			bestCompletionTimeText.text = string.Format (bestCompletionTimeTemplate, bestCompletionTime);
 
-			string hitTimeLeftAverage = HitTimeLeft.Average(item => (float) item).ToString("0.00");;
-			string hitTimeRightAverage = HitTimeRight.Average (item => (float) item).ToString("0.00");;
+			string hitTimeLeftAverage = HitTimeLeft.Average(item => (float) item).ToString("0.00");
+			string hitTimeRightAverage = HitTimeRight.Average (item => (float) item).ToString("0.00");
 
 			reactionTimeLeftText.text = string.Format (reactionTimeLeftTemplate, hitTimeLeftAverage);
 			reactionTimeRightText.text = string.Format (reactionTimeRightTemplate, hitTimeRightAverage);
-			//totalErrorsText.text = string.Format (totalErrorsTemplate, totalErrors); 
 		}
     }
 
-    public void SetGameType(string newGameType)
-    {
-		gameType = newGameType;
-    }
+	private int ChooseLevel()
+	{
+		int count = (maximumLevel - minimumLevel) + 1;
+		int[] randomID = Enumerable.Range(minimumLevel, count).ToArray();
+		Utils.ShuffleArray<int>(randomID);
+		int levelID = randomID[0];
+		Debug.Log("ChooseLevel levelID: " + levelID);
+		return levelID;
+	}
+
+	private void resetLevelCounters()
+	{
+		levelHitsTotal = 0;
+		levelHitsLeft = 0;
+		levelHitsRight = 0;
+		levelErrorsTotal = 0;
+		levelErrorsLeft = 0;
+		levelErrorsRight = 0;
+		levelReactionTime = 0.0f;
+		levelReactionTimeLeft = 0.0f;
+		levelReactionTimeRight = 0.0f;
+	}
 
 	public void TimerPause()
 	{
 		pauseTime = Time.time;
 		levelActive = false;
-		loggingManager.WriteLog ("Game Paused");
-		mainMenuScreen.setPauseText ();
+		//loggingManager.WriteLog ("Game Paused");
+		mainMenuScreen.setPauseText();
 	}
 
 	public void TimerResume()
 	{
-		startGameTime += (Time.time - pauseTime);
+		sessionTimeStart += (Time.time - pauseTime);
 		levelActive = true;
-		activeLevelAssistance.LoadPlayerPrefs ();
-		LoadPlayerPrefs ();
-		SetNextLevel(GetProgressA());
-		activeLevel.ReloadLevel ();
-		loggingManager.WriteLog ("Game Resumed");
+		activeLevelAssistance.LoadPlayerPrefs();
+		LoadPlayerPrefs();
+		currentLevel = ChooseLevel();
+		activeLevel.ReloadLevel();
+		//loggingManager.WriteLog ("Game Resumed");
 	}
 
-	public void ResetGame() {
-		loggingManager.WriteLog ("Game Reset!");
-		loggingManager.UploadLog ();
-		//GameLevel._DidInit = false;
+	public void ResetGame()
+	{
+		//loggingManager.WriteLog ("Game Reset!");
+		loggingManager.UploadLog();
 		SceneManager.LoadSceneAsync("TMT_P10");
+	}
+
+	public void NextLevelButton()
+	{
+		resetLevelCounters();
+		TimerResume();
+		levelActive = true;
+		currentLevel = ChooseLevel();
+		gameOverlayCanvas.gameObject.SetActive(true);
+		_CurrentScene = "Level";
+		GameLevel gameLevel = GameObject.Find("GameLevel").GetComponent<GameLevel>();
+		activeLevelAssistance.resetAssistanceWasActive();
+		currentProgress += 1;
+		levelTimeStart = Time.time;
+		levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
+		gameLevel.LoadNextLevel();
+	}
+
+	public void GameOverlay_MainMenuButton_Click()
+	{
+		menuCanvas.gameObject.SetActive(true);
+		gameOverlayCanvas.gameObject.SetActive(false);
+		TimerPause();
+	}
+
+	public void SetGameType(string newGameType)
+	{
+		gameType = newGameType;
+	}
+
+	public float GetSessionTimeCurrent()
+	{
+		return sessionTimeCurrent;
+	}
+
+	public float GetSessionTimeRemaining()
+	{
+		return sessionTimeRemaining;
 	}
 
     public string GetGameType()
@@ -450,100 +442,75 @@ public class GameManager : MonoBehaviour
         return gameType;
     }
 
+	public string GetTimestampStartLevel()
+	{
+		return levelTimestampStart;
+	}
+
+	public string GetTimestampEndLevel()
+	{
+		return levelTimestampEnd;
+	}
+
+	public int GetLevelHitsTotal()
+	{
+		return levelHitsTotal;
+	}
+
+	public int GetLevelHitsRight()
+	{
+		return levelHitsLeft;
+	}
+
+	public int GetLevelHitsLeft()
+	{
+		return levelHitsRight;
+	}
+
+	public int GetLevelErrorsTotal()
+	{
+		return levelErrorsTotal;
+	}
+
+	public int GetLevelErrorsRight()
+	{
+		return levelErrorsLeft;
+	}
+
+	public int GetLevelErrorsLeft()
+	{
+		return levelErrorsRight;
+	}
+
+	public float GetLevelReactionTime()
+	{
+		return levelReactionTime;
+	}
+
+	public float GetLevelReactionTimeRight()
+	{
+		return levelReactionTimeLeft;
+	}
+
+	public float GetLevelReactionTimeLeft()
+	{
+		return levelReactionTimeRight;
+	}
+
 	public void QuitGame()
 	{
-		print ("quitting");
 		Application.Quit();
 	}
 
-    public void SetProgressA(int inputProgressA)
-    {
-        playerDat.progressA = inputProgressA;
-        PlayerPrefs.SetInt("progressA", playerDat.progressA);
-    }
-
-	public static void ShuffleArray<T>(T[] arr) {
-		for (int i = arr.Length - 1; i > 0; i--) {
-			int r = UnityEngine.Random.Range(0, i);
-			T tmp = arr[i];
-			arr[i] = arr[r];
-			arr[r] = tmp;
-		}
+	public int GetCurrentProgress()
+	{
+		return currentProgress;
 	}
 
-    public int GetProgressA()
-    {
-		int[] randomID = Enumerable.Range(minimumLevel, maximumLevel).ToArray();
-		ShuffleArray<int>(randomID);
-		int progress = randomID[playerDat.progressA % 2];
-		return progress;
-    }
-
-    public void SetProgressB(int inputProgressB)
-    {
-        playerDat.progressB = inputProgressB;
-        PlayerPrefs.SetInt("progressB", playerDat.progressB);
-    }
-    public int GetProgressB()
-    {
-		int[] randomID = Enumerable.Range(23, 28).ToArray();
-		ShuffleArray<int>(randomID);
-		int progress = randomID[playerDat.progressB % 2];
-		return progress;
-    }
-
-    public void NextLevelButton()
-    {
-		TimerResume ();
-		levelActive = true;
-		SetNextLevel(GetNextLevel() + 1);
-        SetProgressA(GetNextLevel());
-        SavePlayerPrefs();
-        gameOverlayCanvas.gameObject.SetActive(true);
-        _CurrentScene = "Level";
-		GameLevel gameLevel = GameObject.Find ("GameLevel").GetComponent<GameLevel> ();
-		gameLevel.LoadNextLevel();
-    }
-
-    public void SetNextLevel(int inputLevel)
-    {
-
-        nextLevel = inputLevel;
-
-		if (gameType == "gameA" && nextLevel >= allLevelsA.Length - 1)
-        {
-            nextLevel = allLevelsA.Length - 1;
-        }
-		else if (gameType == "gameB" && nextLevel >= allLevelsB.Length - 1)
-        {
-            nextLevel = allLevelsB.Length - 1;
-        }
-
-    }
-    public int GetNextLevel()
-    {
-        return nextLevel;
-    }
-
-    public void SetTutorialASeen(bool inputTutorial)
-    {
-        playerDat.tutorialASeen = inputTutorial;
-        PlayerPrefs.SetString("tutorialASeen", playerDat.tutorialASeen.ToString());
-    }
-    public bool GetTutorialASeen()
-    {
-        return playerDat.tutorialASeen;
-    }
-
-    public void SetTutorialBSeen(bool inputTutorial)
-    {
-        playerDat.tutorialBSeen = inputTutorial;
-        PlayerPrefs.SetString("tutorialBSeen", playerDat.tutorialBSeen.ToString());
-    }
-    public bool GetTutorialBSeen()
-    {
-        return playerDat.tutorialBSeen;
-    }
+	public int GetCurrentLevel()
+	{
+		return currentLevel;
+	}
 
     public int GetTotalLevelsA()
     {
@@ -562,11 +529,11 @@ public class GameManager : MonoBehaviour
     {
         if (gameType == "gameA")
         {
-            return allLevelsA[nextLevel];
+			return allLevelsA[currentLevel];
         }
         else
         {
-            return allLevelsB[nextLevel];
+            return allLevelsB[currentLevel];
         }
     }
 
@@ -577,25 +544,5 @@ public class GameManager : MonoBehaviour
     public float GetLevelCompletionTime()
     {
         return levelCompletionTime;
-    }
-
-    public int GetUserID()
-    {
-        return playerDat.userID;
-    }
-    public void IncreaseUserID()
-    {
-        playerDat.userID++;
-        PlayerPrefs.SetInt("userID", playerDat.userID);
-    }
-
-    public int GetOrderRow()
-    {
-        return playerDat.orderRow;
-    }
-    public void SetOrderRow(int inputRow)
-    {
-        playerDat.orderRow = inputRow;
-        PlayerPrefs.SetInt("orderRow", playerDat.orderRow);
     }
 }

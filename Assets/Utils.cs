@@ -31,4 +31,29 @@ public class Utils : MonoBehaviour {
 
 		return hashString.PadLeft(32, '0');
 	}
+
+	public static void ShuffleArray<T>(T[] arr)
+	{
+		for (int i = arr.Length - 1; i > 0; i--)
+		{
+			int r = UnityEngine.Random.Range(0, i);
+			T tmp = arr[i];
+			arr[i] = arr[r];
+			arr[r] = tmp;
+		}
+	}
+
+	public static void Shuffle<T>(IList<T> list)
+	{
+		System.Random rng = new System.Random();
+		int n = list.Count;
+		while (n > 1)
+		{
+			n--;
+			int k = rng.Next(n + 1);
+			T value = list[k];
+			list[k] = list[n];
+			list[n] = value;
+		}
+	}
 }

@@ -8,9 +8,9 @@ public class LoggingManager : MonoBehaviour {
 	private GameManager gameManager;
 	//private SettingsManager settingsManager;
 	private GameLevel gameLevel;
+	[SerializeField]
 	private AssistanceManager assistanceManager;
 	private Tutorial tutorial;
-	private SessionManager sessionManager;
 	[SerializeField]
 	private ConnectToMySQL mySQL;
 
@@ -26,15 +26,51 @@ public class LoggingManager : MonoBehaviour {
 	private string currentLine;
 
 	private string currentProfileID; 		// The ID of the current player
-	private string userID;					// The ID of the current player, converted to a string
-	private string playerOrGuest;			// IGNORED Whether it's a player or a guest. Shouldn't be necessary if we just have currentProfileID showing this info to us.
 	private string date;					// The date in the formt YYYY-MM-DD
-	private string time;					// Timestamp in the format HH-MM-SS.MMMM
-	private string email;
+	private string time;					// Timestamp at the time WriteLog was called in the format HH-MM-SS.MMMM
+	private string email;					// e-mail address of the player, if specified
+	private string eventLabel;              // fx "Target Hit" or "Game Loaded"
+	private string currentProgress;         // 1,2,3,4,.. 0 = tutorial
+	private string currentLevel;			// What underlying level being loaded.
+	private string gameType;                // "1-2-3-4" vs "1-A-2-B"
+	private string difficultyLevel;         // From 1 (easy) to 3 (hard) corresponding to how many circles are present in the level.
+	private string trainingTime;            // accumulated level time set by therapist for training.
+	private string assistanceWasActive;    // whether assistance was active in that given level.
+	//private string gameWasPaused;			// whether game was paused during the level.
+	// we dont use gameWasPaused because we are resetting the level when you pause the game anyway..
+	private string levelHitsTotal;          // total amount of successful hits in the level, while we still have training time left.
+	private string levelHitsLeft;           // amount of successful hits in the left side, while we still have training time left.
+	private string levelHitsRight;          // amount of successful hits in the right side, while we still have training time left.
+	private string levelErrorsTotal;        // amount of errornous hits in the level, while we still have training time left.
+	private string levelErrorsLeft;         // amount of errornous hits in the left side, while we still have training time left.
+	private string levelErrorsRight;        // amount of errornous hits in the right side, while we still have training time left.
+	private string levelReactionTime;       // median reactionTime for the given level, while we still have training time left.
+	private string levelReactionTimeLeft;   // median reactionTime for the left side, while we still have training time left.
+	private string levelReactionTimeRight;  // median reactionTime for the right side, while we still have training time left.
+	private string levelTimeTotal;          // time taken to complete the level, while we still have training time left, in seconds.
+	private string timestampLevelStart;     // timestamp in HH-MM-SS.MMMM for when the level started. (disregards training time)
+	private string timestampLevelEnd;       // timestamp in HH-MM-SS.MMMM for when the level finished. (disregards training time)
+	private string sessionLength;     // current training time. (disregards training time)
+	private string sessionTimeCurrent;     // current training time. (disregards training time)
+	private string sessionTimeRemaining;   // remaining training time. 
+	private string tutorialSetting;         // whether tutorial is enabled or not.
+	private string laneSetting;             // whether lanes are enabled or not.
+	private string pulseSetting;            // whether blinking is enabled or not.
+	private string voiceSetting;            // whether sound is enabled or not.
+	private string repeatVoiceSetting;		// whether repeaing sound is enabled or not.
+
+		// How should we handle settings? And if we consider comparing patients across with each other?
+		// Could we simplify the settings somewhat to introduce less variables?
+		// Anyway, that is another separate action for us to do.
+		// Maybe we could simplify to "Assistance / No Assistance" rather than having very specific handling.
+		// Ask Hendrik what's the argument for having several settings exposed.
+
+		// How should we handle GamePause? GameResume?
+		// A) We should log whether the game was paused during a level.
+		// B) We should make a separate log entry for game Paused.
 
 	private string scene; 					// has the text "Level" if we are in a level
-	private string eventLabel; 				// fx "Target Hit" or "Game Loaded"
-	private string gameType; 				// gameA or gameB
+
 	private string level; 					// current level (this is determined from difficultyLevel and randomization)
 	private string laneOn; 					// should arrows in the top and bottom indicate where the patient should look.
 	private string laneType; 				// are the arrows going left or going right
@@ -42,8 +78,8 @@ public class LoggingManager : MonoBehaviour {
 	private string voiceOn; 				// should a voice help in the game
 	private string repeatVoice; 			// should voice be repeated - currently always off
 	private string levelTime; 				// time spent in each level
-	private string trainingTime; 			// accumulated level time set by therapist for training.
-	private string difficultyLevel; 		// From 1 (easy) to 3 (hard) corresponding to how many circles are present in the level.
+
+
 	private string laneActive; 				// is the lane Active in this moment
 	private string pulseActive; 			// is the pulse Active in this moment
 	private string audioActive; 			// is the audio active in this moment
@@ -70,12 +106,14 @@ public class LoggingManager : MonoBehaviour {
 	private string currentOutsetX;			// ???
 	private string currentOutsetY;			// ???
 
+
+
+
+
 	// Use this for initialization
 	void Start () {
 		logEntries = new List<string>();
 		gameManager = this.GetComponent<GameManager> ();
-		//settingsManager = this.GetComponent<SettingsManager> ();
-		sessionManager = this.GetComponent<SessionManager> ();
 
 		directory = Application.persistentDataPath + "/Data/";
 
@@ -83,191 +121,94 @@ public class LoggingManager : MonoBehaviour {
 			Directory.CreateDirectory(directory);
 		}
 
-		LoadSettings ();
 		DetectDumpedLogs ();
 		NewLog ();
-		WriteLog ("Game Loaded");
 	}
 
-	public void LoadSettings()
-	{
-		currentProfileID = profileManager.GetCurrentProfileID ();
-		email = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":Email", "No Email");
-		laneOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);
-		pulseOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1);
-		voiceOn = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1);
-		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
-		trainingTime = (PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5)).ToString();
-		difficultyLevel = (PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1)).ToString();
-		repeatVoice = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":GentagStemme", 0) == 1);
-	}
+	// The Aggregate Log is the log we upload to our server
+	public void WriteAggregateLog(string inputEvent) {
+		Debug.Log(inputEvent);
 
-	public void WriteLog(string inputEvent) {
-		eventLabel = inputEvent;
-		scene = GameManager._CurrentScene; // Was Application.loadedlevelname or something. 
-
+		currentProfileID = profileManager.GetCurrentProfileID();
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
 		time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
-		sessionTime = sessionManager.GetSessionSeconds ().ToString ();
+		email = PlayerPrefs.GetString("Settings:" + currentProfileID + ":Email", "No Email");
+		eventLabel = inputEvent;
+		currentProgress = gameManager.GetCurrentProgress().ToString();
+		currentLevel = gameManager.GetCurrentLevel().ToString();
+		gameType = PlayerPrefs.GetString("Settings:" + currentProfileID + ":GameType", "gameA");
+		difficultyLevel = (PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1)).ToString();
+		trainingTime = (PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5)).ToString();
+		assistanceWasActive = Utils.BoolToNumberString(assistanceManager.GetAssistanceWasActive());
+		levelHitsTotal = gameManager.GetLevelHitsTotal().ToString();
+		levelHitsLeft = gameManager.GetLevelHitsLeft().ToString();
+		levelHitsRight = gameManager.GetLevelHitsRight().ToString();
+		levelErrorsTotal = gameManager.GetLevelErrorsTotal().ToString();
+		levelErrorsLeft = gameManager.GetLevelErrorsLeft().ToString();
+		levelErrorsRight = gameManager.GetLevelErrorsRight().ToString();
+		levelReactionTime = gameManager.GetLevelReactionTime().ToString();
+		levelReactionTimeLeft = gameManager.GetLevelReactionTimeLeft().ToString();
+		levelReactionTimeRight = gameManager.GetLevelReactionTimeRight().ToString();
+		levelTimeTotal = gameManager.GetLevelCompletionTime().ToString();
+		timestampLevelStart = gameManager.GetTimestampStartLevel();
+		timestampLevelEnd = gameManager.GetTimestampEndLevel();
+		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5).ToString();
+		sessionTimeCurrent = gameManager.GetSessionTimeCurrent().ToString();
+		sessionTimeRemaining = gameManager.GetSessionTimeRemaining().ToString();
+		tutorialSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 0) == 1);
+		laneSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);
+		pulseSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1);
+		voiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1);
+		repeatVoiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1);
 
-		if(scene == "Level" || scene == "LevelComplete") {
-			
-			level = gameManager.GetNextLevel().ToString();
-		}
-		else if(scene == "Tutorial") {
+		currentLine =
+				currentProfileID + sep
+				+ date + sep
+				+ time + sep
+				+ email + sep
+				+ eventLabel + sep
+				+ currentProgress + sep
+				+ currentLevel + sep
+				+ gameType + sep
+				+ difficultyLevel + sep
+				+ trainingTime + sep
+				+ assistanceWasActive + sep
+				+ levelHitsTotal + sep
+				+ levelHitsLeft + sep
+				+ levelHitsRight + sep
+				+ levelErrorsTotal + sep
+				+ levelErrorsLeft + sep
+				+ levelErrorsRight + sep
+				+ levelReactionTime + sep
+				+ levelReactionTimeLeft + sep
+				+ levelReactionTimeRight + sep
+				+ levelTimeTotal + sep
+				+ timestampLevelStart + sep
+				+ timestampLevelEnd + sep
+				+ sessionLength + sep
+				+ sessionTimeCurrent + sep
+				+ sessionTimeRemaining + sep
+				+ tutorialSetting + sep
+				+ laneSetting + sep
+			 	+ pulseSetting + sep
+				+ voiceSetting + sep
+				+ repeatVoiceSetting + sep;
 
-			level = "Tutorial";
-		}
-		else {
-			
-			level = "";
-		}
-
-		if(scene == "Level") {
-
-			if(gameLevel == null) {
-
-				gameLevel = GameObject.Find("GameLevel").GetComponent<GameLevel>();
-			}
-			if(assistanceManager == null) {
-
-				assistanceManager = GameObject.Find("GameLevel").GetComponent<AssistanceManager>();
-			}
-
-			levelTime = gameLevel.GetGameTime().ToString();
-			laneActive = Utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.lane));
-			laneType = assistanceManager.GetLaneType ();
-			pulseActive = Utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.pulse));
-			audioActive = Utils.BoolToNumberString(assistanceManager.GetToolActive(Tool.audio));
-			audioShots = assistanceManager.GetAudioShots().ToString();
-			currentTarget = gameLevel.GetCurrent().ToString();
-			currentHit = gameLevel.GetHit().ToString();
-			lastValid = gameLevel.GetLastValid().ToString();
-			currentOutset = gameLevel.GetOutset().ToString();
-			correctingError = gameLevel.GetCorrectingError().ToString();
-			errorsInRow = gameLevel.GetErrorsInRow().ToString();
-
-			currentTargetPos = gameLevel.GetTargetLocation(gameLevel.GetCurrent());
-			currentHitPos = gameLevel.GetTargetLocation(gameLevel.GetHit());
-			lastValidPos = gameLevel.GetTargetLocation(gameLevel.GetLastValid());
-			currentOutsetPos = gameLevel.GetTargetLocation(gameLevel.GetOutset());
-
-			currentTargetX = currentTargetPos.x.ToString();
-			currentTargetY = currentTargetPos.y.ToString();
-			currentHitX = currentHitPos.x.ToString();
-			currentHitY = currentHitPos.y.ToString();
-			lastValidX = lastValidPos.x.ToString();
-			lastValidY = lastValidPos.y.ToString();
-			currentOutsetX = currentOutsetPos.x.ToString();
-			currentOutsetY = currentOutsetPos.y.ToString();
-		}
-		else if(scene == "Tutorial") {
-
-			if(tutorial == null) {
-				tutorial = GameObject.Find("Tutorial").GetComponent<Tutorial>();
-			}
-
-			levelTime = tutorial.GetGameTime().ToString();
-			currentTarget = tutorial.GetCurrent().ToString();
-			currentHit = tutorial.GetHit().ToString();
-			lastValid = tutorial.GetLastValid().ToString();
-			currentOutset = tutorial.GetOutset().ToString();
-			correctingError = tutorial.GetCorrectingError().ToString();
-			errorsInRow = tutorial.GetErrorsInRow().ToString();
-
-			laneActive = "";
-			pulseActive = "";
-			audioActive = "";
-			audioShots = "";
-
-			currentTargetX = "";
-			currentTargetY = "";
-			currentHitX = "";
-			currentHitY = "";
-			lastValidX = "";
-			lastValidY = "";
-			currentOutsetX = "";
-			currentOutsetY = "";
-		}
-		else {
-			
-			levelTime = "";
-			laneActive = "";
-			pulseActive = "";
-			audioActive = "";
-			audioShots = "";
-			currentTarget = "";
-			currentHit = "";
-			lastValid = "";
-			currentOutset = "";
-			correctingError = "";
-			errorsInRow = "";
-
-			currentTargetX = "";
-			currentTargetY = "";
-			currentHitX = "";
-			currentHitY = "";
-			lastValidX = "";
-			lastValidY = "";
-			currentOutsetX = "";
-			currentOutsetY = "";
-		}
-
-		currentLine = 
-						currentProfileID + sep
-						+ date + sep
-						+ time + sep
-						+ sessionTime + sep
-						+ scene + sep
-						+ eventLabel + sep
-						+ gameType + sep
-						+ level + sep
-						+ laneOn + sep
-						+ laneType + sep
-						+ pulseOn + sep
-						+ voiceOn + sep
-						+ repeatVoice + sep
-						+ levelTime + sep
-						+ laneActive + sep
-						+ pulseActive + sep
-						+ audioActive + sep
-						+ audioShots + sep
-						+ currentHit + sep
-						+ currentTarget + sep
-						+ lastValid + sep
-						+ errorsInRow + sep
-						+ currentHitX + sep
-						+ currentHitY + sep
-						+ currentTargetX + sep
-						+ currentTargetY + sep
-						+ lastValidX + sep
-						+ lastValidY + sep
-						+ difficultyLevel + sep
-						+ trainingTime + sep
-						+ email + sep;
-		
-		logEntries.Add (currentLine);
-		Debug.Log (currentLine);
-		using (StreamWriter writer = File.AppendText(directory + fileName))
-		{
-			writer.WriteLine(currentLine);
-		}
+		logEntries.Add(currentLine);
 	}
 
 	public void NewLog() {
 
-		fileName = "User" + gameManager.GetUserID().ToString() + " - " + System.DateTime.Now.ToString() + ".txt";
+		fileName = "User" + profileManager.GetCurrentProfileID() + " - " + System.DateTime.Now.ToString() + ".txt";
 		fileName = fileName.Replace ('/', '-');
 		fileName = fileName.Replace (':', '-');
 	}
 
 	public void UploadLog() {
 		bool shouldUpload = profileManager.GetUploadPolicy ();
-		Debug.Log ("UploadPolicy: " + shouldUpload);
 		if (!shouldUpload) {
 			return;
 		}
-		Debug.Log ("Uploading logs");
 		mySQL.UploadLog (logEntries);
 	}
 
