@@ -138,7 +138,6 @@ public class LoggingManager : MonoBehaviour {
 		currentLevel = gameManager.GetCurrentLevel().ToString();
 		gameType = PlayerPrefs.GetString("Settings:" + currentProfileID + ":GameType", "gameA");
 		difficultyLevel = (PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1)).ToString();
-		trainingTime = (PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5)).ToString();
 		assistanceWasActive = Utils.BoolToNumberString(assistanceManager.GetAssistanceWasActive());
 		levelHitsTotal = gameManager.GetLevelHitsTotal().ToString();
 		levelHitsLeft = gameManager.GetLevelHitsLeft().ToString();
@@ -171,7 +170,6 @@ public class LoggingManager : MonoBehaviour {
 				+ currentLevel + sep
 				+ gameType + sep
 				+ difficultyLevel + sep
-				+ trainingTime + sep
 				+ assistanceWasActive + sep
 				+ levelHitsTotal + sep
 				+ levelHitsLeft + sep
@@ -206,7 +204,7 @@ public class LoggingManager : MonoBehaviour {
 
 	public void UploadLog() {
 		bool shouldUpload = profileManager.GetUploadPolicy ();
-		if (!shouldUpload) {
+		if (!shouldUpload || logEntries.Count < 1) {
 			return;
 		}
 		mySQL.UploadLog (logEntries);
