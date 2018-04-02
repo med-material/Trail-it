@@ -115,6 +115,7 @@ public class GameLevel : MonoBehaviour
 
                 if (colliderHit.GetComponent<Target>().GetObstacle())
                 {
+					errorSound.Play();
                     obstacles[hit].SetRed();
                     obstacles[hit].TurnLight();
 
@@ -126,7 +127,6 @@ public class GameLevel : MonoBehaviour
                     outset = hit;
                     errorsInRow++;
                     correctingError = true;
-                    errorSound.Play();
 					if (targets != null)
 					{
 						for (int i = 0; i < targets.Length; i++)
@@ -149,6 +149,7 @@ public class GameLevel : MonoBehaviour
                 {
                     if (hit == currentTarget)
                     {
+						correctSound.Play();
 						if (targets != null)
 						{
 							for (int i = 0; i < targets.Length; i++)
@@ -175,7 +176,6 @@ public class GameLevel : MonoBehaviour
 
 							correctingError = false;
 							errorsInRow = 0;
-							correctSound.Play();
 
 							if (hit == targets.Length - 1)
 							{
