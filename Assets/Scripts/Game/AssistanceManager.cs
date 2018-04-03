@@ -24,7 +24,8 @@ public class AssistanceManager : MonoBehaviour {
 	public GameObject arrowRightTop;
 	public GameObject arrowRightBottom;
 	public Texture arrow;
-	public int arrowCount;
+	public int arrowTopCount;
+	public int arrowBottomCount;
 	public Vector2 laneCornerOffset;
 	public Vector2 arrowSize;
 	public float arrowDistance;
@@ -91,28 +92,32 @@ public class AssistanceManager : MonoBehaviour {
 
 		LoadPlayerPrefs ();		
 
-		arrowCount = 7;
+		arrowTopCount = 5;
+		arrowBottomCount = 7;
 
 		Canvas.ForceUpdateCanvases ();
 
 		GameObject arrowObject;
 
-		for (int i = 0; i < arrowCount; i++) {
+		for (int i = 0; i < arrowTopCount; i++) {
 			arrowObject = (GameObject)Instantiate (arrowRightTop, TopPanelCanvas.transform);
-			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
-			RightArrowObjects.Add(arrowObject);
-
-			arrowObject = (GameObject)Instantiate(arrowRightBottom,BottomPanelCanvas.transform);
 			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
 			RightArrowObjects.Add(arrowObject);
 
 			arrowObject = (GameObject)Instantiate(arrowLeftTop, TopPanelCanvas.transform);
 			arrowObject.GetComponent<landingsBane>().arrowOffset = i;
 			LeftArrowObjects.Add(arrowObject);
+		}
 
-			arrowObject = (GameObject)Instantiate(arrowLeftBottom,BottomPanelCanvas.transform);
-			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
-			LeftArrowObjects.Add (arrowObject);
+		for (int i = 0; i < arrowBottomCount; i++)
+		{
+			arrowObject = (GameObject)Instantiate(arrowRightBottom, BottomPanelCanvas.transform);
+			arrowObject.GetComponent<landingsBane>().arrowOffset = i;
+			RightArrowObjects.Add(arrowObject);
+
+			arrowObject = (GameObject)Instantiate(arrowLeftBottom, BottomPanelCanvas.transform);
+			arrowObject.GetComponent<landingsBane>().arrowOffset = i;
+			LeftArrowObjects.Add(arrowObject);
 		}
 
 		arrowRightTop.SetActive(false);
@@ -189,6 +194,18 @@ public class AssistanceManager : MonoBehaviour {
 		} else {
 			ResetTimer();
 		}
+	}
+
+	public void ForceAssistance()
+	{
+		if (currentTarget == null)
+		{
+			currentTarget = gameLevel.GetCurrentTarget();
+		}
+		ActivatePulse();
+		ActivateLane();
+		ActivateAudio();
+		assistanceWasActive = true;
 	}
 
 	public void resetAssistanceWasActive()
