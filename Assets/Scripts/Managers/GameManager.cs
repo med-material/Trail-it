@@ -362,7 +362,6 @@ public class GameManager : MonoBehaviour
 		int[] randomID = Enumerable.Range(minimumLevel, count).ToArray();
 		Utils.ShuffleArray<int>(randomID);
 		int levelID = randomID[0];
-		Debug.Log("ChooseLevel levelID: " + levelID);
 		return levelID;
 	}
 

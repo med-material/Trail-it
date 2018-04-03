@@ -102,7 +102,6 @@ public class ConnectToMySQL : MonoBehaviour {
 			Debug.LogError ("Dumping Log To Disk For Later Uploading");
 			loggingManager.DumpCurrentLog ();
 		}
-
 		loggingManager.ClearLogEntries ();
 	}
 		

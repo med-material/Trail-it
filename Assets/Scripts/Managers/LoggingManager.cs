@@ -216,7 +216,6 @@ public class LoggingManager : MonoBehaviour {
 
 	public void DumpCurrentLog() {
 		for(int i = 0; i < logEntries.Count; i++) {
-			Debug.Log ("Dumping log as: " + directory + "offlinelogs");
 			using (StreamWriter writer = File.AppendText(directory + "offlinelogs"))
 			{
 				writer.WriteLine(logEntries[i]);
@@ -225,9 +224,7 @@ public class LoggingManager : MonoBehaviour {
 	}
 
 	public void DetectDumpedLogs() {
-		Debug.Log ("Detecting dumped logs for upload..");
 		if (File.Exists (directory + "offlinelogs")) {
-			Debug.Log ("Detected: " + directory + "offlinelogs");
 
 			string line;
 			List<string> offlineLogs = new List<string>();

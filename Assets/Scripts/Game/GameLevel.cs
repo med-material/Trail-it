@@ -76,7 +76,6 @@ public class GameLevel : MonoBehaviour
     {
         if (_DidInit)
             return;
-		Debug.Log("initing..");
         gameManager = gm;
         assistanceManager = this.GetComponent<AssistanceManager>();
 
@@ -84,7 +83,6 @@ public class GameLevel : MonoBehaviour
 		spawnSound.clip = spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)];
 		spawnSound.playOnAwake = false;
        
-		Debug.Log ("gameLevel init: LoadLevel");
         LoadLevel();
 
         correctSound = gameObject.AddComponent<AudioSource>();
@@ -293,7 +291,6 @@ public class GameLevel : MonoBehaviour
     {
         camTransform = GameObject.Find("Main Camera").transform;
         mainCam = camTransform.GetComponent<Camera>();
-		Debug.Log("LoadLevel called");
 		if (gameManager == null) {
 			return;
 		}
