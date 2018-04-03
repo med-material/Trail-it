@@ -377,11 +377,13 @@ public class GameLevel : MonoBehaviour
 		spawnSound.Play();
         for (int i = 0; i < sorted.Length; i++)
         {
-            //if (i % 2 == 0)
-            //    audioSource.PlayOneShot(spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)]);
-
-            sorted[i].GetComponent<Animator>().Play("TargetSpawn");
-            sorted[i].SetActive(true);
+			//if (i % 2 == 0)
+			//    audioSource.PlayOneShot(spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)]);
+			if (sorted != null && sorted[i] != null)
+			{
+				sorted[i].GetComponent<Animator>().Play("TargetSpawn");
+				sorted[i].SetActive(true);
+			}
             yield return new WaitForSeconds(t);
         }
 
