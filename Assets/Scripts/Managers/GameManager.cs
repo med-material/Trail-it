@@ -299,12 +299,9 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ShowEndLevelCanvas()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.2f);
         Image bgPanel = endLevelCanvas.GetComponentInChildren<Image>();
         Color col = bgPanel.color;
-
-        //float t = 0f; 
-        //bgPanel.color = new Color(col.r,col.g,col.b, t); 
 
         endLevelCanvas.gameObject.SetActive(true);
 		gameOverlayCanvas.gameObject.SetActive (false);
@@ -316,12 +313,6 @@ public class GameManager : MonoBehaviour
 		UpdateEndScreenClock ();
 		TimerPause ();
         SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
-        //while (t < 0.8f)
-        //{
-        //    bgPanel.color = new Color(col.r, col.g, col.b, t);
-        //    t += (Time.deltaTime * Time.deltaTime * (3 - 2 * Time.deltaTime)) / 10f; 
-        //}
-        //bgPanel.color = new Color(col.r, col.g, col.b, 0.8f);
     }
 
 	private void UpdateEndScreenClock()
