@@ -80,3 +80,5 @@ MonoBehaviour:
   handStillTime: 1
   lineDrawer: {fileID: 114904478942971324, guid: cb6cb1cac09604db1b81c957e1820bc8,
     type: 2}
+  overlayText: {fileID: 0}
+  overlay: {fileID: 0}

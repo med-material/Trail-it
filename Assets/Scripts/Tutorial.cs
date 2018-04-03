@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Tutorial : MonoBehaviour {
 
@@ -25,25 +26,34 @@ public class Tutorial : MonoBehaviour {
 	public float handAwayTime;
 	public float handStillTime;
 	public LineDrawer lineDrawer;
+	public Text overlayText;
+	public GameObject overlay;
 
+	[SerializeField]
 	private GameManager gameManager;
 	private bool gameA;
 	private string gameType;
 	private int stage;
 	private bool delay;
 
+	[SerializeField]
 	private Camera mainCam;
 
 	private Target[] targets;
 	private GameObject[] targetObjects;
 
-	private AudioSource correctSound;
-	private AudioSource errorSound;
-	private AudioSource a1Sound;
-	private AudioSource a2Sound;
-	private AudioSource b1Sound;
-	private AudioSource b2Sound;
-	private AudioSource endSound;
+	//private AudioSource correctSound;
+	//private AudioSource errorSound;
+	//private AudioSource a1Sound;
+	//private AudioSource a2Sound;
+	//private AudioSource b1Sound;
+	//private AudioSource b2Sound;
+	//private AudioSource endSound;
+
+	[SerializeField]
+	private AudioSource tutorialVoice;
+	[SerializeField]
+	private AudioSource gameSounds;
 
 	private Collider2D colliderHit;
 	private Collider2D tempHit;
@@ -62,6 +72,11 @@ public class Tutorial : MonoBehaviour {
 	private float handStartTime;
 	private int handAt;
 
+	private string a1text = "Forbind tallene ved at tegne en streg.";
+	private string a2text = "Tallene skal forbindes i den rigtige rækkefølge.";
+	private string b1text = "Forbind tal og bogstaver ved at tegne en streg.";
+	private string b2text = "Husk at skifte mellem tal og bogstaver i den rigtige rækkefølge.";
+	private bool didInit = false;
 	// Use this for initialization
 /*	void Start () {
 
@@ -88,12 +103,8 @@ public class Tutorial : MonoBehaviour {
 		StartStage0 ();
 	}*/
 
-	public void Init (GameManager gm) {
-
-		gameManager = gm;
-
-		mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> ();
-
+	public void Start () {
+		overlay.SetActive(true);
 		gameType = gameManager.GetGameType ();
 
 /*		if(gameA) {
@@ -107,72 +118,52 @@ public class Tutorial : MonoBehaviour {
 
 		hand = (GameObject)Instantiate (handPrefab, new Vector3(0,-5,0), Quaternion.identity);
 
-		LoadSounds ();
-
-		StartStage0 (); 
+		//LoadSounds ();
 	}
 
+	public void Init()
+	{
+		StartStage0();
+		didInit = true;
+	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (didInit)
+		{
+			if (delay)
+			{
 
-		if(delay) {
-			
-			if(Time.time - completionTime > delayTime) {
+				if (Time.time - completionTime > delayTime)
+				{
 
-				delay = false;
+					delay = false;
 
-				for(int i = 0; i < targetObjects.Length; i++) {
+					for (int i = 0; i < targetObjects.Length; i++)
+					{
 
-					Destroy(targetObjects[i]);
-				}
+						Destroy(targetObjects[i]);
+					}
 
-				if(stage == 1) {
+					if (stage == 1)
+					{
 
-					StartStage1();
-				}
-				else if(stage == 2) {
-					
-					StartStage2();
+						StartStage1();
+					}
+					else if (stage == 2)
+					{
+
+						StartStage2();
+					}
 				}
 			}
+			else if (stage == 0 || stage == 1)
+			{
+
+				RunGame();
+				RunHand();
+			}
 		}
-		else if(stage == 0 || stage == 1) {
-
-			RunGame();
-			RunHand(); 
-		}
-	}
-
-	private void LoadSounds () {
-
-		correctSound = gameObject.AddComponent<AudioSource>();
-		correctSound.clip = correctClip;
-		correctSound.playOnAwake = false;
-		
-		errorSound = gameObject.AddComponent<AudioSource>();
-		errorSound.clip = errorClip;
-		errorSound.playOnAwake = false;
-		
-		a1Sound = gameObject.AddComponent<AudioSource>();
-		a1Sound.clip = a1Clip;
-		a1Sound.playOnAwake = false;
-		
-		a2Sound = gameObject.AddComponent<AudioSource>();
-		a2Sound.clip = a2Clip;
-		a2Sound.playOnAwake = false;
-		
-		b1Sound = gameObject.AddComponent<AudioSource>();
-		b1Sound.clip = b1Clip;
-		b1Sound.playOnAwake = false;
-		
-		b2Sound = gameObject.AddComponent<AudioSource>();
-		b2Sound.clip = b2Clip;
-		b2Sound.playOnAwake = false;
-
-		endSound = gameObject.AddComponent<AudioSource>();
-		endSound.clip = endClip;
-		endSound.playOnAwake = false;
 	}
 
 	private void StartStage0 () {
@@ -200,14 +191,16 @@ public class Tutorial : MonoBehaviour {
 
 			targets[0].SetLabel("1");
 			targets[1].SetLabel("2");
-			a1Sound.Play();
+			tutorialVoice.PlayOneShot(a1Clip);
+			overlayText.text = a1text;
 			phase0A.SetActive(true);
 		}
 		else {
 
 			targets[0].SetLabel("1");
 			targets[1].SetLabel("A");
-			b1Sound.Play();
+			tutorialVoice.PlayOneShot(b1Clip);
+			overlayText.text = b1text;
 			phase0B.SetActive(true);
 		}
 	}
@@ -250,8 +243,9 @@ public class Tutorial : MonoBehaviour {
 			targets [1].SetLabel("2");
 			targets [2].SetLabel("3");
 			targets [3].SetLabel("4");
-			a2Sound.Play();
-			a1Sound.Stop();
+			tutorialVoice.Stop();
+			tutorialVoice.PlayOneShot(a2Clip);
+			overlayText.text = a2text;
 			phase0A.SetActive(false);
 			phase1A.SetActive(true);
 		}
@@ -261,8 +255,9 @@ public class Tutorial : MonoBehaviour {
 			targets [1].SetLabel("A");
 			targets [2].SetLabel("2");
 			targets [3].SetLabel("B");
-			b2Sound.Play();
-			b1Sound.Stop();
+			tutorialVoice.Stop();
+			tutorialVoice.PlayOneShot(b2Clip);
+			overlayText.text = b2text;
 			phase0B.SetActive(false);
 			phase1B.SetActive(true);
 		}
@@ -273,16 +268,16 @@ public class Tutorial : MonoBehaviour {
 		startTime = Time.time;
 		lineDrawer.ClearAll ();
 		lineDrawer.gameObject.SetActive (false);
-
-		endSound.Play ();
+		tutorialVoice.Stop();
+		tutorialVoice.PlayOneShot(endClip);
+		//endSound.Play ();
 		//Debug.Log ("I've reached the end");
-		a2Sound.Stop();
-		b2Sound.Stop();
 		hand.transform.position = new Vector3(0, -5, 0);
 		hand.GetComponent<Renderer> ().enabled = false; 
 		phase2Menu.SetActive (true);
 		phase1A.SetActive (false);
 		phase1B.SetActive (false);
+		overlay.SetActive(false);
 		gameManager.StartGame();
 	}
 
@@ -324,14 +319,16 @@ public class Tutorial : MonoBehaviour {
 						currentTarget++;
 						correctingError = false;
 						errorsInRow = 0;
-						correctSound.Play();
+						gameSounds.PlayOneShot(correctClip);
+						//correctSound.Play();
 					}
 					else if(hit == lastValid) {
 
 						//loggingManager.WriteLog("LastValid Hit");
 						correctingError = false;
 						errorsInRow = 0;
-						correctSound.Play();
+						gameSounds.PlayOneShot(correctClip);
+						//correctSound.Play();
 					}
 					else if(hit < lastValid) {
 
@@ -347,7 +344,8 @@ public class Tutorial : MonoBehaviour {
 						currentTarget = hit + 1;
 						correctingError = false;
 						errorsInRow = 0;
-						correctSound.Play();
+						gameSounds.PlayOneShot(correctClip);
+						//correctSound.Play();
 					}
 					else if(hit > currentTarget) {
 
@@ -359,7 +357,8 @@ public class Tutorial : MonoBehaviour {
 						outset = hit;
 						correctingError = true;
 						errorsInRow++;
-						errorSound.Play();
+						gameSounds.PlayOneShot(errorClip);
+						//errorSound.Play();
 
 						for(int i = 0; i < targets.Length; i++) {
 							if(!targets[i].IsRed() && i != currentTarget)

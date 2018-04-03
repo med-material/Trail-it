@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	public ProfileManager profileManager;
 
+	[SerializeField]
+	public Tutorial tutorial;
+
 	public GameLevel activeLevel;
 	public AssistanceManager activeLevelAssistance;
 
@@ -165,9 +168,12 @@ public class GameManager : MonoBehaviour
 
 		if (intro && !tutorialSeen)
 		{
-			GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject;
-			tutObj.GetComponent<Tutorial>().Init(this);
-			tutObj.name = "Tutorial";
+			//GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject;
+			//tutObj.GetComponent<Tutorial>().Init(this);
+			//tutObj.name = "Tutorial";
+			//tutorial.gameObject.SetActive(true);
+			tutorial.Init();
+			//tutorial.Init(this);
 			_CurrentScene = "Tutorial";
 			tutorialSeen = true;
 		} else
