@@ -290,9 +290,12 @@ public class GameManager : MonoBehaviour
 		SetLevelCompletionTime(levelTimeEnd - levelTimeStart);
 		sessionHitsTotal += levelHitsTotal;
 		sessionErrorTotal -= levelErrorsTotal;
-		levelReactionTime = levelReactionTimesList.Average(item => (float)item);
-		levelReactionTimeLeft = levelReactionTimesLeftList.Average(item => (float)item);
-		levelReactionTimeRight = levelReactionTimesRightList.Average(item => (float)item);
+		levelReactionTime = Utils.GetMedian(levelReactionTimesList); 
+		levelReactionTimeLeft = Utils.GetMedian(levelReactionTimesLeftList);
+		levelReactionTimeRight = Utils.GetMedian(levelReactionTimesRightList);
+		Debug.Log("levelReactionTime: " + levelReactionTime);
+		Debug.Log("levelReactionTimeLeft: " + levelReactionTimeLeft);
+		Debug.Log("levelReactionTimeRight: " + levelReactionTimeRight);
 		loggingManager.WriteAggregateLog("Level " + currentProgress.ToString() + " Completed!");
 		StartCoroutine(ShowEndLevelCanvas());
     }

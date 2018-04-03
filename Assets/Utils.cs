@@ -56,4 +56,39 @@ public class Utils : MonoBehaviour {
 			list[n] = value;
 		}
 	}
+
+	public static float GetMedian(List<float> source)
+	{
+		// Create a copy of the input, and sort the copy
+		List<float> temp = new List<float>();
+		temp = source;
+		temp.Sort();
+		//string debugString = "";
+		//foreach (float val in temp)
+		//{
+		//	debugString = debugString + ", " + val.ToString("0.00");
+		//}
+		//Debug.Log("Sorted array: " + debugString);
+
+		int count = temp.Count;
+		if (count == 0)
+		{
+			return -1;
+		}
+		else if (count % 2 == 0)
+		{
+			// count is even, average two middle elements
+			float a = temp[count / 2 - 1];
+			float b = temp[count / 2];
+			float result = ((a + b) / 2);
+			return result;
+		}
+		else
+		{
+			// count is odd, return the middle element
+			float result = temp[count / 2];
+			return result;
+		}
+	}
+
 }
