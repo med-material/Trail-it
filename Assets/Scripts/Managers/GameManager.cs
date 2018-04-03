@@ -293,9 +293,6 @@ public class GameManager : MonoBehaviour
 		levelReactionTime = Utils.GetMedian(levelReactionTimesList); 
 		levelReactionTimeLeft = Utils.GetMedian(levelReactionTimesLeftList);
 		levelReactionTimeRight = Utils.GetMedian(levelReactionTimesRightList);
-		Debug.Log("levelReactionTime: " + levelReactionTime);
-		Debug.Log("levelReactionTimeLeft: " + levelReactionTimeLeft);
-		Debug.Log("levelReactionTimeRight: " + levelReactionTimeRight);
 		loggingManager.WriteAggregateLog("Level " + currentProgress.ToString() + " Completed!");
 		StartCoroutine(ShowEndLevelCanvas());
     }

@@ -127,8 +127,6 @@ public class LoggingManager : MonoBehaviour {
 
 	// The Aggregate Log is the log we upload to our server
 	public void WriteAggregateLog(string inputEvent) {
-		Debug.Log(inputEvent);
-
 		currentProfileID = profileManager.GetCurrentProfileID();
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
 		time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
