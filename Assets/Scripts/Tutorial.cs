@@ -77,52 +77,12 @@ public class Tutorial : MonoBehaviour {
 	private string b1text = "Forbind tal og bogstaver ved at tegne en streg.";
 	private string b2text = "Husk at skifte mellem tal og bogstaver i den rigtige rækkefølge.";
 	private bool didInit = false;
-	// Use this for initialization
-/*	void Start () {
-
-		gameManager = GameObject.Find("Managers").GetComponent<GameManager>();
-		loggingManager = GameObject.Find("Managers").GetComponent<LoggingManager>();
-
-		mainCam = GameObject.Find ("Main Camera").GetComponent<Camera> ();
-
-		gameA = gameManager.GetGameType ();
-
-		if(gameA) {
-
-			gameManager.SetTutorialASeen(true);
-		}
-		else {
-
-			gameManager.SetTutorialBSeen(true);
-		}
-		
-		hand = (GameObject)Instantiate (handPrefab, new Vector3(0,-5,0), Quaternion.identity);
-
-		LoadSounds ();
-
-		StartStage0 ();
-	}*/
-
-	public void Start () {
-		overlay.SetActive(true);
-		gameType = gameManager.GetGameType ();
-
-/*		if(gameA) {
-
-			gameManager.SetTutorialASeen(true);
-		}
-		else {
-
-			gameManager.SetTutorialBSeen(true);
-		}*/
-
-		hand = (GameObject)Instantiate (handPrefab, new Vector3(0,-5,0), Quaternion.identity);
-
-		//LoadSounds ();
-	}
 
 	public void Init()
 	{
+		overlay.SetActive(true);
+		gameType = gameManager.GetGameType();
+		hand = (GameObject)Instantiate(handPrefab, new Vector3(0, -5, 0), Quaternion.identity);
 		StartStage0();
 		didInit = true;
 	}
