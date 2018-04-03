@@ -17,7 +17,8 @@ public class AssistanceManager : MonoBehaviour {
 	public AudioClip[] voiceClipsB;
 	//public bool laneType;
 
-	public GameObject gameCanvas;
+	public GameObject TopPanelCanvas;
+	public GameObject BottomPanelCanvas;
 	public GameObject arrowLeftTop;
 	public GameObject arrowLeftBottom;
 	public GameObject arrowRightTop;
@@ -90,33 +91,34 @@ public class AssistanceManager : MonoBehaviour {
 
 		LoadPlayerPrefs ();		
 
-		arrowCount = 12;
+		arrowCount = 7;
 
 		Canvas.ForceUpdateCanvases ();
 
 		GameObject arrowObject;
 
-		for (int i = 1; i < arrowCount; i++) {
-			arrowObject = (GameObject)Instantiate (arrowRightTop, arrowRightTop.transform);
+		for (int i = 0; i < arrowCount; i++) {
+			arrowObject = (GameObject)Instantiate (arrowRightTop, TopPanelCanvas.transform);
 			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
-			arrowObject.transform.SetParent (gameCanvas.transform);
 			RightArrowObjects.Add(arrowObject);
 
-			arrowObject = (GameObject)Instantiate(arrowRightBottom,arrowRightBottom.transform);
+			arrowObject = (GameObject)Instantiate(arrowRightBottom,BottomPanelCanvas.transform);
 			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
-			arrowObject.transform.SetParent (gameCanvas.transform);
 			RightArrowObjects.Add(arrowObject);
 
-			arrowObject = (GameObject)Instantiate(arrowLeftTop,arrowLeftTop.transform);
-			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
-			arrowObject.transform.SetParent (gameCanvas.transform);
+			arrowObject = (GameObject)Instantiate(arrowLeftTop, TopPanelCanvas.transform);
+			arrowObject.GetComponent<landingsBane>().arrowOffset = i;
 			LeftArrowObjects.Add(arrowObject);
 
-			arrowObject = (GameObject)Instantiate(arrowLeftBottom,arrowLeftBottom.transform);
+			arrowObject = (GameObject)Instantiate(arrowLeftBottom,BottomPanelCanvas.transform);
 			arrowObject.GetComponent<landingsBane> ().arrowOffset = i;
-			arrowObject.transform.SetParent (gameCanvas.transform);
 			LeftArrowObjects.Add (arrowObject);
 		}
+
+		arrowRightTop.SetActive(false);
+		arrowRightBottom.SetActive(false);
+		arrowLeftTop.SetActive(false);
+		arrowLeftBottom.SetActive(false);
 
 		gameType = gameManager.GetGameType ();
 
@@ -254,20 +256,23 @@ public class AssistanceManager : MonoBehaviour {
 	private void StartLane () {
 		laneActive = true;
 		//Debug.Log ("Lane is Drawing!");
-		gameCanvas.SetActive (true);
+		TopPanelCanvas.SetActive (true);
+		BottomPanelCanvas.SetActive(true);
 		//GameObject arrowObject; // Declared, but never used
 		//Debug.Log("LaneRight: " + laneRight);
 		if (laneRight) {
 			//Debug.Log ("Activating RightArrowObjects!");
 			for (int i = 0; i < RightArrowObjects.Count; i++) {
 				RightArrowObjects[i].SetActive (true);
-				RightArrowObjects[i].GetComponent<Fadein> ().startNow = true;
+				RightArrowObjects[i].GetComponent<Fadein>().ResetFade();
+				RightArrowObjects[i].GetComponent<Fadein>().StartFade();
 			}
 		} else {
 			//Debug.Log ("Activating LeftArrowObjects!");
 			for (int i = 0; i < LeftArrowObjects.Count; i++) {
 				LeftArrowObjects[i].SetActive (true);
-				LeftArrowObjects[i].GetComponent<Fadein> ().startNow = true;
+				LeftArrowObjects[i].GetComponent<Fadein>().ResetFade();
+				LeftArrowObjects[i].GetComponent<Fadein>().StartFade();
 			}
 		}
 
@@ -314,11 +319,11 @@ public class AssistanceManager : MonoBehaviour {
 		laneActive = false;
 		if (laneRight) {
 			for (int i = 0; i < RightArrowObjects.Count; i++) {
-				RightArrowObjects [i].GetComponent<FadeOut> ().startNow = true;
+				RightArrowObjects[i].GetComponent<FadeOut>().StartFade();
 			}
 		} else {
 			for (int i = 0; i < LeftArrowObjects.Count; i++) {
-				LeftArrowObjects [i].GetComponent<FadeOut> ().startNow = true;
+				LeftArrowObjects[i].GetComponent<FadeOut>().StartFade();
 			}
 		}
 	}

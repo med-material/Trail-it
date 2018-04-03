@@ -6,13 +6,14 @@ using UnityEngine.UI;
 public class landingsBane : MonoBehaviour {
 
 	public bool directionRight = true;
-	public float arrowWidth = 138f;
+	public float arrowWidth = 136f;
 	public float arrowOffset = 0;
 	public float speed = 4f;
 	private new RectTransform transform;
 	private Image sprite;
 	private Vector2 resetOffsetMin;
 	private Vector2 resetOffsetMax;
+	private Vector2 anchoredPositionMin;
 	private float maxMove;
 	private float minMove;
 
@@ -25,10 +26,14 @@ public class landingsBane : MonoBehaviour {
 
 		resetOffsetMin = transform.offsetMin;
 		resetOffsetMax = transform.offsetMax;
+		anchoredPositionMin = transform.anchoredPosition;
+		transform.anchoredPosition = new Vector2();
+
 		if (directionRight) {
 			transform.offsetMin = new Vector2 (transform.offsetMin.x + (arrowWidth * arrowOffset), transform.offsetMin.y);
 		} else {
 			transform.offsetMax = new Vector2 (transform.offsetMax.x - (arrowWidth * arrowOffset), transform.offsetMax.y);
+			transform.anchoredPosition = new Vector2(transform.anchoredPosition.x - (arrowWidth * arrowOffset), transform.anchoredPosition.y);
 		}
 		sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, 1f);
 	}
@@ -50,11 +55,13 @@ public class landingsBane : MonoBehaviour {
 			}
 		} else {
 			transform.offsetMax -= new Vector2 (speed, 0f);
+			transform.anchoredPosition -= new Vector2(speed, 0f);
 
 			//Debug.Log ("current: " + transform.offsetMax.x + " width: " + transform.rect.width);
 
 			if (transform.rect.width <= 0) {
-				transform.offsetMax = resetOffsetMax;
+				transform.offsetMax += new Vector2(resetOffsetMax.x, 0f);	
+				transform.anchoredPosition = anchoredPositionMin;
 			}
 
 		}

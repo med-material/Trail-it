@@ -14,17 +14,20 @@ public class FadeOut : MonoBehaviour {
 	private float f = 1f;
 	private bool fadeOut = false;
 	private float startTime;
+	private Color defaultColor;
 
 	// Use this for initialization
 	void Start () {
 		sprite = this.GetComponent<Image> ();
 		text = this.GetComponent<Text> ();
 		if (sprite != null) {
-			sprite.color = new Color (sprite.color.r, sprite.color.g, sprite.color.b, 1f);
+			defaultColor = sprite.color;
+			//sprite.color = new Color (sprite.color.r, sprite.color.g, sprite.color.b, 1f);
 			//Debug.Log ("found sprite");
 		}
 		if (text != null) {
-			text.color = new Color (text.color.r, text.color.g, text.color.b, 1f);
+			defaultColor = text.color;
+			//text.color = new Color (text.color.r, text.color.g, text.color.b, 1f);
 			//Debug.Log ("found text");
 		}
 		startTime = Time.fixedTime;
@@ -57,5 +60,30 @@ public class FadeOut : MonoBehaviour {
 			f -= Time.deltaTime / duration;
 			//Debug.Log ("alpha is: " + f);
 		}
+	}
+
+	public void StartFade()
+	{
+		startNow = true;
+	}
+
+	public void ResetFade()
+	{
+		//print ("resetFade() called");
+		f = 1f;
+		//startNow = true;
+		fadeOut = false;
+
+		if (sprite != null)
+		{
+			sprite.color = defaultColor;
+			//Debug.Log ("found sprite");
+		}
+		if (text != null)
+		{
+			text.color = defaultColor;
+			//Debug.Log ("found text");
+		}
+		startTime = Time.fixedTime;
 	}
 }

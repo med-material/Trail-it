@@ -9,7 +9,8 @@ public class Fadein : MonoBehaviour {
 	Text text;
 	public float duration;
 	public float startDelay;
-	public bool startNow = true;
+	[SerializeField]
+	private bool startNow = true;
 	private float f = 0f;
 	private bool fadeIn = false;
 	private float startTime;
@@ -32,7 +33,7 @@ public class Fadein : MonoBehaviour {
 		if (startDelay < (Time.fixedTime - startTime)) {
 			fadeIn = true;
 		}
-		//Debug.Log(Time.fixedTime - startTime + " seconds passed");	
+		Debug.Log(Time.fixedTime - startTime + " seconds passed");	
 
 		if (fadeIn) {
 			if (sprite != null) {
@@ -45,17 +46,22 @@ public class Fadein : MonoBehaviour {
 				fadeIn = false;
 				startNow = false;
 				f = 0;
-				//Debug.Log ("fading stopped!: " + f);
+				Debug.Log ("fading stopped!: " + f);
 			}
 			f += Time.deltaTime / duration;
-			//Debug.Log ("alpha is: " + f);
+			Debug.Log ("alpha is: " + f);
 		}
+	}
+
+	public void StartFade()
+	{
+		startNow = true;
 	}
 
 	public void ResetFade() {
 		//print ("resetFade() called");
 		f = 0f;
-		startNow = true;
+		//startNow = true;
 		fadeIn = false;
 
 		if (sprite != null) {
