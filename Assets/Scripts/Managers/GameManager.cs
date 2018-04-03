@@ -192,11 +192,10 @@ public class GameManager : MonoBehaviour
 				activeLevel.Init(this);
 				_CurrentScene = "Level";
 			}
-
+			activeLevel.setupCamera();
 			StartCoroutine(CountDownFirstLevel());
 
 		}
-
 		menuCanvas.gameObject.SetActive(false);
     }
 

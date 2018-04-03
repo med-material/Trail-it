@@ -289,6 +289,21 @@ public class GameLevel : MonoBehaviour
         LoadLevel();
     }
 
+	public void setupCamera()
+	{
+		camTransform = GameObject.Find("Main Camera").transform;
+		mainCam = camTransform.GetComponent<Camera>();
+		if (gameManager == null)
+		{
+			return;
+		}
+
+		levelData = gameManager.GetLevelData().text.Split("\n"[0]);
+
+		camTransform.position = new Vector3(float.Parse(levelData[0]), float.Parse(levelData[1]), float.Parse(levelData[2]));
+		mainCam.orthographicSize = float.Parse(levelData[3]);
+	}
+
     private void LoadLevel()
     {
         camTransform = GameObject.Find("Main Camera").transform;
