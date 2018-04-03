@@ -4259,6 +4259,7 @@ GameObject:
   - component: {fileID: 462399591}
   - component: {fileID: 462399592}
   - component: {fileID: 462399593}
+  - component: {fileID: 462399594}
   m_Layer: 0
   m_Name: BackgroundImage
   m_TagString: Untagged
@@ -4336,6 +4337,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scale: 0.095
   offset: {x: 0, y: 0.3, z: 15}
+--- !u!114 &462399594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 462399590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b658ebdf000294567b4bdbee50abacc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backgrounds:
+  - {fileID: 21300000, guid: 34e5ff06a91b34744984f5099ad551ff, type: 3}
+  - {fileID: 21300000, guid: af3bfdd9234e44981928c3a439d03e78, type: 3}
+  spriteRenderer: {fileID: 462399592}
 --- !u!1 &462707723
 GameObject:
   m_ObjectHideFlags: 0
@@ -5112,8 +5128,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 235454368}
-        m_MethodName: LoadSettings
+      - m_Target: {fileID: 462399594}
+        m_MethodName: ChangeBackground
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
