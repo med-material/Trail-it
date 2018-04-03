@@ -5,21 +5,48 @@ using UnityEngine.UI;
 
 public class Fadein : MonoBehaviour {
 
-	Image sprite;
-	Text text;
 	public float duration;
 	public float startDelay;
 	[SerializeField]
 	private bool startNow = true;
 	private float f = 0f;
 	private bool fadeIn = false;
+	private bool startOnAwake = false;
 	private float startTime;
+	private Image[] fadeImages;
+	private Text[] fadeTexts;
+
+	public bool fadeInChildren = false;
 
 	// Use this for initialization
+	void OnEnable()
+	{
+		this.ResetFade();
+		if (startOnAwake)
+		{
+			startNow = true;
+		}
+	}
+
 	void Start () {
-		sprite = this.GetComponent<Image> ();
-		text = this.GetComponent<Text> ();
+
+		if (fadeInChildren)
+		{
+			fadeImages = this.GetComponentsInChildren<Image>();
+			fadeTexts = this.GetComponentsInChildren<Text>();
+		}
+		else
+		{
+			fadeImages = new Image[1];
+			fadeImages[0] = this.GetComponent<Image>();
+			fadeTexts = new Text[1];
+			fadeTexts[0] = this.GetComponent<Text>();
+		}
 		this.ResetFade ();
+		if (startNow)
+		{
+			startOnAwake = true;
+		}
 		//Debug.Log (gameObject);
 	}
 	
@@ -33,23 +60,41 @@ public class Fadein : MonoBehaviour {
 		if (startDelay < (Time.fixedTime - startTime)) {
 			fadeIn = true;
 		}
-		Debug.Log(Time.fixedTime - startTime + " seconds passed");	
+		Debug.Log(Time.fixedTime - startTime + " seconds passed");
 
 		if (fadeIn) {
-			if (sprite != null) {
-				sprite.color = new Color (sprite.color.r, sprite.color.g, sprite.color.b, f);
+			if (fadeImages != null)
+			{
+				foreach (Image img in fadeImages)
+				{
+					if (img != null)
+					{
+						img.color = new Color(img.color.r, img.color.g, img.color.b, f);
+					}
+				}
 			}
-			if (text != null) {
-				text.color = new Color (text.color.r, text.color.g, text.color.b, f);
+
+			if (fadeTexts != null)
+			{
+				foreach (Text text in fadeTexts)
+				{
+					if (text != null)
+					{
+						text.color = new Color(text.color.r, text.color.g, text.color.b, f);
+					}
+				}
 			}
-			if (f >= 1) {
+
+			if (f >= 1)
+			{
 				fadeIn = false;
 				startNow = false;
 				f = 0;
-				Debug.Log ("fading stopped!: " + f);
+				Debug.Log("fading stopped!: " + f);
 			}
+
 			f += Time.deltaTime / duration;
-			Debug.Log ("alpha is: " + f);
+			Debug.Log("alpha is: " + f);
 		}
 	}
 
@@ -59,19 +104,25 @@ public class Fadein : MonoBehaviour {
 	}
 
 	public void ResetFade() {
-		//print ("resetFade() called");
 		f = 0f;
-		//startNow = true;
 		fadeIn = false;
 
-		if (sprite != null) {
-			sprite.color = new Color (sprite.color.r, sprite.color.g, sprite.color.b, 0f);
-			//Debug.Log ("found sprite");
+		if (fadeImages != null) {
+			foreach (Image img in fadeImages) {
+				if (img != null) {
+					img.color = new Color(img.color.r, img.color.g, img.color.b, 0f);
+				}
+			}
 		}
-		if (text != null) {
-			text.color = new Color (text.color.r, text.color.g, text.color.b, 0f);
-			//Debug.Log ("found text");
+
+		if (fadeTexts != null) {
+			foreach (Text text in fadeTexts) {
+				if (text != null) {
+					text.color = new Color(text.color.r, text.color.g, text.color.b, 0f);
+				}
+			}
 		}
+
 		startTime = Time.fixedTime;
 	}
 
