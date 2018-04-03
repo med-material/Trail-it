@@ -60,7 +60,7 @@ public class Fadein : MonoBehaviour {
 		if (startDelay < (Time.fixedTime - startTime)) {
 			fadeIn = true;
 		}
-		Debug.Log(Time.fixedTime - startTime + " seconds passed");
+		//Debug.Log(Time.fixedTime - startTime + " seconds passed");
 
 		if (fadeIn) {
 			if (fadeImages != null)
@@ -90,11 +90,11 @@ public class Fadein : MonoBehaviour {
 				fadeIn = false;
 				startNow = false;
 				f = 0;
-				Debug.Log("fading stopped!: " + f);
+				//Debug.Log("fading stopped!: " + f);
 			}
 
 			f += Time.deltaTime / duration;
-			Debug.Log("alpha is: " + f);
+			//Debug.Log("alpha is: " + f);
 		}
 	}
 
