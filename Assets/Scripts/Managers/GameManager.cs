@@ -284,7 +284,6 @@ public class GameManager : MonoBehaviour
     private void LevelEnded()
     {
 		levelActive = false;
-		gameOverlayCanvas.gameObject.SetActive(false);
         _CurrentScene = "LevelComplete";
 		levelTimeEnd = Time.time;
 		levelTimestampEnd = System.DateTime.Now.ToString("HH:mm:ss.ffff");
