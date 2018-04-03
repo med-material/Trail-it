@@ -114,6 +114,7 @@ public class GameManager : MonoBehaviour
 	private Text reactionTimeRightText;
 	[SerializeField]
 	private Text reactionTimeLeftText;
+
 	private string endLevelTimeTemplate;
 	private string endLevelAmountTemplate;
 	private string endLevelAverageTemplate;
@@ -121,6 +122,12 @@ public class GameManager : MonoBehaviour
 	private string bestCompletionTimeTemplate;
 	private string reactionTimeRightTemplate;
 	private string reactionTimeLeftTemplate;
+
+	[SerializeField]
+	public Text countDownText;
+	public int countDown = 4;
+	[SerializeField]
+	public GameObject getReadyOverlay;
 
 
     // Since we're doing everything in one scene now, we're just adding this to figure out 
@@ -163,7 +170,6 @@ public class GameManager : MonoBehaviour
     {
 		LoadPlayerPrefs ();
 
-		levelActive = true;
         gameOverlayCanvas.gameObject.SetActive(true);
 
 		if (intro && !tutorialSeen)
@@ -178,18 +184,16 @@ public class GameManager : MonoBehaviour
 			tutorialSeen = true;
 		} else
 		{
-			sessionTimeStart = Time.time;
-			levelTimeStart = sessionTimeStart;
-			levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
-
 			currentLevel = ChooseLevel();
 			currentProgress += 1;
 
 			if (!GameLevel._DidInit)
 			{
-				GameObject.Find("GameLevel").GetComponent<GameLevel>().Init(this);
+				activeLevel.Init(this);
 				_CurrentScene = "Level";
 			}
+
+			StartCoroutine(CountDownFirstLevel());
 
 		}
 
@@ -297,7 +301,28 @@ public class GameManager : MonoBehaviour
 		StartCoroutine(ShowEndLevelCanvas());
     }
 
-    private IEnumerator ShowEndLevelCanvas()
+	private IEnumerator CountDownFirstLevel()
+	{
+		getReadyOverlay.SetActive(true);
+		while (countDown > 0)
+		{
+			countDownText.text = countDown.ToString();
+			yield return new WaitForSeconds(1f);
+			countDown--;
+		}
+
+		if (countDown < 1)
+		{
+			getReadyOverlay.SetActive(false);
+			levelActive = true;
+			sessionTimeStart = Time.time;
+			levelTimeStart = sessionTimeStart;
+			levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
+			activeLevel.LoadNextLevel();
+		}
+	}
+
+	private IEnumerator ShowEndLevelCanvas()
     {
         yield return new WaitForSeconds(0.2f);
         Image bgPanel = endLevelCanvas.GetComponentInChildren<Image>();

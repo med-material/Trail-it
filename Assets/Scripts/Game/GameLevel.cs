@@ -83,7 +83,7 @@ public class GameLevel : MonoBehaviour
 		spawnSound.clip = spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)];
 		spawnSound.playOnAwake = false;
        
-        LoadLevel();
+        //LoadLevel();
 
         correctSound = gameObject.AddComponent<AudioSource>();
         correctSound.clip = correctClip;
