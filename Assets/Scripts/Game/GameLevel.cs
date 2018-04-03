@@ -88,10 +88,12 @@ public class GameLevel : MonoBehaviour
         correctSound = gameObject.AddComponent<AudioSource>();
         correctSound.clip = correctClip;
         correctSound.playOnAwake = false;
+		correctSound.volume = 0.7f;
 
         errorSound = gameObject.AddComponent<AudioSource>();
         errorSound.clip = errorClip;
         errorSound.playOnAwake = false;
+		errorSound.volume = 0.7f;
 
         _DidInit = true;
     }
