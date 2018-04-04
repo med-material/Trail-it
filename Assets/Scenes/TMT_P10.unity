@@ -321,8 +321,6 @@ MonoBehaviour:
   handDistTolerance: 0.2
   handAwayTime: 2
   handStillTime: 1
-  lineDrawer: {fileID: 114904478942971324, guid: cb6cb1cac09604db1b81c957e1820bc8,
-    type: 2}
   overlayText: {fileID: 1085460883}
   overlay: {fileID: 2030560347}
   gameManager: {fileID: 235454365}
@@ -2540,6 +2538,7 @@ MonoBehaviour:
   - {fileID: 4900000, guid: 14f63a29663efeb40989737e8d00ca9e, type: 3}
   - {fileID: 4900000, guid: e9d1d2bbc4672584caacc4efc066334c, type: 3}
   - {fileID: 4900000, guid: eb23bef22d0a8bf49aa3c936e6176c76, type: 3}
+  input: {fileID: 0}
   menuCanvas: {fileID: 432501715}
   setupCanvas: {fileID: 1798151972}
   endLevelCanvas: {fileID: 1751727572}
@@ -4798,6 +4797,7 @@ GameObject:
   m_Component:
   - component: {fileID: 466868601}
   - component: {fileID: 466868602}
+  - component: {fileID: 466868603}
   m_Layer: 5
   m_Name: namePanel
   m_TagString: Untagged
@@ -4830,6 +4830,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 466868600}
+--- !u!114 &466868603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 466868600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95d43d52dbec04cbc85794b298d38082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 550135292}
+  moveDistance: 250
+  rectPanel: {fileID: 1961621743}
 --- !u!1 &478558189
 GameObject:
   m_ObjectHideFlags: 0
@@ -9846,6 +9860,7 @@ GameObject:
   - component: {fileID: 829585178}
   - component: {fileID: 829585177}
   - component: {fileID: 829585176}
+  - component: {fileID: 829585179}
   m_Layer: 5
   m_Name: NewProfileCanvas
   m_TagString: Untagged
@@ -9891,7 +9906,6 @@ MonoBehaviour:
   newProfileButton: {fileID: 675639803}
   shouldUpload: {fileID: 82548241}
   shouldProtectSettings: {fileID: 822373708}
-  rectPanel: {fileID: 1233655084}
 --- !u!114 &829585177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9930,6 +9944,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &829585179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 829585174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95d43d52dbec04cbc85794b298d38082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 1812753708}
+  moveDistance: 250
+  rectPanel: {fileID: 1233655084}
 --- !u!1 &852527506
 GameObject:
   m_ObjectHideFlags: 0
@@ -18708,6 +18736,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1799700497}
   - component: {fileID: 1799700498}
+  - component: {fileID: 1799700499}
   m_Layer: 5
   m_Name: EmailPanel
   m_TagString: Untagged
@@ -18740,6 +18769,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1799700496}
+--- !u!114 &1799700499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1799700496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95d43d52dbec04cbc85794b298d38082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 582437622}
+  moveDistance: 250
+  rectPanel: {fileID: 1407936635}
 --- !u!1 &1811391327
 GameObject:
   m_ObjectHideFlags: 0
