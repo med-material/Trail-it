@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
 	private int maximumLevel = 12;
 	private int currentProgress = 0;
 
-    private InputHandler input;
+    public InputHandler input;
 
 	// Counters for Statistics
 
@@ -203,7 +203,7 @@ public class GameManager : MonoBehaviour
 
 	public void Update()
 	{
-		Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
+		//Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
 		if (_CurrentScene == "Level")
 		{
 			if (input.TouchDown)

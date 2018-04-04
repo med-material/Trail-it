@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class LineDrawer : MonoBehaviour
 {
 
-    public GameObject linePrefab;
+	public GameObject linePrefab;
     public float minDist;
     public int nextTarget;
     public Color normalColor;
@@ -78,7 +78,10 @@ public class LineDrawer : MonoBehaviour
 
     public void EndLine()
     {
-        StartCoroutine(FadeLine(_lines[_lines.Count - 1]));
+		if (_lines.Count > 0)
+		{
+			StartCoroutine(FadeLine(_lines[_lines.Count - 1]));
+		}	
     }
 
     public void EndLine(LineRenderer LR)

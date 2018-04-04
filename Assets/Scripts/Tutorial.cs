@@ -25,7 +25,6 @@ public class Tutorial : MonoBehaviour {
 	public float handDistTolerance;
 	public float handAwayTime;
 	public float handStillTime;
-	public LineDrawer lineDrawer;
 	public Text overlayText;
 	public GameObject overlay;
 
@@ -167,7 +166,7 @@ public class Tutorial : MonoBehaviour {
 
 	private void StartStage1 () {
 
-		lineDrawer.ClearAll ();
+		gameManager.LD.ClearAll ();
 
 		startTime = Time.time;
 		handStartTime = Time.time;
@@ -226,8 +225,8 @@ public class Tutorial : MonoBehaviour {
 	private void StartStage2 () {
 
 		startTime = Time.time;
-		lineDrawer.ClearAll ();
-		lineDrawer.gameObject.SetActive (false);
+		gameManager.LD.ClearAll ();
+		//gameManager.LD.gameObject.SetActive (false);
 		tutorialVoice.Stop();
 		tutorialVoice.PlayOneShot(endClip);
 		//endSound.Play ();
@@ -242,9 +241,14 @@ public class Tutorial : MonoBehaviour {
 	}
 
 	private void RunGame() {
-		
-		if(Input.GetMouseButton(0)) {
-			
+
+		if (gameManager.input.TouchDown)
+		{
+			gameManager.LD.StartLine(gameManager.input.TouchPos);
+		}
+
+		if(gameManager.input.TouchActive) {
+
 			colliderHit = Physics2D.OverlapPoint(mainCam.ScreenToWorldPoint(Input.mousePosition));
 			
 			if(colliderHit != null) {
@@ -256,6 +260,8 @@ public class Tutorial : MonoBehaviour {
 					hit = colliderHit.GetComponent<Target>().GetID();
 					
 					if(hit == currentTarget) {
+
+						gameManager.LD.DrawLine(gameManager.input.TouchPos, HitType.TargetHit);
 
 						if(hit == targets.Length-1){
 							//loggingManager.WriteLog("Target Hit - Level Complete");
@@ -328,13 +334,14 @@ public class Tutorial : MonoBehaviour {
 				}
 			}
 			else {
-				
+				gameManager.LD.DrawLine(gameManager.input.TouchPos, HitType.NoHit);
 				tempHit = null;
 			}
 		}
-		else if(Input.GetMouseButtonUp(0)) {
+		else if (gameManager.input.TouchUp) {
 			
 			tempHit = null;
+			gameManager.LD.EndLine();
 		}
 	}
 	
