@@ -12,6 +12,8 @@ public class LineDrawer : MonoBehaviour
     public Color correctColor;
     public Color errorColor;
 
+	private bool usesLineDrawing;
+
     private List<LineRenderer> _lines; // All the lines 
 
     private float lineSize;
@@ -61,7 +63,11 @@ public class LineDrawer : MonoBehaviour
         {
             _lines[curIndex].startColor = correctColor;
             _lines[curIndex].endColor = correctColor;
-            StartLine(linePos); 
+            StartLine(linePos);
+			if (_lines[curIndex].positionCount > 5)
+			{
+				usesLineDrawing = true;
+			}
         } 
         else if (hit == HitType.Backtracking)
         {
@@ -72,7 +78,7 @@ public class LineDrawer : MonoBehaviour
             _lines[curIndex].startColor = errorColor;
             _lines[curIndex].endColor = errorColor;
             EndLine();
-            StartLine(linePos); 
+            StartLine(linePos);
         }
     }
 
@@ -88,6 +94,11 @@ public class LineDrawer : MonoBehaviour
     {
         StartCoroutine(FadeLine(LR));
     }
+
+	public bool GetUsesLineDrawing()
+	{
+		return usesLineDrawing;
+	}
 
     IEnumerator FadeLine(LineRenderer curLine)
     {
@@ -121,5 +132,6 @@ public class LineDrawer : MonoBehaviour
 				Destroy (transform.GetChild (i).gameObject);
 			}
 		}
+		usesLineDrawing = false;
     }
 }

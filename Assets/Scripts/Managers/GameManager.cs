@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
 	private int sessionLength;
 	private float sessionTimeStart = -1;
 	private float sessionTimeCurrent = -1; 		// current time formatted in seconds
-	private float sessionTimeRemaining = -1;	// remaining time formatted in seconds
+	private float sessionTimeRemaining = -1;    // remaining time formatted in seconds
 
     // Canvas Stuff
     [SerializeField]
@@ -442,6 +442,11 @@ public class GameManager : MonoBehaviour
 	public void SetGameType(string newGameType)
 	{
 		gameType = newGameType;
+	}
+
+	public bool GetUsesLineDrawing()
+	{
+		return LD.GetUsesLineDrawing();
 	}
 
 	public float GetSessionTimeCurrent()

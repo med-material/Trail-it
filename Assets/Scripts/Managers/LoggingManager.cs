@@ -36,6 +36,7 @@ public class LoggingManager : MonoBehaviour {
 	private string difficultyLevel;         // From 1 (easy) to 3 (hard) corresponding to how many circles are present in the level.
 	private string trainingTime;            // accumulated level time set by therapist for training.
 	private string assistanceWasActive;    // whether assistance was active in that given level.
+	private string usesLineDrawing;			// whether the player is using line drawing or just clicking. Determined based on 1 succesful line-drawn
 	//private string gameWasPaused;			// whether game was paused during the level.
 	// we dont use gameWasPaused because we are resetting the level when you pause the game anyway..
 	private string levelHitsTotal;          // total amount of successful hits in the level, while we still have training time left.
@@ -137,6 +138,7 @@ public class LoggingManager : MonoBehaviour {
 		gameType = PlayerPrefs.GetString("Settings:" + currentProfileID + ":GameType", "gameA");
 		difficultyLevel = (PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1)).ToString();
 		assistanceWasActive = Utils.BoolToNumberString(assistanceManager.GetAssistanceWasActive());
+		usesLineDrawing = Utils.BoolToNumberString(gameManager.GetUsesLineDrawing());
 		levelHitsTotal = gameManager.GetLevelHitsTotal().ToString();
 		levelHitsLeft = gameManager.GetLevelHitsLeft().ToString();
 		levelHitsRight = gameManager.GetLevelHitsRight().ToString();
@@ -169,6 +171,7 @@ public class LoggingManager : MonoBehaviour {
 				+ gameType + sep
 				+ difficultyLevel + sep
 				+ assistanceWasActive + sep
+				+ usesLineDrawing + sep
 				+ levelHitsTotal + sep
 				+ levelHitsLeft + sep
 				+ levelHitsRight + sep
