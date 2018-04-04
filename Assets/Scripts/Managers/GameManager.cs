@@ -161,8 +161,8 @@ public class GameManager : MonoBehaviour
 		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5);
 		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MinLevel", 1);
 		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MaxLevel", 4);
-		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "GameA");
-		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 0) == 1;
+		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
+		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
    
     }
 
@@ -182,6 +182,8 @@ public class GameManager : MonoBehaviour
 			//tutorial.Init(this);
 			_CurrentScene = "Tutorial";
 			tutorialSeen = true;
+			string currentProfileID = profileManager.GetCurrentProfileID();
+			PlayerPrefs.SetInt("Settings:" + currentProfileID + ":Intro", tutorialSeen ? 0 : 1);
 		} else
 		{
 			currentLevel = ChooseLevel();
