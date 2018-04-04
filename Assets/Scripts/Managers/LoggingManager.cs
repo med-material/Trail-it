@@ -54,7 +54,7 @@ public class LoggingManager : MonoBehaviour {
 	private string sessionLength;     // current training time. (disregards training time)
 	private string sessionTimeCurrent;     // current training time. (disregards training time)
 	private string sessionTimeRemaining;   // remaining training time. 
-	private string tutorialSetting;         // whether tutorial is enabled or not.
+	private string tutorialSeen;         	// whether tutorial was seen this training session or not.
 	private string laneSetting;             // whether lanes are enabled or not.
 	private string pulseSetting;            // whether blinking is enabled or not.
 	private string voiceSetting;            // whether sound is enabled or not.
@@ -154,7 +154,7 @@ public class LoggingManager : MonoBehaviour {
 		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5).ToString();
 		sessionTimeCurrent = gameManager.GetSessionTimeCurrent().ToString();
 		sessionTimeRemaining = gameManager.GetSessionTimeRemaining().ToString();
-		tutorialSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 0) == 1);
+		tutorialSeen = Utils.BoolToNumberString(gameManager.GetTutorialSeen());
 		laneSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);
 		pulseSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1);
 		voiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1);
@@ -187,7 +187,7 @@ public class LoggingManager : MonoBehaviour {
 				+ sessionLength + sep
 				+ sessionTimeCurrent + sep
 				+ sessionTimeRemaining + sep
-				+ tutorialSetting + sep
+				+ tutorialSeen + sep
 				+ laneSetting + sep
 			 	+ pulseSetting + sep
 				+ voiceSetting + sep

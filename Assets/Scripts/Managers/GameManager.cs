@@ -183,7 +183,13 @@ public class GameManager : MonoBehaviour
 			_CurrentScene = "Tutorial";
 			tutorialSeen = true;
 			string currentProfileID = profileManager.GetCurrentProfileID();
-			PlayerPrefs.SetInt("Settings:" + currentProfileID + ":Intro", tutorialSeen ? 0 : 1);
+
+			int introVal = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", -1);
+
+			if (introVal == -1)
+			{
+				PlayerPrefs.SetInt("Settings:" + currentProfileID + ":Intro", tutorialSeen ? 0 : 1);
+			}
 		} else
 		{
 			currentLevel = ChooseLevel();
@@ -215,7 +221,7 @@ public class GameManager : MonoBehaviour
 			{
 				HitType hitType = activeLevel.AttemptHit(input.TouchPos);
 				LD.DrawLine(input.TouchPos, hitType);
-				if (hitType == HitType.TargetHit)
+				if (hitType == HitType.TargetHit || hitType == HitType.TargetHitLevelComplete)
 				{
 					float time = Time.time;
 
@@ -244,12 +250,13 @@ public class GameManager : MonoBehaviour
 
 						lastHitTime = Time.time;
 					}
-				} 
-				else if (hitType == HitType.TargetHitLevelComplete)
-				{
-					LevelEnded();
-				} 
-				else if (hitType == HitType.WrongTargetHit)
+
+					if (hitType == HitType.TargetHitLevelComplete)
+					{
+						LevelEnded();
+					}
+
+				} else if (hitType == HitType.WrongTargetHit)
 				{
 					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
 					{
@@ -265,6 +272,7 @@ public class GameManager : MonoBehaviour
 						levelErrorsLeft++;
 					}
 				}
+
 
 			} else if (input.TouchUp)
 			{
@@ -290,8 +298,8 @@ public class GameManager : MonoBehaviour
 		levelTimeEnd = Time.time;
 		levelTimestampEnd = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		sessionTimeCurrent = (levelTimeEnd - sessionTimeStart);
-		sessionTimeRemaining = (sessionLength * 60) - levelTimeEnd;
-		SetLevelCompletionTime(levelTimeEnd - levelTimeStart);
+		levelCompletionTime = levelTimeEnd - levelTimeStart;
+		sessionTimeRemaining = (sessionLength * 60) - levelCompletionTime;
 		sessionHitsTotal += levelHitsTotal;
 		sessionErrorTotal -= levelErrorsTotal;
 		levelReactionTime = Utils.GetMedian(levelReactionTimesList); 
@@ -413,7 +421,6 @@ public class GameManager : MonoBehaviour
 	public void ResetGame()
 	{
 		//loggingManager.WriteLog ("Game Reset!");
-		loggingManager.UploadLog();
 		SceneManager.LoadSceneAsync("TMT_P10");
 	}
 
@@ -457,6 +464,11 @@ public class GameManager : MonoBehaviour
 	public float GetSessionTimeRemaining()
 	{
 		return sessionTimeRemaining;
+	}
+
+	public bool GetTutorialSeen()
+	{
+		return tutorialSeen;
 	}
 
     public string GetGameType()
@@ -559,10 +571,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetLevelCompletionTime(float inputTime)
-    {
-        levelCompletionTime = inputTime;
-    }
     public float GetLevelCompletionTime()
     {
         return levelCompletionTime;

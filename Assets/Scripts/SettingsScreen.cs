@@ -231,7 +231,7 @@ public class SettingsScreen : MonoBehaviour
         pulse = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
         stemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1;
 		gentagStemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":GentagStemme", 0) == 1;
-		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 0) == 1;
+		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
 		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 5);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
