@@ -158,7 +158,7 @@ public class GameManager : MonoBehaviour
     public void LoadPlayerPrefs()
     {
 		string currentProfileID = profileManager.GetCurrentProfileID ();
-		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5);
+		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 2);
 		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MinLevel", 1);
 		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MaxLevel", 4);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
