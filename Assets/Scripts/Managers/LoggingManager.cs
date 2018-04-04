@@ -191,6 +191,11 @@ public class LoggingManager : MonoBehaviour {
 				+ repeatVoiceSetting + sep;
 
 		logEntries.Add(currentLine);
+		using (StreamWriter writer = File.AppendText(directory + fileName))
+		{
+			writer.WriteLine(currentLine);
+		}
+
 	}
 
 	public void NewLog() {

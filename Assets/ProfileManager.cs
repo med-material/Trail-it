@@ -8,6 +8,12 @@ public class ProfileManager : MonoBehaviour {
 	[SerializeField]
 	private MainMenuScreen mainMenuScreen;
 
+	[SerializeField]
+	private GameObject mainMenuCanvas;
+
+	[SerializeField]
+	private GameObject firstTimeCanvas;
+
 	private string currentProfileID = "Gæst";
 	private string currentName;
 	private string currentEmail;
@@ -18,7 +24,15 @@ public class ProfileManager : MonoBehaviour {
 
 
 	public void Awake() {
-		string profileString = PlayerPrefs.GetString ("Settings:ProfileIDs", "Gæst");
+		string profileString = PlayerPrefs.GetString ("Settings:ProfileIDs", "-1");
+
+		if (profileString == "-1")
+		{
+			mainMenuCanvas.SetActive(false);
+			firstTimeCanvas.SetActive(true);
+			profileString = "Gæst";
+		}
+
 		if (profileString.Contains (sep)) {
 			string[] profilesArray = profileString.Split (char.Parse (sep));
 			for (int i = 0; i < profilesArray.Length; i++) {
