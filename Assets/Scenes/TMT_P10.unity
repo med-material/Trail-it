@@ -2544,15 +2544,15 @@ MonoBehaviour:
   endLevelCanvas: {fileID: 1751727572}
   endSessionCanvas: {fileID: 703736491}
   gameOverlayCanvas: {fileID: 2043687481}
-  endLevelTime: {fileID: 1062787012}
+  endLevelTime: {fileID: 1062787014}
   endLevelDuration: {fileID: 1053172702}
-  endLevelAmount: {fileID: 1492646124}
-  endLevelAverage: {fileID: 1827846890}
-  totalAmount: {fileID: 632265026}
+  endLevelAmount: {fileID: 1492646126}
+  endLevelAverage: {fileID: 1827846892}
+  totalAmount: {fileID: 632265029}
   endSessionAmount: {fileID: 2130726626}
-  bestCompletionTimeText: {fileID: 1232901663}
-  reactionTimeRightText: {fileID: 742334084}
-  reactionTimeLeftText: {fileID: 1536379266}
+  bestCompletionTimeText: {fileID: 1232901665}
+  reactionTimeRightText: {fileID: 742334086}
+  reactionTimeLeftText: {fileID: 1536379268}
   countDownText: {fileID: 551523315}
   countDown: 3
   getReadyOverlay: {fileID: 1083341195}
@@ -6648,6 +6648,7 @@ GameObject:
   - component: {fileID: 632265027}
   - component: {fileID: 632265026}
   - component: {fileID: 632265028}
+  - component: {fileID: 632265029}
   m_Layer: 5
   m_Name: totalAmountText
   m_TagString: Untagged
@@ -6730,6 +6731,21 @@ MonoBehaviour:
   startDelay: 0.3
   startNow: 1
   fadeInChildren: 0
+--- !u!114 &632265029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 632265024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countType: 0
+  duration: 0
+  delay: 0
+  resetNumber: 1
 --- !u!1 &636726435
 GameObject:
   m_ObjectHideFlags: 0
@@ -8719,6 +8735,7 @@ GameObject:
   - component: {fileID: 742334085}
   - component: {fileID: 742334084}
   - component: {fileID: 742334083}
+  - component: {fileID: 742334086}
   m_Layer: 5
   m_Name: reactionTimeRightText
   m_TagString: Untagged
@@ -8801,6 +8818,21 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 742334081}
+--- !u!114 &742334086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 742334081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countType: 1
+  duration: 0
+  delay: 0
+  resetNumber: 1
 --- !u!1 &761853013
 GameObject:
   m_ObjectHideFlags: 0
@@ -11458,6 +11490,7 @@ GameObject:
   - component: {fileID: 1062787011}
   - component: {fileID: 1062787013}
   - component: {fileID: 1062787012}
+  - component: {fileID: 1062787014}
   m_Layer: 5
   m_Name: leveltimeText
   m_TagString: Untagged
@@ -11525,6 +11558,21 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1062787010}
+--- !u!114 &1062787014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1062787010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countType: 0
+  duration: 0.2
+  delay: 0.3
+  resetNumber: 1
 --- !u!1 &1080026295
 GameObject:
   m_ObjectHideFlags: 0
@@ -12938,6 +12986,7 @@ GameObject:
   - component: {fileID: 1232901664}
   - component: {fileID: 1232901663}
   - component: {fileID: 1232901662}
+  - component: {fileID: 1232901665}
   m_Layer: 5
   m_Name: bestCompletionTimeText
   m_TagString: Untagged
@@ -13020,6 +13069,21 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1232901660}
+--- !u!114 &1232901665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1232901660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countType: 0
+  duration: 0
+  delay: 0
+  resetNumber: 1
 --- !u!1 &1233655083
 GameObject:
   m_ObjectHideFlags: 0
@@ -15513,6 +15577,7 @@ GameObject:
   - component: {fileID: 1492646123}
   - component: {fileID: 1492646125}
   - component: {fileID: 1492646124}
+  - component: {fileID: 1492646126}
   m_Layer: 5
   m_Name: levelAmountText
   m_TagString: Untagged
@@ -15580,6 +15645,21 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1492646122}
+--- !u!114 &1492646126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1492646122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countType: 0
+  duration: 0
+  delay: 0
+  resetNumber: 1
 --- !u!1 &1495525608
 GameObject:
   m_ObjectHideFlags: 0
@@ -16132,6 +16212,7 @@ GameObject:
   - component: {fileID: 1536379267}
   - component: {fileID: 1536379266}
   - component: {fileID: 1536379265}
+  - component: {fileID: 1536379268}
   m_Layer: 5
   m_Name: reactionTimeLeftText
   m_TagString: Untagged
@@ -16214,6 +16295,21 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1536379263}
+--- !u!114 &1536379268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1536379263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countType: 1
+  duration: 0
+  delay: 0
+  resetNumber: 1
 --- !u!1 &1552609947
 GameObject:
   m_ObjectHideFlags: 0
@@ -17890,7 +17986,7 @@ GameObject:
   - component: {fileID: 1716903917}
   - component: {fileID: 1716903916}
   m_Layer: 5
-  m_Name: snitText
+  m_Name: reactionTimeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19166,8 +19262,9 @@ GameObject:
   - component: {fileID: 1827846889}
   - component: {fileID: 1827846891}
   - component: {fileID: 1827846890}
+  - component: {fileID: 1827846892}
   m_Layer: 5
-  m_Name: snitAmountText
+  m_Name: reactionTimeAmount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19233,6 +19330,21 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1827846888}
+--- !u!114 &1827846892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1827846888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countType: 1
+  duration: 0.4
+  delay: 0.55
+  resetNumber: 1
 --- !u!1 &1839624904
 GameObject:
   m_ObjectHideFlags: 0

@@ -72,9 +72,7 @@ public class GameManager : MonoBehaviour
 	private string levelTimestampStart = ""; // used for logging (System.Datetime.now based)
 	private string levelTimestampEnd = "";   // used for logging (System.Datetime.now based)
 
-	// Per-Training-Session Counters
-	// TODO: Do we need these to be static? Think, if game pauses.
-	float bestCompletionTime = 0.0f;
+	int bestCompletionTime = 0;
 	private List<float> HitTimeLeft = new List<float>();
 	private List<float> HitTimeRight = new List<float>();
 	private int sessionHitsTotal = 0;
@@ -97,31 +95,31 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
     private Canvas gameOverlayCanvas;
     [SerializeField]
-    private Text endLevelTime;
+    private CountAnimation endLevelTime;
     [SerializeField]
     private Text endLevelDuration;
 	[SerializeField]
-	private Text endLevelAmount;
+	private CountAnimation endLevelAmount;
 	[SerializeField]
-	private Text endLevelAverage;
+	private CountAnimation endLevelAverage;
 	[SerializeField]
-	private Text totalAmount;
+	private CountAnimation totalAmount;
 	[SerializeField]
 	private Text endSessionAmount;
 	[SerializeField]
-	private Text bestCompletionTimeText;
+	private CountAnimation bestCompletionTimeText;
 	[SerializeField]
-	private Text reactionTimeRightText;
+	private CountAnimation reactionTimeRightText;
 	[SerializeField]
-	private Text reactionTimeLeftText;
+	private CountAnimation reactionTimeLeftText;
 
-	private string endLevelTimeTemplate;
-	private string endLevelAmountTemplate;
-	private string endLevelAverageTemplate;
-	private string totalAmountTemplate;
-	private string bestCompletionTimeTemplate;
-	private string reactionTimeRightTemplate;
-	private string reactionTimeLeftTemplate;
+	//private string endLevelTimeTemplate;
+	//private string endLevelAmountTemplate;
+	//private string endLevelAverageTemplate;
+	//private string totalAmountTemplate;
+	//private string bestCompletionTimeTemplate;
+	//private string reactionTimeRightTemplate;
+	//private string reactionTimeLeftTemplate;
 
 	[SerializeField]
 	public Text countDownText;
@@ -140,13 +138,13 @@ public class GameManager : MonoBehaviour
     {
 		GameLevel._DidInit = false;
 
-		endLevelTimeTemplate = endLevelTime.text;
-		endLevelAmountTemplate = endLevelAmount.text;
-		endLevelAverageTemplate = endLevelAverage.text;
-		totalAmountTemplate = totalAmount.text;
-		bestCompletionTimeTemplate = bestCompletionTimeText.text;
-		reactionTimeLeftTemplate = reactionTimeLeftText.text;
-		reactionTimeRightTemplate = reactionTimeRightText.text;
+		//endLevelTimeTemplate = endLevelTime.text;
+		//endLevelAmountTemplate = endLevelAmount.text;
+		//endLevelAverageTemplate = endLevelAverage.text;
+		//totalAmountTemplate = totalAmount.text;
+		//bestCompletionTimeTemplate = bestCompletionTimeText.text;
+		//reactionTimeLeftTemplate = reactionTimeLeftText.text;
+		//reactionTimeRightTemplate = reactionTimeRightText.text;
 
         input = gameObject.AddComponent<InputHandler>();
 
@@ -253,7 +251,8 @@ public class GameManager : MonoBehaviour
 
 					if (hitType == HitType.TargetHitLevelComplete)
 					{
-						LevelEnded();
+						TheLevelEnded();
+
 					}
 
 				} else if (hitType == HitType.WrongTargetHit)
@@ -280,10 +279,6 @@ public class GameManager : MonoBehaviour
 				LD.EndLine();
 			}
 		}
-		else if (_CurrentScene == "LevelComplete")
-		{
-			SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
-		}
 
 		if (Input.GetKeyDown(KeyCode.R))
 		{
@@ -291,7 +286,7 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-    private void LevelEnded()
+    private void TheLevelEnded()
     {
 		levelActive = false;
         _CurrentScene = "LevelComplete";
@@ -306,7 +301,7 @@ public class GameManager : MonoBehaviour
 		levelReactionTimeLeft = Utils.GetMedian(levelReactionTimesLeftList);
 		levelReactionTimeRight = Utils.GetMedian(levelReactionTimesRightList);
 		loggingManager.WriteAggregateLog("Level " + currentProgress.ToString() + " Completed!");
-		StartCoroutine(ShowEndLevelCanvas());
+		ShowTheEndLevelCanvas();
     }
 
 	private IEnumerator CountDownFirstLevel()
@@ -330,9 +325,8 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	private IEnumerator ShowEndLevelCanvas()
+	public void ShowTheEndLevelCanvas()
     {
-        yield return new WaitForSeconds(0.2f);
         Image bgPanel = endLevelCanvas.GetComponentInChildren<Image>();
         Color col = bgPanel.color;
 
@@ -357,23 +351,23 @@ public class GameManager : MonoBehaviour
 
 
     private void SetEndScreenValues(int levelCompletionSeconds)
-    {	
+    {
 		if (sessionActive) {
-			endLevelTime.text = string.Format (endLevelTimeTemplate, levelCompletionSeconds);
+			endLevelTime.SetTargetWholeNumber(levelCompletionSeconds);
 			if (bestCompletionTime < levelCompletionSeconds) {
 				bestCompletionTime = levelCompletionSeconds;
 			}
-			endLevelAmount.text = string.Format (endLevelAmountTemplate, sessionHitsTotal);
-			endLevelAverage.text = string.Format (endLevelAverageTemplate, levelReactionTime.ToString("0.00"));
+			endLevelAmount.SetTargetWholeNumber(sessionHitsTotal);
+			endLevelAverage.SetTargetDecimalNumber(levelReactionTime);
 		} else {
-			totalAmount.text = string.Format (totalAmountTemplate, sessionHitsTotal);
-			bestCompletionTimeText.text = string.Format (bestCompletionTimeTemplate, bestCompletionTime);
+			totalAmount.SetTargetWholeNumber(sessionHitsTotal);
+			bestCompletionTimeText.SetTargetWholeNumber(bestCompletionTime);
 
-			string hitTimeLeftAverage = HitTimeLeft.Average(item => (float) item).ToString("0.00");
-			string hitTimeRightAverage = HitTimeRight.Average (item => (float) item).ToString("0.00");
+			float hitTimeLeftAverage = HitTimeLeft.Average(item => (float) item);
+			float hitTimeRightAverage = HitTimeRight.Average (item => (float) item);
 
-			reactionTimeLeftText.text = string.Format (reactionTimeLeftTemplate, hitTimeLeftAverage);
-			reactionTimeRightText.text = string.Format (reactionTimeRightTemplate, hitTimeRightAverage);
+			reactionTimeLeftText.SetTargetDecimalNumber(hitTimeLeftAverage);
+			reactionTimeRightText.SetTargetDecimalNumber(hitTimeRightAverage);
 		}
     }
 
