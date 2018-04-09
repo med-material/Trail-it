@@ -49,41 +49,56 @@ public class CountAnimation : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (startCounting && delay < (Time.time - startTime) )
+		if (startCounting && delay < (Time.time - startTime))
 		{
-			if (countType == CountType.wholeNumber && wholeNumberCurrentCount < wholeNumberCountTarget)
+			if (countType == CountType.wholeNumber)
 			{
-
-				CalculateWholeNumberIncrement();
-
-				decimalCurrentCount += numberIncrement;
-				if (decimalCurrentCount >= 1.0f)
+				if (wholeNumberCurrentCount < wholeNumberCountTarget)
 				{
-					wholeNumberCurrentCount += (int) Mathf.Round(decimalCurrentCount);
-					decimalCurrentCount = 0.0f;
+					CalculateWholeNumberIncrement();
+					decimalCurrentCount += numberIncrement;
+					if (decimalCurrentCount >= 1.0f)
+					{
+						wholeNumberCurrentCount += (int)Mathf.Round(decimalCurrentCount);
+						decimalCurrentCount = 0.0f;
+					}
+					countText.text = string.Format(countTextTemplate, wholeNumberCurrentCount.ToString());
 				}
-				countText.text = string.Format(countTextTemplate, wholeNumberCurrentCount.ToString());
-			}
-			else if (countType == CountType.decimalNumber && decimalCurrentCount < decimalCountTarget)
-			{
-
-				CalculateDecimalIncrement();
-
-				decimalCurrentCount += numberIncrement;
-				countText.text = string.Format(countTextTemplate, decimalCurrentCount.ToString("0.00"));
-			}
-			else
-			{
-				startCounting = false;
-				if (resetNumber)
+				else
 				{
-					wholeNumberCurrentCount = 0;
-					decimalCurrentCount = 0.0f;
+					countText.text = string.Format(countTextTemplate, wholeNumberCountTarget.ToString());
+					turnOff();
+				}
+			}
+			else if (countType == CountType.decimalNumber)
+			{
+				if (decimalCurrentCount < decimalCountTarget)
+				{
+					CalculateDecimalIncrement();
+
+					decimalCurrentCount += numberIncrement;
+					countText.text = string.Format(countTextTemplate, decimalCurrentCount.ToString("0.00"));
+				}
+				else
+				{
+					countText.text = string.Format(countTextTemplate, decimalCountTarget.ToString("0.00"));
+					turnOff();
 				}
 			}
 
 		}
 
+	}
+
+	private void turnOff()
+	{
+		startCounting = false;
+
+		if (resetNumber)
+		{
+			wholeNumberCurrentCount = 0;
+			decimalCurrentCount = 0.0f;
+		}
 	}
 
 	private void CalculateWholeNumberIncrement()

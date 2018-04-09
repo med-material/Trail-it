@@ -231,7 +231,8 @@ public class GameManager : MonoBehaviour
 						}
 
 						levelHitsTotal += 1;
-						levelReactionTimesList.Add(Time.time - lastHitTime);
+						float reactionTime = Time.time - lastHitTime;
+						levelReactionTimesList.Add(reactionTime);
 
 						if (input.TouchPos.x > 0)
 						{
@@ -297,7 +298,7 @@ public class GameManager : MonoBehaviour
 		sessionTimeRemaining = (sessionLength * 60) - levelCompletionTime;
 		sessionHitsTotal += levelHitsTotal;
 		sessionErrorTotal -= levelErrorsTotal;
-		levelReactionTime = Utils.GetMedian(levelReactionTimesList); 
+		levelReactionTime = Utils.GetMedian(levelReactionTimesList);
 		levelReactionTimeLeft = Utils.GetMedian(levelReactionTimesLeftList);
 		levelReactionTimeRight = Utils.GetMedian(levelReactionTimesRightList);
 		loggingManager.WriteAggregateLog("Level " + currentProgress.ToString() + " Completed!");
@@ -318,10 +319,10 @@ public class GameManager : MonoBehaviour
 		{
 			getReadyOverlay.SetActive(false);
 			levelActive = true;
-			sessionTimeStart = Time.time;
-			levelTimeStart = sessionTimeStart;
 			levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 			activeLevel.LoadNextLevel();
+			sessionTimeStart = Time.time;
+			levelTimeStart = sessionTimeStart;
 		}
 	}
 
@@ -391,6 +392,9 @@ public class GameManager : MonoBehaviour
 		levelReactionTime = 0.0f;
 		levelReactionTimeLeft = 0.0f;
 		levelReactionTimeRight = 0.0f;
+		levelReactionTimesList.Clear();
+		levelReactionTimesLeftList.Clear();
+		levelReactionTimesRightList.Clear();
 	}
 
 	public void TimerPause()
@@ -428,9 +432,10 @@ public class GameManager : MonoBehaviour
 		_CurrentScene = "Level";
 		activeLevelAssistance.resetAssistanceWasActive();
 		currentProgress += 1;
-		levelTimeStart = Time.time;
-		levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		activeLevel.LoadNextLevel();
+		levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
+		levelTimeStart = Time.time;
+		lastHitTime = levelTimeStart;
 	}
 
 	public void GameOverlay_MainMenuButton_Click()
