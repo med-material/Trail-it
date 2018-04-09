@@ -63,12 +63,6 @@ public class Utils : MonoBehaviour {
 		List<float> temp = new List<float>();
 		temp = source;
 		temp.Sort();
-		//string debugString = "";
-		//foreach (float val in temp)
-		//{
-		//	debugString = debugString + ", " + val.ToString("0.00");
-		//}
-		//Debug.Log("Sorted array: " + debugString);
 
 		int count = temp.Count;
 		if (count == 0)
@@ -89,6 +83,26 @@ public class Utils : MonoBehaviour {
 			float result = temp[count / 2];
 			return result;
 		}
+	}
+
+	public static string StringFromFloatList(List<float> source)
+	{
+		string debugString = "";
+		foreach (float number in source)
+		{
+			debugString += number.ToString("0.00") + ",";
+		}
+		return debugString;
+	}
+
+	public static string StringFromIntList(List<int> source)
+	{
+		string debugString = "";
+		foreach (int number in source)
+		{
+			debugString += number.ToString() + ",";
+		}
+		return debugString;
 	}
 
 }
