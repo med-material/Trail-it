@@ -11569,7 +11569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  countType: 0
+  countType: 1
   duration: 0.2
   delay: 0.3
   resetNumber: 1
@@ -13080,7 +13080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e992e0642ba463fa69dba944161a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  countType: 0
+  countType: 1
   duration: 0
   delay: 0
   resetNumber: 1

@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
 	private string levelTimestampStart = ""; // used for logging (System.Datetime.now based)
 	private string levelTimestampEnd = "";   // used for logging (System.Datetime.now based)
 
-	int bestCompletionTime = 0;
+	private float bestCompletionTime = -1.0f;
 	private List<float> HitTimeLeft = new List<float>();
 	private List<float> HitTimeRight = new List<float>();
 	private int sessionHitsTotal = 0;
@@ -340,7 +340,7 @@ public class GameManager : MonoBehaviour
 		}
 		UpdateEndScreenClock ();
 		TimerPause ();
-        SetEndScreenValues(Mathf.FloorToInt(levelCompletionTime));
+        SetEndScreenValues();
     }
 
 	private void UpdateEndScreenClock()
@@ -351,18 +351,18 @@ public class GameManager : MonoBehaviour
 	}
 
 
-    private void SetEndScreenValues(int levelCompletionSeconds)
+    private void SetEndScreenValues()
     {
 		if (sessionActive) {
-			endLevelTime.SetTargetWholeNumber(levelCompletionSeconds);
-			if (bestCompletionTime < levelCompletionSeconds) {
-				bestCompletionTime = levelCompletionSeconds;
+			endLevelTime.SetTargetDecimalNumber(levelCompletionTime);
+			if (bestCompletionTime < 0 || bestCompletionTime > levelCompletionTime) {
+				bestCompletionTime = levelCompletionTime;
 			}
 			endLevelAmount.SetTargetWholeNumber(sessionHitsTotal);
 			endLevelAverage.SetTargetDecimalNumber(levelReactionTime);
 		} else {
 			totalAmount.SetTargetWholeNumber(sessionHitsTotal);
-			bestCompletionTimeText.SetTargetWholeNumber(bestCompletionTime);
+			bestCompletionTimeText.SetTargetDecimalNumber(bestCompletionTime);
 
 			float hitTimeLeftAverage = HitTimeLeft.Average(item => (float) item);
 			float hitTimeRightAverage = HitTimeRight.Average (item => (float) item);
