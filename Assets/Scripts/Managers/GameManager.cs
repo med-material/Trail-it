@@ -535,6 +535,18 @@ public class GameManager : MonoBehaviour
 		Application.Quit();
 	}
 
+	void OnApplicationQuit()
+	{
+		// if we fail to upload before user exit, we dump the logs disk.
+		bool shouldUpload = profileManager.GetUploadPolicy();
+		bool sessionFinished = (Time.time - sessionTimeStart > sessionLength * 60);
+		if (shouldUpload && loggingManager.hasLogs() && sessionFinished)
+		{
+			loggingManager.DumpCurrentLog();
+			loggingManager.ClearLogEntries();
+		}
+	}
+
 	public int GetCurrentProgress()
 	{
 		return currentProgress;

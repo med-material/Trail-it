@@ -210,14 +210,18 @@ public class LoggingManager : MonoBehaviour {
 
 	public void UploadLog() {
 		bool shouldUpload = profileManager.GetUploadPolicy ();
-		if (!shouldUpload || logEntries.Count < 1) {
-			return;
+		if (shouldUpload && logEntries.Count > 0) {
+			mySQL.UploadLog(logEntries);
 		}
-		mySQL.UploadLog (logEntries);
 	}
 
 	public void ClearLogEntries() {
 		logEntries.Clear ();
+	}
+
+	public bool hasLogs()
+	{
+		return (logEntries.Count > 0);
 	}
 
 	public void DumpCurrentLog() {
