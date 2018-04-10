@@ -403,7 +403,7 @@ public class GameManager : MonoBehaviour
 		pauseTime = Time.time;
 		levelActive = false;
 		//loggingManager.WriteLog ("Game Paused");
-		mainMenuScreen.setPauseText();
+		//mainMenuScreen.setPauseText();
 	}
 
 	public void TimerResume()

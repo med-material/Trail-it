@@ -10,17 +10,21 @@ using UnityEngine.UI;
 public class MainMenuScreen : MonoBehaviour {
 
 	[SerializeField]
+	private ProfileManager profileManager;
+
+	[SerializeField]
 	private Text welcomeText;
 
 	private string welcomeTextTemplate;
 
+	private string currentProfileID;
 	private string currentName;
+
 
 	// Use this for initialization
 	void Start () {
 		welcomeTextTemplate = welcomeText.text;
-		string name = PlayerPrefs.GetString("Settings:Name", "Gæst");
-		setWelcomeText (name);
+		setTheWelcomeText ();
 	}
 	
 	// Update is called once per frame
@@ -28,11 +32,8 @@ public class MainMenuScreen : MonoBehaviour {
 		
 	}
 
-	public void setWelcomeText(string name) {
-		welcomeText.text = string.Format (welcomeTextTemplate, name);
-	}
-
-	public void setPauseText() {
-		welcomeText.text = "Spillet er på Pause.";
+	public void setTheWelcomeText() {
+		currentName = profileManager.GetCurrentName();
+		welcomeText.text = string.Format (welcomeTextTemplate, currentName);
 	}
 }

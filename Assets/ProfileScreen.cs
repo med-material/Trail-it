@@ -105,7 +105,6 @@ public class ProfileScreen : MonoBehaviour {
 		profileCreatorButton.transform.SetParent (parentTransform);
 		profileCreatorButton.SetActive (true);
 		profileButtons.Add (profileCreatorButton);
-		// Tell SettingsScreen to load settings
 
 	}
 
@@ -123,8 +122,6 @@ public class ProfileScreen : MonoBehaviour {
 			profileTitleText.text = "Slet en Profil";
 			mainMenuButton.SetActive(false);
 			finishDeletionButton.SetActive(true);
-
-			// Change behavior of Profile Buttons, to remove themselves
 
 		}
 		else

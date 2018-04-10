@@ -16,6 +16,12 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	private MainMenuScreen mainMenuScreen;
 
 	[SerializeField]
+	private GameManager gameManager;
+
+	[SerializeField]
+	private GameObject questionnaireCanvas;
+
+	[SerializeField]
 	private InputField nameField;
 
 	[SerializeField]
@@ -31,11 +37,16 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	private Toggle shouldProtectSettings;
 
 	public void SetNameAndCreateProfile() {
-		Debug.Log ("shouldProtect: " + shouldProtectSettings.isOn);
 		profileManager.AddNewProfile (nameField.text, emailField.text, shouldUpload.isOn, shouldProtectSettings.isOn);
-		mainMenuScreen.setWelcomeText(nameField.text); 
-		nameField.text = "";
-		emailField.text = "";
+		if (shouldUpload.isOn)
+		{
+			questionnaireCanvas.SetActive(true);
+			this.gameObject.SetActive(false);
+		}
+		else
+		{
+			gameManager.ResetGame();
+		}
 	}
 
 }

@@ -25,10 +25,14 @@ public class LoggingManager : MonoBehaviour {
 	private string sep = ",";
 	private string currentLine;
 
-	private string currentProfileID; 		// The ID of the current player
+	private string currentProfileID;        // The ID of the current player
+	private string version;					// Version of Trail it being played
 	private string date;					// The date in the formt YYYY-MM-DD
 	private string time;					// Timestamp at the time WriteLog was called in the format HH-MM-SS.MMMM
-	private string email;					// e-mail address of the player, if specified
+	private string email;                   // e-mail address of the player, if specified
+	private string playContext;             // whether the player is playing at home or in a clinical context. "Rehab", "Home", "RehabHome".
+	private string trainingReason;           // whether the player has diagnosed a type of neglect.
+	private string ageGroup;				// Player age group: Below 13, 13-17, 18-24, 25-39, 40-59, 60-69, 70-79, Above 80
 	private string eventLabel;              // fx "Target Hit" or "Game Loaded"
 	private string currentProgress;         // 1,2,3,4,.. 0 = tutorial
 	private string currentLevel;			// What underlying level being loaded.
@@ -37,8 +41,6 @@ public class LoggingManager : MonoBehaviour {
 	private string trainingTime;            // accumulated level time set by therapist for training.
 	private string assistanceWasActive;    // whether assistance was active in that given level.
 	private string usesLineDrawing;			// whether the player is using line drawing or just clicking. Determined based on 1 succesful line-drawn
-	//private string gameWasPaused;			// whether game was paused during the level.
-	// we dont use gameWasPaused because we are resetting the level when you pause the game anyway..
 	private string levelHitsTotal;          // total amount of successful hits in the level, while we still have training time left.
 	private string levelHitsLeft;           // amount of successful hits in the left side, while we still have training time left.
 	private string levelHitsRight;          // amount of successful hits in the right side, while we still have training time left.
@@ -53,12 +55,13 @@ public class LoggingManager : MonoBehaviour {
 	private string timestampLevelEnd;       // timestamp in HH-MM-SS.MMMM for when the level finished. (disregards training time)
 	private string sessionLength;     // current training time. (disregards training time)
 	private string sessionTimeCurrent;     // current training time. (disregards training time)
-	private string sessionTimeRemaining;   // remaining training time. 
 	private string tutorialSeen;         	// whether tutorial was seen this training session or not.
 	private string laneSetting;             // whether lanes are enabled or not.
 	private string pulseSetting;            // whether blinking is enabled or not.
 	private string voiceSetting;            // whether sound is enabled or not.
-	private string repeatVoiceSetting;		// whether repeaing sound is enabled or not.
+	private string repeatVoiceSetting;      // whether repeaing sound is enabled or not.
+	private string dataVisEnabled;			// whether we show data visualization at the end of the training session. currently always false
+
 
 		// How should we handle settings? And if we consider comparing patients across with each other?
 		// Could we simplify the settings somewhat to introduce less variables?
@@ -129,9 +132,13 @@ public class LoggingManager : MonoBehaviour {
 	// The Aggregate Log is the log we upload to our server
 	public void WriteAggregateLog(string inputEvent) {
 		currentProfileID = profileManager.GetCurrentProfileID();
+		version = PlayerPrefs.GetString("Settings:" + currentProfileID + ":Version", "2017.04.04").Replace(".","-");
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
 		time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		email = PlayerPrefs.GetString("Settings:" + currentProfileID + ":Email", "No Email");
+		playContext = PlayerPrefs.GetString("Settings:" + currentProfileID + ":PlayContext", "Unknown");
+		trainingReason = PlayerPrefs.GetString("Settings:" + currentProfileID + ":TrainingReason", "Unknown");
+		ageGroup = PlayerPrefs.GetString("Settings:" + currentProfileID + ":AgeGroup", "Unknown");
 		eventLabel = inputEvent;
 		currentProgress = gameManager.GetCurrentProgress().ToString();
 		currentLevel = gameManager.GetCurrentLevel().ToString();
@@ -153,18 +160,24 @@ public class LoggingManager : MonoBehaviour {
 		timestampLevelEnd = gameManager.GetTimestampEndLevel();
 		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5).ToString();
 		sessionTimeCurrent = gameManager.GetSessionTimeCurrent().ToString();
-		sessionTimeRemaining = gameManager.GetSessionTimeRemaining().ToString();
 		tutorialSeen = Utils.BoolToNumberString(gameManager.GetTutorialSeen());
 		laneSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);
 		pulseSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1);
 		voiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1);
 		repeatVoiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1);
+		dataVisEnabled = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DataVisEnabled", 0) == 1);
+
+		Debug.Log("version: " + version + ", playContext: " + playContext + ", trainingReason: " + trainingReason + ", ageGroup: " + ageGroup);
 
 		currentLine =
 				currentProfileID + sep
+			    + version + sep
 				+ date + sep
 				+ time + sep
 				+ email + sep
+				+ playContext + sep
+				+ trainingReason + sep
+				+ ageGroup + sep
 				+ eventLabel + sep
 				+ currentProgress + sep
 				+ currentLevel + sep
@@ -186,12 +199,12 @@ public class LoggingManager : MonoBehaviour {
 				+ timestampLevelEnd + sep
 				+ sessionLength + sep
 				+ sessionTimeCurrent + sep
-				+ sessionTimeRemaining + sep
 				+ tutorialSeen + sep
 				+ laneSetting + sep
 			 	+ pulseSetting + sep
 				+ voiceSetting + sep
-				+ repeatVoiceSetting + sep;
+				+ repeatVoiceSetting + sep
+				+ dataVisEnabled + sep;
 
 		logEntries.Add(currentLine);
 		using (StreamWriter writer = File.AppendText(directory + fileName))

@@ -14,15 +14,18 @@ public class FirstTimeScreen : MonoBehaviour {
 	[SerializeField]
 	private ProfileManager profileManager;
 
-	private bool uploadPolicy = false;
-
-	public void SetUploadPolicy(bool policy)
+	public void SetTrueUploadPolicy()
 	{
-		uploadPolicy = policy;
+		profileManager.SetUploadPolicy(true);
 	}
 
-	public void SaveProfile()
+	public void SetEmail()
 	{
-		profileManager.AddNewProfile(nameInputField.text, emailInputField.text, uploadPolicy, false);
+		profileManager.SetEmail(emailInputField.text);
+	}
+
+	public void AddProfile()
+	{
+		profileManager.AddNewProfile(nameInputField.text);
 	}
 }

@@ -72,7 +72,7 @@ public class ConnectToMySQL : MonoBehaviour {
 	public void UploadLog(List<string> input) {
 		WWWForm form = new WWWForm ();
 
-		form.AddField ("purposePost", "submitLogs");
+		form.AddField ("purposePost", "submitLogs_v2018.04.10");
 		form.AddField ("hashPost", hash);
 
 		// Create a string with the data
@@ -105,15 +105,4 @@ public class ConnectToMySQL : MonoBehaviour {
 		loggingManager.ClearLogEntries ();
 	}
 		
-	//public void UploadData(string playerID, string playerOrGuest, string date, string currentHitX) {
-
-		/*for(int i = 0; i < input.Count; i++) {
-			if(i != 0) {
-				data += ";";
-			}
-			data += input[i].uid + "," + input[i].data + "," + input[i].intensity + "," + input[i].modality;
-		}*/
-
-	//	StartCoroutine (SubmitLogs (playerID, playerOrGuest, date, currentHitX));
-	//}
 }
