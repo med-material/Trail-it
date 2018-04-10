@@ -21112,6 +21112,7 @@ GameObject:
   - component: {fileID: 2030560348}
   - component: {fileID: 2030560350}
   - component: {fileID: 2030560349}
+  - component: {fileID: 2030560351}
   m_Layer: 5
   m_Name: TutorialOverlay
   m_TagString: Untagged
@@ -21174,6 +21175,21 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2030560347}
+--- !u!114 &2030560351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2030560347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee4f34777ab5c4d79b1774b083a6b14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0.45
+  startDelay: 0
+  startNow: 1
+  fadeInChildren: 0
 --- !u!1 &2031854038
 GameObject:
   m_ObjectHideFlags: 0

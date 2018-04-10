@@ -79,8 +79,14 @@ public class Tutorial : MonoBehaviour {
 
 	public void Init()
 	{
-		overlay.SetActive(true);
 		gameType = gameManager.GetGameType();
+		StartCoroutine(startTutorial());
+	}
+
+	private IEnumerator startTutorial()
+	{
+		yield return new WaitForSeconds(0.5f);
+		overlay.SetActive(true);
 		hand = (GameObject)Instantiate(handPrefab, new Vector3(0, -5, 0), Quaternion.identity);
 		StartStage0();
 		didInit = true;
