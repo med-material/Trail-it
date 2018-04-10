@@ -295,7 +295,7 @@ public class GameManager : MonoBehaviour
 		levelTimestampEnd = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		sessionTimeCurrent = (levelTimeEnd - sessionTimeStart);
 		levelCompletionTime = levelTimeEnd - levelTimeStart;
-		sessionTimeRemaining = (sessionLength * 60) - levelCompletionTime;
+		sessionTimeRemaining = sessionTimeRemaining - levelCompletionTime;
 		sessionHitsTotal += levelHitsTotal;
 		sessionErrorTotal -= levelErrorsTotal;
 		levelReactionTime = Utils.GetMedian(levelReactionTimesList);
@@ -322,6 +322,7 @@ public class GameManager : MonoBehaviour
 			levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 			activeLevel.LoadNextLevel();
 			sessionTimeStart = Time.time;
+			sessionTimeRemaining = (sessionLength * 60);
 			levelTimeStart = sessionTimeStart;
 		}
 	}
