@@ -61,7 +61,7 @@ public class ProfileManager : MonoBehaviour {
 			currentEmail = "No Email";
 		}
 
-		string newProfileID = Utils.Md5Sum(currentName + currentEmail);
+		string newProfileID = Utils.Md5Sum(System.DateTime.Now.ToString() + currentName + currentEmail);
 		currentProfileID = newProfileID;
 		shouldUpload = uploadPolicy;
 		shouldProtectSettings = protectSettings;
