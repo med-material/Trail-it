@@ -810,8 +810,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1289489651}
   - {fileID: 1559863396}
+  - {fileID: 1289489651}
   - {fileID: 494013710}
   m_Father: {fileID: 272444518}
   m_RootOrder: 1
@@ -3514,7 +3514,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loggingManager: {fileID: 235454368}
-  mainMenuScreen: {fileID: 0}
   profileManager: {fileID: 235454372}
   tutorial: {fileID: 12864068}
   activeLevel: {fileID: 808461630}
@@ -8110,8 +8109,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1024, y: -318.91528}
-  m_SizeDelta: {x: 2048, y: 325.7696}
+  m_AnchoredPosition: {x: 1024, y: -344.82782}
+  m_SizeDelta: {x: 2048, y: 344.3443}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &551523314
 MonoBehaviour:
@@ -10130,7 +10129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.25
+  startDelay: 0.48
   startNow: 1
   fadeInChildren: 0
 --- !u!114 &686489995
@@ -12755,6 +12754,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   profileManager: {fileID: 235454372}
   welcomeText: {fileID: 253069505}
+  trainingTimeText: {fileID: 1289489653}
 --- !u!1 &829585174
 GameObject:
   m_ObjectHideFlags: 0
@@ -15738,8 +15738,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -527.1}
-  m_SizeDelta: {x: 0, y: -1054.2}
+  m_AnchoredPosition: {x: 0.000061035156, y: -509.49994}
+  m_SizeDelta: {x: 0, y: -1019}
   m_Pivot: {x: 0.000000037252903, y: 1.0000001}
 --- !u!222 &1083341197
 CanvasRenderer:
@@ -18734,12 +18734,12 @@ RectTransform:
   m_Children:
   - {fileID: 686489993}
   m_Father: {fileID: 22441621}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 787.4, y: 86.2}
+  m_SizeDelta: {x: 768.5, y: 86.2}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1289489652
 MonoBehaviour:
@@ -18754,7 +18754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.25
+  startDelay: 0.48
   startNow: 1
   fadeInChildren: 0
 --- !u!114 &1289489653
@@ -18790,7 +18790,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Daglig tr\xE6ning af sanserne er sundt."
+  m_Text: "Tr\xE6ningen i dag varer {0} minutter."
 --- !u!222 &1289489654
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20414,8 +20414,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1024, y: -78.015236}
-  m_SizeDelta: {x: 2048, y: 156.03047}
+  m_AnchoredPosition: {x: 1024, y: -86.32784}
+  m_SizeDelta: {x: 2048, y: 172.65569}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1387985486
 MonoBehaviour:
@@ -23026,7 +23026,7 @@ RectTransform:
   m_Children:
   - {fileID: 1692738642}
   m_Father: {fileID: 22441621}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -23046,7 +23046,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.48
+  startDelay: 0.25
   startNow: 1
   fadeInChildren: 0
 --- !u!114 &1559863398
@@ -24682,7 +24682,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   duration: 0.45
-  startDelay: 0.48
+  startDelay: 0.25
   startNow: 1
   fadeInChildren: 0
 --- !u!114 &1692738644

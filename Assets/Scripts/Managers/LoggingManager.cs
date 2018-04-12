@@ -160,7 +160,7 @@ public class LoggingManager : MonoBehaviour {
 		levelTimeTotal = gameManager.GetLevelCompletionTime().ToString();
 		timestampLevelStart = gameManager.GetTimestampStartLevel();
 		timestampLevelEnd = gameManager.GetTimestampEndLevel();
-		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 5).ToString();
+		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 2).ToString();
 		sessionTimeCurrent = gameManager.GetSessionTimeCurrent().ToString();
 		tutorialSeen = Utils.BoolToNumberString(gameManager.GetTutorialSeen());
 		laneSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);

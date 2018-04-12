@@ -67,7 +67,7 @@ public class SettingsScreen : MonoBehaviour
     private bool stemme;
 	private bool gentagStemme;
 	private bool intro;
-	private int trainingTime = 8;
+	private int trainingTime = 2;
 	private int difficultyLevel = 3;
 	private int minimumLevel = 7;
 	private int maximumLevel = 13;
