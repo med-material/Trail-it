@@ -90,7 +90,9 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	private Canvas endSessionCanvas;
 	[SerializeField]
-    private Canvas gameOverlayCanvas;
+    private GameObject gameOverlayCanvas;
+	[SerializeField]
+	private GameObject gamePanel;
     [SerializeField]
     private CountAnimation endLevelTime;
     [SerializeField]
@@ -167,7 +169,7 @@ public class GameManager : MonoBehaviour
     {
 		LoadPlayerPrefs ();
 
-        gameOverlayCanvas.gameObject.SetActive(true);
+        gameOverlayCanvas.SetActive(true);
 
 		if (intro && !tutorialSeen)
 		{
@@ -189,6 +191,7 @@ public class GameManager : MonoBehaviour
 			}
 		} else
 		{
+			gamePanel.SetActive(true);
 			currentLevel = ChooseLevel();
 			currentProgress += 1;
 
@@ -332,7 +335,7 @@ public class GameManager : MonoBehaviour
         Color col = bgPanel.color;
 
         endLevelCanvas.gameObject.SetActive(true);
-		gameOverlayCanvas.gameObject.SetActive (false);
+		gameOverlayCanvas.SetActive (false);
 		if (Time.time - sessionTimeStart > sessionLength*60 && sessionActive) {
 			endSessionCanvas.gameObject.SetActive(true);
 			loggingManager.UploadLog();
@@ -441,7 +444,7 @@ public class GameManager : MonoBehaviour
 		TimerResume();
 		levelActive = true;
 		currentLevel = ChooseLevel();
-		gameOverlayCanvas.gameObject.SetActive(true);
+		gameOverlayCanvas.SetActive(true);
 		_CurrentScene = "Level";
 		activeLevelAssistance.resetAssistanceWasActive();
 		currentProgress += 1;
@@ -454,7 +457,7 @@ public class GameManager : MonoBehaviour
 	public void GameOverlay_MainMenuButton_Click()
 	{
 		menuCanvas.gameObject.SetActive(true);
-		gameOverlayCanvas.gameObject.SetActive(false);
+		gameOverlayCanvas.SetActive(false);
 		TimerPause();
 	}
 

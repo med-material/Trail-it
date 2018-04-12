@@ -29,6 +29,9 @@ public class Tutorial : MonoBehaviour {
 	public GameObject overlay;
 
 	[SerializeField]
+	private ProfileManager profileManager;
+
+	[SerializeField]
 	private GameManager gameManager;
 	private bool gameA;
 	private string gameType;
@@ -87,7 +90,7 @@ public class Tutorial : MonoBehaviour {
 	{
 		yield return new WaitForSeconds(0.5f);
 		overlay.SetActive(true);
-		hand = (GameObject)Instantiate(handPrefab, new Vector3(0, -5, 0), Quaternion.identity);
+		hand = (GameObject)Instantiate(handPrefab, new Vector3(0, -5, 0), Quaternion.identity, this.gameObject.transform);
 		StartStage0();
 		didInit = true;
 	}
@@ -143,8 +146,8 @@ public class Tutorial : MonoBehaviour {
 		targetObjects = new GameObject[2];
 		targets = new Target[2];
 
-		targetObjects [0] = (GameObject)Instantiate (targetPrefab, targetPositions[0], Quaternion.identity);
-		targetObjects [1] = (GameObject)Instantiate (targetPrefab, targetPositions[1], Quaternion.identity);
+		targetObjects [0] = (GameObject)Instantiate (targetPrefab, targetPositions[0], Quaternion.identity, this.gameObject.transform);
+		targetObjects [1] = (GameObject)Instantiate (targetPrefab, targetPositions[1], Quaternion.identity, this.gameObject.transform);
 		targetObjects [0].transform.localScale = targetScale;
 		targetObjects [1].transform.localScale = targetScale;
 		targets [0] = targetObjects [0].GetComponent<Target> ();
@@ -185,10 +188,10 @@ public class Tutorial : MonoBehaviour {
 		targetObjects = new GameObject[4];
 		targets = new Target[4];
 
-		targetObjects [0] = (GameObject)Instantiate (targetPrefab, targetPositions[2], Quaternion.identity);
-		targetObjects [1] = (GameObject)Instantiate (targetPrefab, targetPositions[3], Quaternion.identity);
-		targetObjects [2] = (GameObject)Instantiate (targetPrefab, targetPositions[4], Quaternion.identity);
-		targetObjects [3] = (GameObject)Instantiate (targetPrefab, targetPositions[5], Quaternion.identity);
+		targetObjects [0] = (GameObject)Instantiate (targetPrefab, targetPositions[2], Quaternion.identity, this.gameObject.transform);
+		targetObjects [1] = (GameObject)Instantiate (targetPrefab, targetPositions[3], Quaternion.identity, this.gameObject.transform);
+		targetObjects [2] = (GameObject)Instantiate (targetPrefab, targetPositions[4], Quaternion.identity, this.gameObject.transform);
+		targetObjects [3] = (GameObject)Instantiate (targetPrefab, targetPositions[5], Quaternion.identity, this.gameObject.transform);
 		targetObjects [0].transform.localScale = targetScale;
 		targetObjects [1].transform.localScale = targetScale;
 		targetObjects [2].transform.localScale = targetScale;
@@ -228,6 +231,13 @@ public class Tutorial : MonoBehaviour {
 		}
 	}
 
+	public void SkipButtonClicked()
+	{
+		string profileID = profileManager.GetCurrentProfileID();
+		PlayerPrefs.SetInt("Settings:" + profileID + ":Intro", 0);
+		StartStage2();
+	}
+
 	private void StartStage2 () {
 
 		startTime = Time.time;
@@ -240,9 +250,12 @@ public class Tutorial : MonoBehaviour {
 		hand.transform.position = new Vector3(0, -5, 0);
 		hand.GetComponent<Renderer> ().enabled = false; 
 		phase2Menu.SetActive (true);
+		phase0A.SetActive(false);
+		phase0B.SetActive(false);
 		phase1A.SetActive (false);
 		phase1B.SetActive (false);
 		overlay.SetActive(false);
+		this.gameObject.SetActive(false);
 		gameManager.StartGame();
 	}
 
