@@ -362,12 +362,25 @@ public class GameManager : MonoBehaviour
 			endLevelAmount.SetTargetWholeNumber(sessionHitsTotal);
 			endLevelAverage.SetTargetDecimalNumber(levelReactionTime);
 		} else {
-			totalAmount.SetTargetWholeNumber(sessionHitsTotal);
+
+			float hitTimeRightAverage;
+			float hitTimeLeftAverage;
+
+
+			if (currentProgress > 1) {
+				hitTimeLeftAverage = HitTimeLeft.Average(item => (float)item);
+				hitTimeRightAverage = HitTimeRight.Average(item => (float)item);
+			} else {
+				// If we only finish one level during the training time
+				// we need to take a couple of dedicated measures.
+				bestCompletionTime = levelCompletionTime;
+				hitTimeLeftAverage = 0.00f;
+				hitTimeRightAverage = 0.00f;
+			}
+
 			bestCompletionTimeText.SetTargetDecimalNumber(bestCompletionTime);
 
-			float hitTimeLeftAverage = HitTimeLeft.Average(item => (float) item);
-			float hitTimeRightAverage = HitTimeRight.Average (item => (float) item);
-
+			totalAmount.SetTargetWholeNumber(sessionHitsTotal);
 			reactionTimeLeftText.SetTargetDecimalNumber(hitTimeLeftAverage);
 			reactionTimeRightText.SetTargetDecimalNumber(hitTimeRightAverage);
 		}
