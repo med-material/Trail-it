@@ -98,6 +98,7 @@ public class GameManager : MonoBehaviour
     private CountAnimation endLevelTime;
     [SerializeField]
     private Text endLevelDuration;
+	private string endLevelDurationTemplate;
 	[SerializeField]
 	private CountAnimation endLevelAmount;
 	[SerializeField]
@@ -138,6 +139,7 @@ public class GameManager : MonoBehaviour
     {
 		GameLevel._DidInit = false;
 
+		endLevelDurationTemplate = endLevelDuration.text;
 		//endLevelTimeTemplate = endLevelTime.text;
 		//endLevelAmountTemplate = endLevelAmount.text;
 		//endLevelAverageTemplate = endLevelAverage.text;
@@ -347,8 +349,10 @@ public class GameManager : MonoBehaviour
 	private void UpdateEndScreenClock()
 	{
 		var timeSpan = TimeSpan.FromSeconds(Time.time - sessionTimeStart);
-		endLevelDuration.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
-		endSessionAmount.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
+		string formattedTime = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
+		endLevelDuration.text = string.Format(endLevelDurationTemplate, timeSpan.Minutes.ToString(), sessionLength.ToString());
+		               
+		endSessionAmount.text = formattedTime;
 	}
 
 
