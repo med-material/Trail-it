@@ -160,7 +160,7 @@ public class LoggingManager : MonoBehaviour {
 		levelTimeTotal = gameManager.GetLevelCompletionTime().ToString();
 		timestampLevelStart = gameManager.GetTimestampStartLevel();
 		timestampLevelEnd = gameManager.GetTimestampEndLevel();
-		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 2).ToString();
+		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":SessionLength", 15).ToString();
 		sessionTimeCurrent = gameManager.GetSessionTimeCurrent().ToString();
 		tutorialSeen = Utils.BoolToNumberString(gameManager.GetTutorialSeen());
 		laneSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1);
@@ -168,8 +168,6 @@ public class LoggingManager : MonoBehaviour {
 		voiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1);
 		repeatVoiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1);
 		dataVisEnabled = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DataVisEnabled", 0) == 1);
-
-		Debug.Log("deviceModel: " + deviceModel);
 
 		currentLine =
 				currentProfileID + sep

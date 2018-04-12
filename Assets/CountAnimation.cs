@@ -10,8 +10,16 @@ public class CountAnimation : MonoBehaviour {
 		wholeNumber, decimalNumber
 	}
 
+	private enum InterpolationType
+	{
+		linear, smoothstep, sine, overshoot
+	}
+
 	[SerializeField]
 	private CountType countType = CountType.wholeNumber;
+
+	[SerializeField]
+	private InterpolationType interpolationType = InterpolationType.linear;
 
 	[SerializeField]
 	private float duration = 1.0f;
@@ -28,13 +36,11 @@ public class CountAnimation : MonoBehaviour {
 
 	private bool startCounting = false;
 
+	private float countTarget = -1.00f;
 	private int wholeNumberCountTarget = -1;
 	private int wholeNumberCurrentCount = 0;
-
-	private float decimalCountTarget = -1.00f;
 	private float decimalCurrentCount = 0.00f;
 	private float numberIncrement = 0.01f;
-
 
 	// Use this for initialization
 	void Start () {
@@ -51,39 +57,27 @@ public class CountAnimation : MonoBehaviour {
 	void Update () {
 		if (startCounting && delay < (Time.time - startTime))
 		{
-			if (countType == CountType.wholeNumber)
-			{
-				if (wholeNumberCurrentCount < wholeNumberCountTarget)
-				{
-					CalculateWholeNumberIncrement();
-					decimalCurrentCount += numberIncrement;
-					if (decimalCurrentCount >= 1.0f)
-					{
-						wholeNumberCurrentCount += (int)Mathf.Round(decimalCurrentCount);
-						decimalCurrentCount = 0.0f;
-					}
-					countText.text = string.Format(countTextTemplate, wholeNumberCurrentCount.ToString());
-				}
-				else
-				{
-					countText.text = string.Format(countTextTemplate, wholeNumberCountTarget.ToString());
-					turnOff();
-				}
-			}
-			else if (countType == CountType.decimalNumber)
-			{
-				if (decimalCurrentCount < decimalCountTarget)
-				{
-					CalculateDecimalIncrement();
+			numberIncrement += Time.deltaTime / duration;
 
-					decimalCurrentCount += numberIncrement;
-					countText.text = string.Format(countTextTemplate, decimalCurrentCount.ToString("0.00"));
-				}
-				else
-				{
-					countText.text = string.Format(countTextTemplate, decimalCountTarget.ToString("0.00"));
-					turnOff();
-				}
+			if (interpolationType == InterpolationType.linear) {
+				decimalCurrentCount = Mathf.Lerp(0.00f, countTarget, numberIncrement);
+			} else if (interpolationType == InterpolationType.smoothstep) {
+				decimalCurrentCount = Mathf.SmoothStep(0.00f, countTarget, numberIncrement);
+			} else if (interpolationType == InterpolationType.overshoot) {
+				decimalCurrentCount = Berp(0.00f, countTarget, numberIncrement);
+			} else if (interpolationType == InterpolationType.sine) {
+				decimalCurrentCount = Sinerp(0.00f, countTarget, numberIncrement);
+			}
+
+			if (countType == CountType.wholeNumber) {
+				wholeNumberCurrentCount = (int)Mathf.Round(countTarget);
+				countText.text = string.Format(countTextTemplate, wholeNumberCurrentCount.ToString());
+			} else if (countType == CountType.decimalNumber) {
+				countText.text = string.Format(countTextTemplate, decimalCurrentCount.ToString("0.00"));
+			}
+
+			if (numberIncrement > 1) {
+				turnOff();
 			}
 
 		}
@@ -98,30 +92,7 @@ public class CountAnimation : MonoBehaviour {
 		{
 			wholeNumberCurrentCount = 0;
 			decimalCurrentCount = 0.0f;
-		}
-	}
-
-	private void CalculateWholeNumberIncrement()
-	{
-
-		if (duration <= 0.0f) {
-			numberIncrement = wholeNumberCountTarget;
-		}
-		else
-		{
-			numberIncrement = (float)wholeNumberCountTarget / (duration / Time.deltaTime);
-		}
-	}
-
-	private void CalculateDecimalIncrement()
-	{
-		if (duration <= 0.0f)
-		{
-			numberIncrement = decimalCountTarget;
-		}
-		else
-		{
-			numberIncrement = decimalCountTarget / (duration / Time.deltaTime);
+			numberIncrement = 0.00f;
 		}
 	}
 
@@ -129,6 +100,7 @@ public class CountAnimation : MonoBehaviour {
 	{
 		startCounting = true;
 		startTime = Time.time;
+		countTarget = target;
 		wholeNumberCountTarget = target;
 
 		if (countText != null)
@@ -141,11 +113,22 @@ public class CountAnimation : MonoBehaviour {
 	{
 		startCounting = true;
 		startTime = Time.time;
-		decimalCountTarget = target;
+		countTarget = target;
 		if (countText != null)
 		{
 			countText.text = "";
 		}
 	}
 
+	public static float Berp(float start, float end, float value)
+	{
+		value = Mathf.Clamp01(value);
+		value = (Mathf.Sin(value * Mathf.PI * (0.2f + 2.5f * value * value * value)) * Mathf.Pow(1f - value, 2.2f) + value) * (1f + (1.2f * (1f - value)));
+		return start + (end - start) * value;
+	}
+
+	public static float Sinerp(float start, float end, float value)
+	{
+		return Mathf.Lerp(start, end, Mathf.Sin(value * Mathf.PI * 0.5f));
+	}
 }
