@@ -26,7 +26,8 @@ public class LoggingManager : MonoBehaviour {
 	private string currentLine;
 
 	private string currentProfileID;        // The ID of the current player
-	private string version;					// Version of Trail it being played
+	private string version;                 // Version of Trail it being played
+	private string deviceModel;				// The model of device which is being played on (ipads, iphones, android etc.)
 	private string date;					// The date in the formt YYYY-MM-DD
 	private string time;					// Timestamp at the time WriteLog was called in the format HH-MM-SS.MMMM
 	private string email;                   // e-mail address of the player, if specified
@@ -133,6 +134,7 @@ public class LoggingManager : MonoBehaviour {
 	public void WriteAggregateLog(string inputEvent) {
 		currentProfileID = profileManager.GetCurrentProfileID();
 		version = PlayerPrefs.GetString("Settings:" + currentProfileID + ":Version", "2017.04.04").Replace(".","-");
+		deviceModel = SystemInfo.deviceModel;
 		date = System.DateTime.Now.ToString("yyyy-MM-dd");
 		time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
 		email = PlayerPrefs.GetString("Settings:" + currentProfileID + ":Email", "No Email");
@@ -167,11 +169,12 @@ public class LoggingManager : MonoBehaviour {
 		repeatVoiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1);
 		dataVisEnabled = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DataVisEnabled", 0) == 1);
 
-		Debug.Log("version: " + version + ", playContext: " + playContext + ", trainingReason: " + trainingReason + ", ageGroup: " + ageGroup);
+		Debug.Log("deviceModel: " + deviceModel);
 
 		currentLine =
 				currentProfileID + sep
 			    + version + sep
+				+ deviceModel + sep
 				+ date + sep
 				+ time + sep
 				+ email + sep
