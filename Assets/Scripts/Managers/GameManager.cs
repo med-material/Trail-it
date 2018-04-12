@@ -12,9 +12,6 @@ public class GameManager : MonoBehaviour
 	public LoggingManager loggingManager;
 
 	[SerializeField]
-	public MainMenuScreen mainMenuScreen;
-
-	[SerializeField]
 	public ProfileManager profileManager;
 
 	[SerializeField]
@@ -419,8 +416,6 @@ public class GameManager : MonoBehaviour
 	{
 		pauseTime = Time.time;
 		levelActive = false;
-		//loggingManager.WriteLog ("Game Paused");
-		//mainMenuScreen.setPauseText();
 	}
 
 	public void TimerResume()
