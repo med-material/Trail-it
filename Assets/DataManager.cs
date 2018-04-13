@@ -65,7 +65,6 @@ public class DataManager : MonoBehaviour {
         for (int i = 0; i < cellColumnCount; i++) {
             for (int j = 0; j < cellRowCount; j++) {
                 levelHits[j, i] = new List<float>();
-                Debug.Log("Created new list in levelHits[" + j + "," + i + "]");
             }
         }
 
@@ -87,22 +86,24 @@ public class DataManager : MonoBehaviour {
         cell.x = -1;
         cell.y = -1;
 
-        for (int i = 0; i < cellColumnCount; i++) {
-            for (int j = 0; j < cellRowCount; j++) {
-                float lowBoundX = cellWidth * j;
-                float highBoundX = cellWidth * j + 1;
-				if ( lowBoundX < posX && posX > highBoundX) {
-                    Debug.Log("[" + lowBoundX + "] " + posX + " [" + highBoundX + "]");
-                    cell.x = j;
-                    //break;
-                }
+        for (int i = 0; i < cellRowCount; i++) {
+            float lowBoundX = cellWidth * i;
+            float highBoundX = cellWidth * (i + 1);
+
+            if (lowBoundX < posX && posX > highBoundX) {
+                Debug.Log("[" + lowBoundX + "] " + posX + " [" + highBoundX + "]");
+                cell.x = i;
+                break;
             }
+        }
+
+        for (int i = 0; i < cellColumnCount; i++) {
             float lowBoundY = cellWidth * i;
-            float highBoundY = cellWidth * i + 1;
+            float highBoundY = cellWidth * (i + 1);
 			if (lowBoundY < posX && posX > highBoundY) {
                 Debug.Log("[" + lowBoundY + "] " + posY + " [" + highBoundY + "]");
                 cell.y = i;
-                //break;
+                break;
             }
         }
 

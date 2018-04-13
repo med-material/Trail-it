@@ -74,9 +74,9 @@ public class Tutorial : MonoBehaviour {
 	private float handStartTime;
 	private int handAt;
 
-	private string a1text = "Forbind tallene ved at tegne en streg.";
-	private string a2text = "Tallene skal forbindes i den rigtige rækkefølge.";
-	private string b1text = "Forbind tal og bogstaver ved at tegne en streg.";
+	private string a1text = "Tryk på tallene efter hinanden.";
+	private string a2text = "Tallene skal trykkes i den rigtige rækkefølge.";
+	private string b1text = "Tryk skiftevis på tal og bogstav.";
 	private string b2text = "Husk at skifte mellem tal og bogstaver i den rigtige rækkefølge.";
 	private bool didInit = false;
 
@@ -236,6 +236,7 @@ public class Tutorial : MonoBehaviour {
 		string profileID = profileManager.GetCurrentProfileID();
 		PlayerPrefs.SetInt("Settings:" + profileID + ":Intro", 0);
 		StartStage2();
+        this.gameObject.SetActive(false);
 	}
 
 	private void StartStage2 () {
@@ -255,7 +256,6 @@ public class Tutorial : MonoBehaviour {
 		phase1A.SetActive (false);
 		phase1B.SetActive (false);
 		overlay.SetActive(false);
-		this.gameObject.SetActive(false);
 		gameManager.StartGame();
 	}
 

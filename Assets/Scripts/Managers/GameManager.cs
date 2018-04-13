@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	public ProfileManager profileManager;
 
+    [SerializeField]
+    public DataManager dataManager;
+
 	[SerializeField]
 	public Tutorial tutorial;
 
@@ -226,7 +229,7 @@ public class GameManager : MonoBehaviour
 
 			if (input.TouchActive)
 			{
-				Debug.Log("touchInput: [" + mainCam.WorldToViewportPoint(input.TouchPos) + "]");
+				//Debug.Log("touchInput: [" + mainCam.WorldToViewportPoint(input.TouchPos) + "]");
 				HitType hitType = activeLevel.AttemptHit(input.TouchPos);
 				LD.DrawLine(input.TouchPos, hitType);
 				if (hitType == HitType.TargetHit || hitType == HitType.TargetHitLevelComplete)
@@ -243,6 +246,7 @@ public class GameManager : MonoBehaviour
 						float reactionTime = Time.time - lastHitTime;
 						// DataManager.AddHit(input.TouchPos, reactionTime);
 						levelReactionTimesList.Add(reactionTime);
+                        dataManager.addHit(input.TouchPos, reactionTime);
 
 						if (input.TouchPos.x > 0)
 						{

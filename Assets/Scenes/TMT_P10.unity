@@ -3605,6 +3605,7 @@ MonoBehaviour:
   loggingManager: {fileID: 235454368}
   mainCam: {fileID: 1720051832}
   profileManager: {fileID: 235454372}
+  dataManager: {fileID: 235454366}
   tutorial: {fileID: 12864068}
   activeLevel: {fileID: 808461630}
   activeLevelAssistance: {fileID: 36167942}
@@ -3695,6 +3696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530adcf5b6b92410f8e4cbfb2057383a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 1720051832}
 --- !u!114 &235454368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6622,7 +6624,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 462399590}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0032830276, y: 0.30000007, z: 15}
+  m_LocalPosition: {x: 0, y: 0.30000007, z: 15}
   m_LocalScale: {x: 0.6333333, y: 0.6333333, z: 0.6333333}
   m_Children: []
   m_Father: {fileID: 1720051833}
