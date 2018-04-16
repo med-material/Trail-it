@@ -100,11 +100,11 @@ public class LoggingManager : MonoBehaviour {
     public void WriteAggregateLog(string inputEvent)
     {
         var levelData = dataManager.GetLevelData();
+        currentProfileID = profileManager.GetCurrentProfileID();
         difficultyLevel = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1);
         levelFieldReactionTimes = levelData.fieldReactionTimes;
         levelFieldDistances = levelData.fieldDistances;
 
-        currentProfileID = profileManager.GetCurrentProfileID();
         version = profileManager.GetCurrentVersion().Replace(".", "-");
         deviceModel = SystemInfo.deviceModel;
         date = System.DateTime.Now.ToString("yyyy-MM-dd");
