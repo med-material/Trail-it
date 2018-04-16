@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
 public enum HitType
@@ -23,6 +22,9 @@ public class GameLevel : MonoBehaviour
 	[SerializeField]
 	private GameObject gameCanvas;
 
+    [SerializeField]
+    private DataManager dataManager;
+
     public string[] labelsA;
     public string[] labelsB;
     public string[] obstacleLabels;
@@ -32,9 +34,9 @@ public class GameLevel : MonoBehaviour
 
     public LineDrawer lineDrawer;
 
-    private GameObject[] targetObjects;
+    private List<GameObject> targetObjects;
     private GameObject[] obstacleObjects;
-    private Target[] targets;
+    private List<Target> targets;
     private Target[] obstacles;
 
     private GameManager gameManager;
@@ -43,6 +45,7 @@ public class GameLevel : MonoBehaviour
     public string[] levelData;
 
     private Transform camTransform;
+    [SerializeField]
     private Camera mainCam;
 
     private int outset;
@@ -66,7 +69,6 @@ public class GameLevel : MonoBehaviour
 
     public static bool _DidInit = false;
 
-    [Range(0.001f, 1.0f)]
     public float TargetSpawnDelay = 0.02f;
 
     [SerializeField]
@@ -129,7 +131,7 @@ public class GameLevel : MonoBehaviour
                     correctingError = true;
 					if (targets != null)
 					{
-						for (int i = 0; i < targets.Length; i++)
+						for (int i = 0; i < targets.Count; i++)
 						{
 							if (!targets[i].IsRed() && i != currentTarget)
 								targets[i].TurnDark();
@@ -152,7 +154,7 @@ public class GameLevel : MonoBehaviour
 						correctSound.Play();
 						if (targets != null)
 						{
-							for (int i = 0; i < targets.Length; i++)
+							for (int i = 0; i < targets.Count; i++)
 							{
 								if (i > (hit))
 								{
@@ -164,7 +166,7 @@ public class GameLevel : MonoBehaviour
 								}
 							}
 
-							for (int i = 0; i < targets.Length; i++)
+							for (int i = 0; i < targets.Count; i++)
 							{
 								targets[i].TurnLight();
 							}
@@ -177,7 +179,7 @@ public class GameLevel : MonoBehaviour
 							correctingError = false;
 							errorsInRow = 0;
 
-							if (hit == targets.Length - 1)
+							if (hit == targets.Count - 1)
 							{
 								//loggingManager.WriteLog("Target Hit - Level Complete");
 								typeHit = HitType.TargetHitLevelComplete;
@@ -264,7 +266,7 @@ public class GameLevel : MonoBehaviour
                         errorsInRow++;
                         errorSound.Play();
 
-                        for (int i = 0; i < targets.Length; i++)
+                        for (int i = 0; i < targets.Count; i++)
                         {
 							if (!targets[i].IsRed() && i != currentTarget && i != lastValid)
                                 targets[i].TurnDark();
@@ -289,117 +291,140 @@ public class GameLevel : MonoBehaviour
         LoadLevel();
     }
 
-	public void setupCamera()
-	{
-		camTransform = GameObject.Find("Main Camera").transform;
-		mainCam = camTransform.GetComponent<Camera>();
-		if (gameManager == null)
-		{
-			return;
-		}
-
-		levelData = gameManager.GetLevelData().text.Split("\n"[0]);
-
-		camTransform.position = new Vector3(float.Parse(levelData[0]), float.Parse(levelData[1]), float.Parse(levelData[2]));
-		mainCam.orthographicSize = float.Parse(levelData[3]);
-	}
-
     private void LoadLevel()
     {
-        camTransform = GameObject.Find("Main Camera").transform;
-        mainCam = camTransform.GetComponent<Camera>();
 		if (gameManager == null) {
 			return;
 		}
         gameType = gameManager.GetGameType();
 
-        levelData = gameManager.GetLevelData().text.Split("\n"[0]);
+        var fields = dataManager.GetFields();
+        Utils.Shuffle<DataManager.Field>(fields);
 
-        camTransform.position = new Vector3(float.Parse(levelData[0]), float.Parse(levelData[1]), float.Parse(levelData[2]));
-        mainCam.orthographicSize = float.Parse(levelData[3]);
+        lineDrawer.ClearAll();
+        int circlePosGranularity = 4;
 
-        if (targetObjects != null && targetObjects.Length > 0)
-        {
+        List<List<Vector2>> allFieldPositions = new List<List<Vector2>>();
+
+        float curPosX = -1.0f;
+        float curPosY = -1.0f;
+
+        // to ensure we dont spawn circles on top of each other, we create
+        // a list of all possible circle locations and shuffle them.
+        foreach (var field in fields) {
+            float xIncrement = field.width / (float)circlePosGranularity;
+            float yIncrement = field.height / (float)circlePosGranularity;
+
+            List<Vector2> currentFieldPositions = new List<Vector2>();
+            for (int i = 0; i < circlePosGranularity; i++) {
+
+                // we add a a slight offset to x and y to avoid border decision
+                // cases between intersecting fields.
+                float offset = (yIncrement / 8);
+                curPosY = yIncrement * i + field.yMin + offset;
+
+                for (int j = 0; j < circlePosGranularity; j++) {
+                    offset = (xIncrement / 4);
+                    curPosX = xIncrement * j + field.xMin + offset;
+
+                    // we need either the incrementer or the index to be above 0 for x and y.
+                    // this enables us to skip positions which are located on screen edges.
+                    if ((j > 0 || field.xIndex > 0) && (i > 0 || field.yIndex > 0)) {
+
+                        // We offset some circles a bit to make the level feel less like a grid
+                        // at the cost of some inconsistency in terms how many samples we
+                        // have per field (matters mostly in low difficulty).
+                        if (field.yIndex % 2 == 0) {
+                            curPosX += (xIncrement / 4) ;
+                        }
+                        if (field.xIndex % 2 == 0) {
+                            curPosY -= (yIncrement / 8);
+                        }
+
+                        Vector2 pos = new Vector2(curPosX, curPosY);
+                        currentFieldPositions.Add(pos);
+                    }
+
+                }
+            }
+
+            Utils.Shuffle(currentFieldPositions);
+            Debug.Log("field [" + field.xIndex + "," + field.yIndex + "]: (" + Utils.StringFromVector2List(currentFieldPositions) + ")");
+            allFieldPositions.Add(currentFieldPositions);
+        }
+
+        int targetAmount = gameManager.GetAmountOfCircles();
+        List<Vector2> targetPositions = new List<Vector2>();
+
+        // Now we select 1 position from each field list.
+        // the order of lists has been shuffled, as has the locations each list stores.
+        // if we still have targets left after going over all lists, we select again.
+        // To avoid duplicate locations, we remove the positions we select.
+        while (targetAmount > 0) {
+            Utils.Shuffle(allFieldPositions);
+            foreach (var fieldposList in allFieldPositions) {
+                if (targetAmount > 0) {
+                    Vector2 pos = fieldposList[0];
+                    targetPositions.Add(pos);
+                    fieldposList.RemoveAt(0);
+                }
+                targetAmount -= 1;
+            } 
+        }
+
+        Debug.Log(targetPositions.Count + " targetPositions: [" + Utils.StringFromVector2List(targetPositions) + "]");
+
+        int[] circleIDs = Enumerable.Range(0, targetPositions.Count).ToArray();
+        Debug.Log("Generating " + circleIDs.Length + " CircleIDs: [" + Utils.StringFromIntArray(circleIDs) + "]");
+
+        // Destroy any previous spawned targets before instantiation of new targets.
+        if (targetObjects != null && targetObjects.Count > 0) {
+            Debug.Log(targetObjects.Count + " target Objects exists, destroying level..");
             DestroyLevel();
         }
 
-        lineDrawer.ClearAll();
+        targetObjects = new List<GameObject>();
 
-        targetObjects = new GameObject[int.Parse(levelData[4])];
-        targets = new Target[targetObjects.Length];
-		obstacles = null;
+        targets = new List<Target>();
+        int index = 0;
+        foreach (Vector2 pos in targetPositions) {
+            Vector3 worldPos = mainCam.ViewportToWorldPoint(new Vector3(pos.x, pos.y, 0.0f));
+            GameObject obj = Instantiate(targetPrefab, new Vector3(worldPos.x, worldPos.y, 0.0f), Quaternion.identity);
+            targetObjects.Add(obj);
+            Target target = obj.GetComponent<Target>();
 
-		int[] randomID = Enumerable.Range(0, targetObjects.Length).ToArray();
-		List<int> randomLevel = new List<int>();
-		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
-		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
-		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
-		randomLevel.AddRange (Enumerable.Range (20, targetObjects.Length).ToList ());
-		Utils.ShuffleArray<int>(randomID);
-		Utils.Shuffle<int>(randomLevel);
+            target.SetID(circleIDs[index]);
+            target.SetObstacle(false);
 
-        for (int j = 0; j < targetObjects.Length; j++)
-        {
-			int i = randomID [j];
-			int k = randomLevel [j];
-            targetObjects[i] = (GameObject)Instantiate(targetPrefab, new Vector3(float.Parse(levelData[j * 6 + 5]), float.Parse(levelData[j * 6 + 6]), float.Parse(levelData[j * 6 + 7])), Quaternion.identity);
-            targetObjects[i].transform.localScale = new Vector3(float.Parse(levelData[j * 6 + 8]), float.Parse(levelData[j * 6 + 9]), float.Parse(levelData[j * 6 + 10]));
-			targetObjects[i].transform.parent = gameCanvas.transform;
-            targets[i] = targetObjects[i].GetComponent<Target>();
-
-			targets[i].SetID(i);
-            targets[i].SetObstacle(false);
-            if (gameType == "gameA")
-            {
-                targets[i].SetLabel(labelsA[i]);
+            if (gameType == "gameA") {
+                target.SetLabel(labelsA[index]);
+            } else {
+                target.SetLabel(labelsB[index]);                
             }
-            else
-            {
-                targets[i].SetLabel(labelsB[i]);
-            }
+                                               
+            obj.SetActive(false);
+            targets.Add(target);
+            Debug.Log(index + ": [" + pos.x + "," + pos.y + "] given ID " + circleIDs[index] + "and name {" + labelsA[index] + "}");
+            index += 1;
 
-            targetObjects[i].SetActive(false);
         }
-
-        if (levelData[5 + targetObjects.Length * 6] != null && levelData[5 + targetObjects.Length * 6] != "")
-        {
-            obstacleObjects = new GameObject[int.Parse(levelData[5 + targetObjects.Length * 6])];
-            obstacles = new Target[obstacleObjects.Length];
-
-            for (int i = 0; i < obstacleObjects.Length; i++)
-            {
-
-                obstacleObjects[i] = (GameObject)Instantiate(targetPrefab, new Vector3(float.Parse(levelData[i * 6 + targetObjects.Length * 6 + 6]), float.Parse(levelData[i * 6 + targetObjects.Length * 6 + 7]), float.Parse(levelData[i * 6 + targetObjects.Length * 6 + 8])), Quaternion.identity);
-                obstacleObjects[i].transform.localScale = new Vector3(float.Parse(levelData[i * 6 + targetObjects.Length * 6 + 9]), float.Parse(levelData[i * 6 + targetObjects.Length * 6 + 10]), float.Parse(levelData[i * 6 + targetObjects.Length * 6 + 11]));
-                obstacles[i] = obstacleObjects[i].GetComponent<Target>();
-                obstacles[i].SetID(i);
-                obstacles[i].SetObstacle(true);
-                obstacles[i].SetLabel(obstacleLabels[i]);
-            }
-        }
-
         currentTarget = 0;
         lastValid = currentTarget;
-		spawnSound.clip = spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)];
-        StartCoroutine(SpawnTargets(targetObjects));
+        spawnSound.clip = spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)];
+        StartCoroutine(SpawnTargets(targetObjects.ToArray()));
     }
 
     IEnumerator SpawnTargets(GameObject[] objsToSpawn)
     {
         float t = TargetSpawnDelay;
 
-        GameObject[] sorted = objsToSpawn;
-
-		//Array.Sort(sorted, delegate (GameObject x, GameObject y) { return x.transform.position.x.CompareTo(y.transform.position.x); });
 		spawnSound.Play();
-        for (int i = 0; i < sorted.Length; i++)
+        for (int i = 0; i < objsToSpawn.Length; i++)
         {
-			//if (i % 2 == 0)
-			//    audioSource.PlayOneShot(spawnTargetsSounds[UnityEngine.Random.Range(0, spawnTargetsSounds.Length - 1)]);
-			if (sorted != null && sorted[i] != null)
+			if (objsToSpawn != null && objsToSpawn[i] != null)
 			{
-				sorted[i].GetComponent<Animator>().Play("TargetSpawn");
-				sorted[i].SetActive(true);
+				objsToSpawn[i].GetComponent<Animator>().Play("TargetSpawn");
+				objsToSpawn[i].SetActive(true);
 			}
             yield return new WaitForSeconds(t);
         }
@@ -410,9 +435,9 @@ public class GameLevel : MonoBehaviour
     private void DestroyLevel()
     {
 		if (targetObjects != null) {
-			for (int i = 0; i < targetObjects.Length; i++) {
-				Destroy (targetObjects [i]);
-			}
+            foreach (GameObject obj in targetObjects) {
+                Destroy(obj);
+            }
 		}
 
 		if (obstacleObjects != null)
@@ -476,8 +501,6 @@ public class GameLevel : MonoBehaviour
             return mainCam.WorldToViewportPoint(obstacleObjects[(inputTargetID + 1) * -1].transform.position);
         else
         {
-			//Debug.Log ("TargetObjects length: " + targetObjects.Length);
-			//Debug.Log ("inputTargetID: " + inputTargetID);
             return mainCam.WorldToViewportPoint(targetObjects[inputTargetID].transform.position);
         }
     }

@@ -69,10 +69,7 @@ public class SettingsScreen : MonoBehaviour
 	private bool intro;
 	private int trainingTime = 2;
 	private int difficultyLevel = 3;
-	private int minimumLevel = 7;
-	private int maximumLevel = 13;
-	private int circleAmountMin = 1;
-	private int circleAmountMax = 2;
+	private int circleAmount = 1;
 	private string circleAmountNumberTemplate;
 	private string trainingMinutesTemplate;
 	private string gameType;
@@ -104,50 +101,8 @@ public class SettingsScreen : MonoBehaviour
 			circleAmountNumberTemplate = circleAmountNumber.text;
 		}
 		trainingMinutes.text = string.Format (trainingMinutesTemplate, trainingTime.ToString());
-		circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString(),circleAmountMax.ToString());
+		circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmount.ToString());
     }
-
-	private void DetermineAmountOfCircles () {
-		switch(difficultyLevel) {
-		case 1:
-			circleAmountMin = 10;
-			circleAmountMax = 15;
-			break;
-		case 2:
-			circleAmountMin = 20;
-			circleAmountMax = 30;
-			break;
-		case 3:
-			circleAmountMin = 35;
-			circleAmountMax = 40;
-			break;
-		default:
-			circleAmountMin = 1;
-			circleAmountMax = 2;
-			break;
-		}			
-	}
-
-	private void DetermineMinMaxLevel () {
-		switch(difficultyLevel) {
-		case 1:
-			minimumLevel = 1;
-			maximumLevel = 4;
-			break;
-		case 2:
-			minimumLevel = 7;
-			maximumLevel = 13;
-			break;
-		case 3:
-			minimumLevel = 18;
-			maximumLevel = 27;
-			break;
-		default:
-			minimumLevel = 1;
-			maximumLevel = 2;
-			break;
-		}		
-	}
 
     public void Landingsbane_Click()
     {
@@ -199,9 +154,8 @@ public class SettingsScreen : MonoBehaviour
 		int val = (int) circleAmountSlider.value;
 		if (circleAmountNumberTemplate != null) {
 			difficultyLevel = val;
-			DetermineAmountOfCircles ();
-			circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmountMin.ToString (), circleAmountMax.ToString ());
-			DetermineMinMaxLevel ();
+            circleAmount = Utils.TargetAmountFromDifficulty(difficultyLevel);
+			circleAmountNumber.text = string.Format (circleAmountNumberTemplate, circleAmount.ToString ());
 			SaveSettings ();
 		}
 	}
@@ -235,8 +189,7 @@ public class SettingsScreen : MonoBehaviour
 		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 2);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
-		DetermineMinMaxLevel();
-		DetermineAmountOfCircles ();
+        circleAmount = Utils.TargetAmountFromDifficulty(difficultyLevel);
     }
 
     /// <summary>
@@ -253,8 +206,6 @@ public class SettingsScreen : MonoBehaviour
 		PlayerPrefs.SetInt("Settings:"+currentProfileID +":Intro", intro ? 1 : 0);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":Time", trainingTime);
 		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":DifficultyLevel", difficultyLevel);
-		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MinLevel", minimumLevel);
-		PlayerPrefs.SetInt ("Settings:"+currentProfileID +":MaxLevel", maximumLevel);
 		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":GameType", gameType);
     }
 

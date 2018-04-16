@@ -10,6 +10,7 @@ public class Target : MonoBehaviour {
 
     [SerializeField]
 	private int targetID;
+    [SerializeField]
 	private TextMesh targetLabel;
 	private SpriteRenderer sprite;
 	private Animation pulse;

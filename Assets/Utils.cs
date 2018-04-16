@@ -85,6 +85,15 @@ public class Utils : MonoBehaviour {
 		}
 	}
 
+    public static string StringFromVector2List(List<Vector2> source)
+    {
+        string debugString = "";
+        foreach (Vector2 vector in source) {
+            debugString += "(" + vector.x.ToString("0.00") + "," + vector.y.ToString("0.00") + ") ";
+        }
+        return debugString;
+    }
+
 	public static string StringFromFloatList(List<float> source)
 	{
 		string debugString = "";
@@ -104,5 +113,44 @@ public class Utils : MonoBehaviour {
 		}
 		return debugString;
 	}
+
+    public static string StringFromHitList(List<DataManager.Hit> source)
+    {
+        string debugString = "";
+        foreach (DataManager.Hit hit in source) {
+            debugString += "[t(" + hit.time.ToString("0.00") +") d(" + hit.distance.ToString("0.00") + ")]" + ", ";
+        }
+        return debugString;
+    }
+
+    public static string StringFromIntArray(int[] source)
+    {
+        string debugString = "";
+        foreach (int number in source) {
+            debugString += number.ToString() + ",";
+        }
+        return debugString;
+    }
+
+    public static int TargetAmountFromDifficulty(int difficulty = 1)
+    {
+        int circleAmount = 12;
+        switch (difficulty) {
+            case 1:
+                circleAmount = 12;
+                break;
+            case 2:
+                circleAmount = 18;
+                break;
+            case 3:
+                circleAmount = 30;
+                break;
+            default:
+                circleAmount = 12;
+                break;
+        }
+
+        return circleAmount;
+    }
 
 }

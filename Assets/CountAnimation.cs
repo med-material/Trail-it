@@ -37,7 +37,6 @@ public class CountAnimation : MonoBehaviour {
 	private bool startCounting = false;
 
 	private float countTarget = -1.00f;
-	private int wholeNumberCountTarget = -1;
 	private int wholeNumberCurrentCount = 0;
 	private float decimalCurrentCount = 0.00f;
 	private float numberIncrement = 0.01f;
@@ -101,7 +100,6 @@ public class CountAnimation : MonoBehaviour {
 		startCounting = true;
 		startTime = Time.time;
 		countTarget = target;
-		wholeNumberCountTarget = target;
 
 		if (countText != null)
 		{

@@ -2435,6 +2435,16 @@ Prefab:
       propertyPath: BottomPanelCanvas
       value: 
       objectReference: {fileID: 253594222}
+    - target: {fileID: 114940138181922602, guid: 7d6c141dfce714626b16c237c42f839b,
+        type: 2}
+      propertyPath: dataManager
+      value: 
+      objectReference: {fileID: 235454366}
+    - target: {fileID: 114940138181922602, guid: 7d6c141dfce714626b16c237c42f839b,
+        type: 2}
+      propertyPath: mainCam
+      value: 
+      objectReference: {fileID: 1720051832}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7d6c141dfce714626b16c237c42f839b, type: 2}
   m_IsPrefabParent: 0
@@ -3609,62 +3619,6 @@ MonoBehaviour:
   tutorial: {fileID: 12864068}
   activeLevel: {fileID: 808461630}
   activeLevelAssistance: {fileID: 36167942}
-  allLevelsA:
-  - {fileID: 4900000, guid: afcc34514622fd444ba80fbbacd30406, type: 3}
-  - {fileID: 4900000, guid: 6b214256fd0530d44910251168573641, type: 3}
-  - {fileID: 4900000, guid: 73341357e86e6c44d9986272ff4a2cd8, type: 3}
-  - {fileID: 4900000, guid: ef711315d483e77449af7d0ca5bc4daa, type: 3}
-  - {fileID: 4900000, guid: 4d16f7e53dd76bf419a93d0cd98f4900, type: 3}
-  - {fileID: 4900000, guid: 866f94107c8d1bb48ae732a86da03d17, type: 3}
-  - {fileID: 4900000, guid: bc59c17b364b5fa47b803e167f151ce0, type: 3}
-  - {fileID: 4900000, guid: 7c7f7697135ba9b4e8bbfbc9d7443ad6, type: 3}
-  - {fileID: 4900000, guid: 3acd76cb8e9cfc54a9f5d650189163b1, type: 3}
-  - {fileID: 4900000, guid: 69437407022ec394583babf56c313eef, type: 3}
-  - {fileID: 4900000, guid: c83634bf69056da4d837045b457bfde8, type: 3}
-  - {fileID: 4900000, guid: a47aa9cf840ed524c85495db61a0e236, type: 3}
-  - {fileID: 4900000, guid: 7565539367557a3499513c36acd26441, type: 3}
-  - {fileID: 4900000, guid: cc7db2f997f2fae469d411fced6a0ce1, type: 3}
-  - {fileID: 4900000, guid: 02c399985b1e6bb45990ba633747ceda, type: 3}
-  - {fileID: 4900000, guid: 7c92f850b537b494ca933c19e95e5320, type: 3}
-  - {fileID: 4900000, guid: 4d553cb4ef9eac544921569e524b3cd6, type: 3}
-  - {fileID: 4900000, guid: ab14a810f9478184598fb9f4d31542f8, type: 3}
-  - {fileID: 4900000, guid: 87ff9655f99b08c45a3da29aae80e456, type: 3}
-  - {fileID: 4900000, guid: 177046579ea2d824b8708319a4b880cb, type: 3}
-  - {fileID: 4900000, guid: e67c651c41ac4cc448e5fb82ecd9e044, type: 3}
-  - {fileID: 4900000, guid: 2a27338729f5b1f41ab844aa83fbdff5, type: 3}
-  - {fileID: 4900000, guid: f1f47095d87ea2c4bba5a3674d58ed6f, type: 3}
-  - {fileID: 4900000, guid: 47b67819c1aa33c49a23370cf44f6cfa, type: 3}
-  - {fileID: 4900000, guid: 0786188ac1347634b8f644ac6893ee6f, type: 3}
-  - {fileID: 4900000, guid: b90e181257133c84cbb7a52954a5e202, type: 3}
-  - {fileID: 4900000, guid: 400abe6f742b2f042b831e0347d70fd8, type: 3}
-  allLevelsB:
-  - {fileID: 4900000, guid: 050c9367be3ad6347917a664729f9ce8, type: 3}
-  - {fileID: 4900000, guid: 112b1d65e3eed5f4eba43f89a904b8ad, type: 3}
-  - {fileID: 4900000, guid: 8d9a49937dedb224da5f043b1fdd91e5, type: 3}
-  - {fileID: 4900000, guid: 03bfc6afd8191d14e8d0f4a3e316f9c7, type: 3}
-  - {fileID: 4900000, guid: 0ade2a17aea4a684a9b56d049388be8b, type: 3}
-  - {fileID: 4900000, guid: 2caf962d8852a9e4f9faec8cdc422108, type: 3}
-  - {fileID: 4900000, guid: aa93d70c777d0ce4991c7768453c5928, type: 3}
-  - {fileID: 4900000, guid: 32befce77655b4547bdee5c12ce9922c, type: 3}
-  - {fileID: 4900000, guid: eef3bd5e345142c40b13b4b7c8494f1d, type: 3}
-  - {fileID: 4900000, guid: d0ac7977f157ff242bcab8525558b41e, type: 3}
-  - {fileID: 4900000, guid: 51b12a2b6f586c24c88380d03b5c695d, type: 3}
-  - {fileID: 4900000, guid: 6628450cef3a600468849d01bd433c4b, type: 3}
-  - {fileID: 4900000, guid: 406342de98e8f6c44af6f7269586c076, type: 3}
-  - {fileID: 4900000, guid: 3b59ca15585d16441bacc9c1139a8133, type: 3}
-  - {fileID: 4900000, guid: 241ffb9792270724fbc051934fafb765, type: 3}
-  - {fileID: 4900000, guid: 61a8e451da46a3d4dbaaab9ee213c739, type: 3}
-  - {fileID: 4900000, guid: ad22d3dd7c33846428c3393e531054e9, type: 3}
-  - {fileID: 4900000, guid: fe05eb3b407216a44a3e867d0595779d, type: 3}
-  - {fileID: 4900000, guid: de78e4cb53c90df4daee4faffe69211a, type: 3}
-  - {fileID: 4900000, guid: b366aa04285011a43a034b867e6f06a0, type: 3}
-  - {fileID: 4900000, guid: 2510d3e307a38e34c85ca34ce8b5eb8e, type: 3}
-  - {fileID: 4900000, guid: c94de1b51c14b9543a66f44ebfeb6e31, type: 3}
-  - {fileID: 4900000, guid: 85983cb53cfe51947b534083b3173e7a, type: 3}
-  - {fileID: 4900000, guid: 1c682a12b2e190649b6556c2978f39ee, type: 3}
-  - {fileID: 4900000, guid: 14f63a29663efeb40989737e8d00ca9e, type: 3}
-  - {fileID: 4900000, guid: e9d1d2bbc4672584caacc4efc066334c, type: 3}
-  - {fileID: 4900000, guid: eb23bef22d0a8bf49aa3c936e6176c76, type: 3}
   input: {fileID: 0}
   menuCanvas: {fileID: 432501715}
   setupCanvas: {fileID: 1798151972}
@@ -3696,7 +3650,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 530adcf5b6b92410f8e4cbfb2057383a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 1720051832}
+  profileManager: {fileID: 235454372}
 --- !u!114 &235454368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3708,7 +3662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7593cb7069cc0147af4ea58fa56dea0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assistanceManager: {fileID: 36167942}
+  dataManager: {fileID: 235454366}
   mySQL: {fileID: 235454371}
   profileManager: {fileID: 235454372}
 --- !u!114 &235454370
@@ -3748,6 +3702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuScreen: {fileID: 825755647}
   mainMenuCanvas: {fileID: 825755642}
+  dataManager: {fileID: 235454366}
   questionnaireCanvas: {fileID: 564947306}
   firstTimeCanvas: {fileID: 1469693257}
   updatedCanvas: {fileID: 2096603660}
@@ -13722,7 +13677,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '{0}-{1}  cirkler'
+  m_Text: '{0} cirkler'
 --- !u!222 &863203397
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16250,7 +16205,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Forbind tallene ved at tegne en streg.
+  m_Text: "Tryk skiftevis p\xE5 tal og bogstav."
 --- !u!222 &1085460884
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19489,10 +19444,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 91588d9c3fc317c41a9b03f16b8976a4, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 91588d9c3fc317c41a9b03f16b8976a4, type: 2}
   m_IsPrefabParent: 0
@@ -19966,7 +19917,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Skift Profil
+  m_Text: "V\xE6lg en Profil"
 --- !u!23 &1367991391
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -171,6 +171,9 @@ public class Tutorial : MonoBehaviour {
 			overlayText.text = b1text;
 			phase0B.SetActive(true);
 		}
+
+        targetObjects[0].SetActive(true);
+        targetObjects[1].SetActive(true);
 	}
 
 	private void StartStage1 () {
@@ -229,6 +232,11 @@ public class Tutorial : MonoBehaviour {
 			phase0B.SetActive(false);
 			phase1B.SetActive(true);
 		}
+
+        targetObjects[0].SetActive(true);
+        targetObjects[1].SetActive(true);
+        targetObjects[2].SetActive(true);
+        targetObjects[3].SetActive(true);
 	}
 
 	public void SkipButtonClicked()

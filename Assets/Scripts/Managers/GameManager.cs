@@ -26,28 +26,16 @@ public class GameManager : MonoBehaviour
 	public GameLevel activeLevel;
 	public AssistanceManager activeLevelAssistance;
 
-	public TextAsset[] allLevelsA;
-    public TextAsset[] allLevelsB;
-
-    private int currentLevel;
     private bool player;
-    //private int userID;
     private bool gameA;
 	private string gameType;
 	private bool tutorialSeen = false;
-    //private int progressA;
-    //private int progressB;
-    //private int orderRow;
-    //private bool tutorialASeen = false;
-    //private bool tutorialBSeen = false;
     private float levelCompletionTime = -1;
 	private float lastHitTime = -1;
 	private bool sessionActive = true;
 	private bool levelActive = false;
 	private float pauseTime = 0;
 	private bool intro = false;
-	private int minimumLevel = 7;
-	private int maximumLevel = 12;
 	private int currentProgress = 0;
 
     public InputHandler input;
@@ -56,12 +44,12 @@ public class GameManager : MonoBehaviour
 
 	// Per-Level Counters 
 	private int levelHitsTotal = 0;
-	private int levelHitsLeft = 0;
-	private int levelHitsRight = 0;
+    private int levelHitsLeft = 0;
+    private int levelHitsRight = 0;
+
+    private Vector2 lastHitPos;
 
 	private int levelErrorsTotal = 0;
-	private int levelErrorsLeft = 0;
-	private int levelErrorsRight = 0;
 
 	private List<float> levelReactionTimesList = new List<float>();
 	private List<float> levelReactionTimesLeftList = new List<float>();
@@ -70,14 +58,11 @@ public class GameManager : MonoBehaviour
 	private float levelReactionTimeLeft = 0.0f;
 	private float levelReactionTimeRight = 0.0f;
 
-
-
-
-
-	private float levelTimeStart = -1;		 // used for calculations (Time.time based)
-	private float levelTimeEnd = -1;		 // used for calculations (Time.time based)
-	private string levelTimestampStart = ""; // used for logging (System.Datetime.now based)
-	private string levelTimestampEnd = "";   // used for logging (System.Datetime.now based)
+	private float levelTimeStart = -1;		  // used for calculations (Time.time based)
+	private float levelTimeEnd = -1;		  // used for calculations (Time.time based)
+	private DateTime levelTimestampStart;     // used for logging (System.Datetime.now based)
+	private DateTime levelTimestampEnd;       // used for logging (System.Datetime.now based)
+    private DateTime sessionTimestampStart;   // used for logging (System.Datetime.now based)
 
 	private float bestCompletionTime = -1.0f;
 	private List<float> HitTimeLeft = new List<float>();
@@ -89,6 +74,7 @@ public class GameManager : MonoBehaviour
 	private float sessionTimeStart = -1;
 	private float sessionTimeCurrent = -1; 		// current time formatted in seconds
 	private float sessionTimeRemaining = -1;    // remaining time formatted in seconds
+    private int difficultyLevel;
 
     // Canvas Stuff
     [SerializeField]
@@ -123,14 +109,6 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	private CountAnimation reactionTimeLeftText;
 
-	//private string endLevelTimeTemplate;
-	//private string endLevelAmountTemplate;
-	//private string endLevelAverageTemplate;
-	//private string totalAmountTemplate;
-	//private string bestCompletionTimeTemplate;
-	//private string reactionTimeRightTemplate;
-	//private string reactionTimeLeftTemplate;
-
 	[SerializeField]
 	public Text countDownText;
 	public int countDown = 4;
@@ -149,13 +127,6 @@ public class GameManager : MonoBehaviour
 		GameLevel._DidInit = false;
 
 		endLevelDurationTemplate = endLevelDuration.text;
-		//endLevelTimeTemplate = endLevelTime.text;
-		//endLevelAmountTemplate = endLevelAmount.text;
-		//endLevelAverageTemplate = endLevelAverage.text;
-		//totalAmountTemplate = totalAmount.text;
-		//bestCompletionTimeTemplate = bestCompletionTimeText.text;
-		//reactionTimeLeftTemplate = reactionTimeLeftText.text;
-		//reactionTimeRightTemplate = reactionTimeRightText.text;
 
         input = gameObject.AddComponent<InputHandler>();
 
@@ -168,8 +139,7 @@ public class GameManager : MonoBehaviour
     {
 		string currentProfileID = profileManager.GetCurrentProfileID ();
 		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 2);
-		minimumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MinLevel", 1);
-		maximumLevel = PlayerPrefs.GetInt ("Settings:" + currentProfileID + ":MaxLevel", 4);
+        difficultyLevel = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
    
@@ -178,17 +148,12 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
 		LoadPlayerPrefs ();
-
+        lastHitPos = new Vector2(0.5f, 0.5f);
         gameOverlayCanvas.SetActive(true);
 
 		if (intro && !tutorialSeen)
 		{
-			//GameObject tutObj = Instantiate(Resources.Load("Tutorial/Tutorial")) as GameObject;
-			//tutObj.GetComponent<Tutorial>().Init(this);
-			//tutObj.name = "Tutorial";
-			//tutorial.gameObject.SetActive(true);
 			tutorial.Init();
-			//tutorial.Init(this);
 			_CurrentScene = "Tutorial";
 			tutorialSeen = true;
 			string currentProfileID = profileManager.GetCurrentProfileID();
@@ -202,7 +167,6 @@ public class GameManager : MonoBehaviour
 		} else
 		{
 			gamePanel.SetActive(true);
-			currentLevel = ChooseLevel();
 			currentProgress += 1;
 
 			if (!GameLevel._DidInit)
@@ -210,7 +174,7 @@ public class GameManager : MonoBehaviour
 				activeLevel.Init(this);
 				_CurrentScene = "Level";
 			}
-			activeLevel.setupCamera();
+            dataManager.NewSession();
 			StartCoroutine(CountDownFirstLevel());
 
 		}
@@ -232,21 +196,26 @@ public class GameManager : MonoBehaviour
 				//Debug.Log("touchInput: [" + mainCam.WorldToViewportPoint(input.TouchPos) + "]");
 				HitType hitType = activeLevel.AttemptHit(input.TouchPos);
 				LD.DrawLine(input.TouchPos, hitType);
+
 				if (hitType == HitType.TargetHit || hitType == HitType.TargetHitLevelComplete)
 				{
 					float time = Time.time;
 
 					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
 					{
-						if (lastHitTime == -1)
+                        if (lastHitTime == -1)
 						{
 							lastHitTime = levelTimeStart;
 						}
+
 						levelHitsTotal += 1;
+
 						float reactionTime = Time.time - lastHitTime;
-						// DataManager.AddHit(input.TouchPos, reactionTime);
-						levelReactionTimesList.Add(reactionTime);
-                        dataManager.addHit(input.TouchPos, reactionTime);
+                        levelReactionTimesList.Add(reactionTime);
+                        Vector2 hitPos = mainCam.WorldToViewportPoint(input.TouchPos);
+                        float distance = Vector2.Distance(lastHitPos, hitPos);
+
+                        dataManager.AddHit(hitPos, reactionTime, distance, hitType);
 
 						if (input.TouchPos.x > 0)
 						{
@@ -266,7 +235,7 @@ public class GameManager : MonoBehaviour
 
 					if (hitType == HitType.TargetHitLevelComplete)
 					{
-						TheLevelEnded();
+                        TheLevelEnded();
 
 					}
 
@@ -274,17 +243,13 @@ public class GameManager : MonoBehaviour
 				{
 					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
 					{
-						levelErrorsTotal++;
-					}
+                        float reactionTime = Time.time - lastHitTime;
+                        Vector2 hitPos = mainCam.WorldToViewportPoint(input.TouchPos);
+                        float distance = Vector2.Distance(lastHitPos, hitPos);
 
-					if (input.TouchPos.x > 0)
-					{
-						levelErrorsRight++;
-					}
-					else
-					{
-						levelErrorsLeft++;
-					}
+                        dataManager.AddHit(hitPos, reactionTime, distance, hitType);
+                    }
+
 				}
 
 
@@ -303,10 +268,11 @@ public class GameManager : MonoBehaviour
 
     private void TheLevelEnded()
     {
-		levelActive = false;
+        dataManager.printResults();
+        levelActive = false;
         _CurrentScene = "LevelComplete";
 		levelTimeEnd = Time.time;
-		levelTimestampEnd = System.DateTime.Now.ToString("HH:mm:ss.ffff");
+		levelTimestampEnd = System.DateTime.Now;
 		sessionTimeCurrent = (levelTimeEnd - sessionTimeStart);
 		levelCompletionTime = levelTimeEnd - levelTimeStart;
 		sessionTimeRemaining = sessionTimeRemaining - levelCompletionTime;
@@ -315,6 +281,10 @@ public class GameManager : MonoBehaviour
 		levelReactionTime = Utils.GetMedian(levelReactionTimesList);
 		levelReactionTimeLeft = Utils.GetMedian(levelReactionTimesLeftList);
 		levelReactionTimeRight = Utils.GetMedian(levelReactionTimesRightList);
+        bool assistanceWasActive = activeLevelAssistance.GetAssistanceWasActive();
+        bool usedLineDrawing = LD.GetUsesLineDrawing();
+        dataManager.AddLevelData(currentProgress, levelCompletionTime, sessionTimeCurrent, assistanceWasActive,
+                                 levelTimestampStart, levelTimestampEnd, usedLineDrawing);
 		loggingManager.WriteAggregateLog("Level " + currentProgress.ToString() + " Completed!");
 		ShowTheEndLevelCanvas();
     }
@@ -333,8 +303,9 @@ public class GameManager : MonoBehaviour
 		{
 			getReadyOverlay.SetActive(false);
 			levelActive = true;
-			levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
-			activeLevel.LoadNextLevel();
+			levelTimestampStart = System.DateTime.Now;
+            activeLevel.LoadNextLevel();
+            sessionTimestampStart = System.DateTime.Now;
 			sessionTimeStart = Time.time;
 			sessionTimeRemaining = (sessionLength * 60);
 			levelTimeStart = sessionTimeStart;
@@ -349,7 +320,8 @@ public class GameManager : MonoBehaviour
         endLevelCanvas.gameObject.SetActive(true);
 		gameOverlayCanvas.SetActive (false);
 		if (Time.time - sessionTimeStart > sessionLength*60 && sessionActive) {
-			endSessionCanvas.gameObject.SetActive(true);
+            dataManager.AddSessionData(gameType, difficultyLevel, sessionLength, sessionTimestampStart, intro);
+            endSessionCanvas.gameObject.SetActive(true);
 			loggingManager.UploadLog();
 			sessionActive = false;
 		}
@@ -370,18 +342,19 @@ public class GameManager : MonoBehaviour
 
     private void SetEndScreenValues()
     {
-		if (sessionActive) {
+
+        if (sessionActive) {
 			endLevelTime.SetTargetDecimalNumber(levelCompletionTime);
-			if (bestCompletionTime < 0 || bestCompletionTime > levelCompletionTime) {
-				bestCompletionTime = levelCompletionTime;
-			}
+            if (bestCompletionTime < 0 || bestCompletionTime > levelCompletionTime) {
+                bestCompletionTime = levelCompletionTime;
+            }
 			endLevelAmount.SetTargetWholeNumber(sessionHitsTotal);
 			endLevelAverage.SetTargetDecimalNumber(levelReactionTime);
+
 		} else {
 
 			float hitTimeRightAverage;
 			float hitTimeLeftAverage;
-
 
 			if (currentProgress > 1) {
 				hitTimeLeftAverage = HitTimeLeft.Average(item => (float)item);
@@ -393,23 +366,13 @@ public class GameManager : MonoBehaviour
 				hitTimeLeftAverage = 0.00f;
 				hitTimeRightAverage = 0.00f;
 			}
+            bestCompletionTimeText.SetTargetDecimalNumber(bestCompletionTime);
 
-			bestCompletionTimeText.SetTargetDecimalNumber(bestCompletionTime);
-
-			totalAmount.SetTargetWholeNumber(sessionHitsTotal);
+            totalAmount.SetTargetWholeNumber(sessionHitsTotal);
 			reactionTimeLeftText.SetTargetDecimalNumber(hitTimeLeftAverage);
 			reactionTimeRightText.SetTargetDecimalNumber(hitTimeRightAverage);
 		}
     }
-
-	private int ChooseLevel()
-	{
-		int count = (maximumLevel - minimumLevel);
-		int[] randomID = Enumerable.Range(minimumLevel, count).ToArray();
-		Utils.ShuffleArray<int>(randomID);
-		int levelID = randomID[0];
-		return levelID;
-	}
 
 	private void resetLevelCounters()
 	{
@@ -417,8 +380,6 @@ public class GameManager : MonoBehaviour
 		levelHitsLeft = 0;
 		levelHitsRight = 0;
 		levelErrorsTotal = 0;
-		levelErrorsLeft = 0;
-		levelErrorsRight = 0;
 		levelReactionTime = 0.0f;
 		levelReactionTimeLeft = 0.0f;
 		levelReactionTimeRight = 0.0f;
@@ -439,7 +400,6 @@ public class GameManager : MonoBehaviour
 		levelActive = true;
 		activeLevelAssistance.LoadPlayerPrefs();
 		LoadPlayerPrefs();
-		currentLevel = ChooseLevel();
 		activeLevel.ReloadLevel();
 		//loggingManager.WriteLog ("Game Resumed");
 	}
@@ -455,68 +415,40 @@ public class GameManager : MonoBehaviour
 		resetLevelCounters();
 		TimerResume();
 		levelActive = true;
-		currentLevel = ChooseLevel();
 		gameOverlayCanvas.SetActive(true);
 		_CurrentScene = "Level";
 		activeLevelAssistance.resetAssistanceWasActive();
 		currentProgress += 1;
 		activeLevel.LoadNextLevel();
-		levelTimestampStart = System.DateTime.Now.ToString("HH:mm:ss.ffff");
+        dataManager.NewLevel();
+		levelTimestampStart = System.DateTime.Now;
 		levelTimeStart = Time.time;
 		lastHitTime = levelTimeStart;
+        lastHitPos = new Vector2(0.5f, 0.5f);
 	}
 
-	public void GameOverlay_MainMenuButton_Click()
-	{
-		menuCanvas.gameObject.SetActive(true);
-		gameOverlayCanvas.SetActive(false);
-		TimerPause();
-	}
+    void OnApplicationQuit()
+    {
+        dataManager.SaveData();
+        // if we fail to upload before user exit, we dump the logs disk.
+        bool shouldUpload = profileManager.GetUploadPolicy();
+        bool sessionFinished = (Time.time - sessionTimeStart > sessionLength * 60);
+        if (shouldUpload && loggingManager.hasLogs() && sessionFinished) {
+            loggingManager.DumpCurrentLog();
+            loggingManager.ClearLogEntries();
+        }
+    }
 
-	public void SetGameType(string newGameType)
-	{
-		gameType = newGameType;
-	}
-
-	public bool GetUsesLineDrawing()
-	{
-		return LD.GetUsesLineDrawing();
-	}
-
-	public float GetSessionTimeCurrent()
-	{
-		return sessionTimeCurrent;
-	}
-
-	public float GetSessionTimeRemaining()
-	{
-		return sessionTimeRemaining;
-	}
-
-	public bool GetTutorialSeen()
-	{
-		return tutorialSeen;
-	}
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 
     public string GetGameType()
     {
         return gameType;
     }
-
-	public string GetTimestampStartLevel()
-	{
-		return levelTimestampStart;
-	}
-
-	public string GetTimestampEndLevel()
-	{
-		return levelTimestampEnd;
-	}
-
-	public int GetLevelHitsTotal()
-	{
-		return levelHitsTotal;
-	}
+        
 
 	public int GetLevelHitsRight()
 	{
@@ -526,26 +458,6 @@ public class GameManager : MonoBehaviour
 	public int GetLevelHitsLeft()
 	{
 		return levelHitsRight;
-	}
-
-	public int GetLevelErrorsTotal()
-	{
-		return levelErrorsTotal;
-	}
-
-	public int GetLevelErrorsRight()
-	{
-		return levelErrorsLeft;
-	}
-
-	public int GetLevelErrorsLeft()
-	{
-		return levelErrorsRight;
-	}
-
-	public float GetLevelReactionTime()
-	{
-		return levelReactionTime;
 	}
 
 	public float GetLevelReactionTimeRight()
@@ -558,60 +470,13 @@ public class GameManager : MonoBehaviour
 		return levelReactionTimeRight;
 	}
 
-	public void QuitGame()
-	{
-		Application.Quit();
-	}
-
-	void OnApplicationQuit()
-	{
-		// if we fail to upload before user exit, we dump the logs disk.
-		bool shouldUpload = profileManager.GetUploadPolicy();
-		bool sessionFinished = (Time.time - sessionTimeStart > sessionLength * 60);
-		if (shouldUpload && loggingManager.hasLogs() && sessionFinished)
-		{
-			loggingManager.DumpCurrentLog();
-			loggingManager.ClearLogEntries();
-		}
-	}
-
-	public int GetCurrentProgress()
-	{
-		return currentProgress;
-	}
-
-	public int GetCurrentLevel()
-	{
-		return currentLevel;
-	}
-
-    public int GetTotalLevelsA()
-    {
-        return allLevelsA.Length;
-    }
-    public int GetTotalLevelsB()
-    {
-        return allLevelsB.Length;
-    }
-
 	public bool GetLevelActive() {
 		return levelActive;
 	}
 
-    public TextAsset GetLevelData()
+    public int GetAmountOfCircles()
     {
-        if (gameType == "gameA")
-        {
-			return allLevelsA[currentLevel];
-        }
-        else
-        {
-            return allLevelsB[currentLevel];
-        }
-    }
-
-    public float GetLevelCompletionTime()
-    {
-        return levelCompletionTime;
+        int targetAmount = Utils.TargetAmountFromDifficulty(difficultyLevel);
+        return targetAmount;
     }
 }

@@ -11,6 +11,9 @@ public class ProfileManager : MonoBehaviour {
 	[SerializeField]
 	private GameObject mainMenuCanvas;
 
+    [SerializeField]
+    private DataManager dataManager;
+
 	[SerializeField]
 	private GameObject questionnaireCanvas;
 
@@ -142,6 +145,82 @@ public class ProfileManager : MonoBehaviour {
 		SaveProfiles ();
 	}
 
+    public void SetCurrentProfile(string newProfileID)
+    {
+        dataManager.SaveData();
+        currentProfileID = newProfileID;
+        CurrentName = PlayerPrefs.GetString("Settings:" + newProfileID + ":Name", "Gæst");
+        CurrentEmail = PlayerPrefs.GetString("Settings:" + newProfileID + ":Email", "No Email");
+        CurrentVersion = PlayerPrefs.GetString("Settings:" + newProfileID + ":Version", "2017.04.04");
+        CurrentPlayContext = PlayerPrefs.GetString("Settings:" + newProfileID + ":PlayContext", "Unknown");
+        CurrentAgeGroup = PlayerPrefs.GetString("Settings:" + newProfileID + ":AgeGroup", "Unknown");
+        CurrentTrainingReason = PlayerPrefs.GetString("Settings:" + newProfileID + ":TrainingReason", "Unknown");
+        shouldUpload = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":UploadData", 0) == 1);
+        shouldProtectSettings = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":ProtectSettings", 0) == 1);
+
+        dataManager.LoadData();
+        Debug.Log("profileID: " + currentProfileID);
+        Debug.Log("Current Profile: " + CurrentName + ", version " + CurrentVersion + ", playContext " + CurrentPlayContext + ", ageGroup " + CurrentAgeGroup
+                  + ", trainingReason " + CurrentTrainingReason + "and uploadPolicy " + shouldUpload);
+        SaveProfiles();
+    }
+
+    private void MigrateProfile()
+    {
+        if (CurrentVersion == "2017.04.04") // checking both for now, bot the one with dots will be the real one in the future.
+        {
+            Debug.Log("Migration from 2017.04.04 starting");
+
+            if (!didInit) {
+                updatedCanvas.SetActive(true);
+                mainMenuCanvas.SetActive(false);
+            } else if (shouldUpload) {
+                questionnaireCanvas.SetActive(true);
+                mainMenuCanvas.SetActive(false);
+            }
+            CurrentVersion = Application.version;
+        }
+        SaveProfiles();
+
+    }
+
+    public void RemoveProfile(string idToRemove)
+    {
+        List<string> newProfileList = new List<string>();
+        foreach (var id in profiles) {
+
+            if (id == idToRemove) {
+                Debug.Log("id " + id + "found and removed");
+            }
+            if (id != idToRemove) {
+                newProfileList.Add(id);
+            }
+        }
+        profiles = newProfileList;
+    }
+
+    public void SaveProfiles()
+    {
+        string[] profileArray = profiles.ToArray();
+        string profileString = string.Join(sep, profileArray);
+        PlayerPrefs.SetString("Settings:ProfileIDs", profileString);
+        PlayerPrefs.SetString("Settings:CurrentProfileID", currentProfileID);
+        PlayerPrefs.SetString("Settings:" + currentProfileID + ":Name", CurrentName);
+        PlayerPrefs.SetString("Settings:" + currentProfileID + ":Email", CurrentEmail);
+        PlayerPrefs.SetString("Settings:" + currentProfileID + ":Version", CurrentVersion);
+        PlayerPrefs.SetString("Settings:" + currentProfileID + ":PlayContext", CurrentPlayContext);
+        PlayerPrefs.SetString("Settings:" + currentProfileID + ":AgeGroup", CurrentAgeGroup);
+        PlayerPrefs.SetString("Settings:" + currentProfileID + ":TrainingReason", CurrentTrainingReason);
+        PlayerPrefs.SetInt("Settings:" + currentProfileID + ":UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
+        PlayerPrefs.SetInt("Settings:" + currentProfileID + ":ProtectSettings", int.Parse((Utils.BoolToNumberString(shouldProtectSettings))));
+        PlayerPrefs.SetString("Settings:Name", CurrentName);
+        PlayerPrefs.SetString("Settings:Email", CurrentEmail);
+        PlayerPrefs.SetInt("Settings:UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
+        PlayerPrefs.SetInt("Settings:ProtectSettings", int.Parse((Utils.BoolToNumberString(shouldProtectSettings))));
+
+        Debug.Log("Saving Profile: " + CurrentName + " with playContext " + CurrentPlayContext + ", ageGroup " + CurrentAgeGroup + " and trainingReason " + CurrentTrainingReason);
+    }
+
 	public string GetCurrentName()
 	{
 		return CurrentName;
@@ -157,9 +236,24 @@ public class ProfileManager : MonoBehaviour {
 		return CurrentVersion;
 	}
 
+    public string GetCurrentPlayContext()
+    {
+        return CurrentPlayContext;
+    }
+
+    public string GetCurrentTrainingReason()
+    {
+        return CurrentTrainingReason;
+    }
+
+    public string GetCurrentAgeGroup()
+    {
+        return CurrentAgeGroup;
+    }
+
 	public bool GetUploadPolicy()
 	{
-		return shouldUpload;
+        return shouldUpload;
 	}
 
 	public bool GetProtectSettings()
@@ -211,81 +305,5 @@ public class ProfileManager : MonoBehaviour {
 	public List<string> GetProfileList()
 	{
 		return profiles;
-	}
-
-	public void SetCurrentProfile(string newProfileID)
-	{
-		currentProfileID = newProfileID;
-		CurrentName = PlayerPrefs.GetString("Settings:" + newProfileID + ":Name", "Gæst");
-		CurrentEmail = PlayerPrefs.GetString ("Settings:" + newProfileID + ":Email", "No Email");
-		CurrentVersion = PlayerPrefs.GetString("Settings:" + newProfileID + ":Version", "2017.04.04");
-		CurrentPlayContext = PlayerPrefs.GetString("Settings:" + newProfileID + ":PlayContext", "Unknown");
-		CurrentAgeGroup = PlayerPrefs.GetString("Settings:" + newProfileID + ":AgeGroup", "Unknown");
-		CurrentTrainingReason = PlayerPrefs.GetString("Settings:" + newProfileID + ":TrainingReason", "Unknown");
-		shouldUpload = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":UploadData", 0) == 1);
-		shouldProtectSettings = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":ProtectSettings", 0) == 1);
-
-		Debug.Log("profileID: " + currentProfileID);
-		Debug.Log("Current Profile: " + CurrentName + ", version " + CurrentVersion + ", playContext " + CurrentPlayContext + ", ageGroup " + CurrentAgeGroup
-		          + ", trainingReason " + CurrentTrainingReason);
-		SaveProfiles ();
-	}
-
-	private void MigrateProfile()
-	{
-		if (CurrentVersion == "2017.04.04") // checking both for now, bot the one with dots will be the real one in the future.
-		{
-			Debug.Log("Migration from 2017.04.04 starting");
-
-			if (!didInit)
-			{
-				updatedCanvas.SetActive(true);
-				mainMenuCanvas.SetActive(false);
-			} else if (shouldUpload)
-			{
-					questionnaireCanvas.SetActive(true);
-					mainMenuCanvas.SetActive(false);
-			}
-			CurrentVersion = Application.version;
-		}
-		SaveProfiles();
-
-	}
-
-	public void RemoveProfile(string idToRemove) {
-		List<string> newProfileList = new List<string>();
-		foreach (var id in profiles) {
-
-			if (id == idToRemove)
-			{
-				Debug.Log("id " + id + "found and removed");
-			}
-			if (id != idToRemove) {
-				newProfileList.Add(id);
-			}
-		}
-		profiles = newProfileList;
-	}
-
-	public void SaveProfiles()
-	{
-		string[] profileArray = profiles.ToArray ();
-		string profileString = string.Join (sep, profileArray);
-		PlayerPrefs.SetString ("Settings:ProfileIDs", profileString);
-		PlayerPrefs.SetString ("Settings:CurrentProfileID", currentProfileID);
-		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Name", CurrentName);
-		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Email", CurrentEmail);
-		PlayerPrefs.SetString("Settings:" + currentProfileID + ":Version", CurrentVersion);
-		PlayerPrefs.SetString("Settings:" + currentProfileID + ":PlayContext", CurrentPlayContext);
-		PlayerPrefs.SetString("Settings:" + currentProfileID + ":AgeGroup", CurrentAgeGroup);
-		PlayerPrefs.SetString("Settings:" + currentProfileID + ":TrainingReason", CurrentTrainingReason);
-		PlayerPrefs.SetInt("Settings:" + currentProfileID + ":UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
-		PlayerPrefs.SetInt("Settings:" + currentProfileID + ":ProtectSettings", int.Parse((Utils.BoolToNumberString(shouldProtectSettings))));
-		PlayerPrefs.SetString ("Settings:Name", CurrentName);
-		PlayerPrefs.SetString ("Settings:Email", CurrentEmail);
-		PlayerPrefs.SetInt ("Settings:UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
-		PlayerPrefs.SetInt ("Settings:ProtectSettings", int.Parse((Utils.BoolToNumberString(shouldProtectSettings))));
-
-		Debug.Log("Saving Profile: " + CurrentName + " with playContext " + CurrentPlayContext + ", ageGroup " + CurrentAgeGroup + " and trainingReason " + CurrentTrainingReason);
 	}
 }
