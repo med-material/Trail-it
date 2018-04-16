@@ -16,9 +16,8 @@ public class LineDrawer : MonoBehaviour
 
     private List<LineRenderer> _lines; // All the lines 
 
-    private float lineSize;
     [SerializeField]
-    private float lineScalar = 75f;
+    private float lineSize = 0.3f;
 
     [SerializeField]
     private float fadeTimeScaler = 10f;
@@ -29,7 +28,6 @@ public class LineDrawer : MonoBehaviour
     void Start()
     {
         _lines = new List<LineRenderer>();
-        lineSize = Camera.main.orthographicSize / lineScalar;
     }
 
     public void StartLine(Vector3 startPos)

@@ -27699,7 +27699,7 @@ MonoBehaviour:
   normalColor: {r: 0.28235295, g: 0.654902, b: 0.3372549, a: 1}
   correctColor: {r: 0.3529412, g: 0.8666667, b: 0.42352942, a: 1}
   errorColor: {r: 0.99215686, g: 0.52156866, b: 0.52156866, a: 1}
-  lineScalar: 10
+  lineSize: 0.3
   fadeTimeScaler: 10
 --- !u!1 &1865648708
 GameObject:
