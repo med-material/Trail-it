@@ -161,7 +161,7 @@ PlayerSettings:
     Android: com.AAU.TRAILIT
     Standalone: unity.AAU.TRAILiT
     Tizen: com.AAU.TrailItEvolved2
-    iOS: com.AAU.TrailItEvolved2
+    iOS: com.AAU.TRAILIT
     tvOS: com.AAU.TrailItEvolved2
   buildNumber:
     iOS: 0
@@ -635,7 +635,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: Hand
   platformArchitecture:
-    iOS: 0
+    iOS: 2
   scriptingBackend:
     Android: 0
     Metro: 2
