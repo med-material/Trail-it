@@ -76,9 +76,7 @@ public class DataManager : MonoBehaviour {
             string hitString = levelNumber + "has " + levelHits.Length + " hitLists. ";
             Debug.Log(hitString);
             for (int i = 0; i < levelHits.GetLength(1); i++) {
-                Debug.Log("getLength(0): " + levelHits.GetLength(0));
                 for (int j = 0; j < levelHits.GetLength(0); j++) {
-                    Debug.Log("getLength(1): " + levelHits.GetLength(1));
                     hitString += "[" + j + ", " + i + "](" + levelHits[j,i].Count + "), ";
                 }
             }
@@ -284,7 +282,6 @@ public class DataManager : MonoBehaviour {
         currentSessionData.gameType = gameType;
         currentSessionData.intro = intro;
         currentSessionData.version = profileManager.GetCurrentVersion();
-        currentSessionData.testNumber = 12;
         Debug.Log("AddSessionData: " + currentSessionData.ToString());
         sessionDataList.Add(currentSessionData);
     }
@@ -427,8 +424,8 @@ public class DataManager : MonoBehaviour {
     public void SaveData()
     {
         if (hasInit && sessionDataList.Count > 0) {
-            Debug.Log("SaveData sees: " + sessionDataList.Last().testNumber);
             string profileID = profileManager.GetCurrentProfileID();
+            Debug.Log("Saving " + sessionDataList.Count + " sessions to" + directory + profileID + ".dat");
             if (File.Exists(directory + profileID + ".dat")) {
                 File.Delete(directory + profileID + ".dat");
             }
