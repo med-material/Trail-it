@@ -205,7 +205,7 @@ public class LoggingManager : MonoBehaviour {
 			 	+ pulseSetting + sep
 				+ voiceSetting + sep
 				+ repeatVoiceSetting + sep
-				+ dataVisEnabled + sep;
+				+ dataVisEnabled;
 
         string debugLine =
                   "date: " + date + sep
@@ -234,6 +234,8 @@ public class LoggingManager : MonoBehaviour {
                 + "levelReactionTimeRight: " + levelReactionTimeRight + sep
                 + "levelAvgDistance: " + levelAvgDistance + sep
                 + "levelTimeTotal: " + levelTimeTotal + sep
+                + "centerOfHitX: " + centerOfHitX + sep
+                + "centerOfHitY: " + centerOfHitY + sep
                 + "timestampLevelStart: " + timestampLevelStart + sep
                 + "timestampLevelEnd: " + timestampLevelEnd + sep
                 + "sessionLength: " + sessionLength + sep
@@ -255,7 +257,7 @@ public class LoggingManager : MonoBehaviour {
                 + "pulseSetting: " + pulseSetting + sep
                 + "voiceSetting: " + voiceSetting + sep
                 + "repeatVoiceSetting: " + repeatVoiceSetting + sep
-                + "dataVisEnabled: " + dataVisEnabled + sep;
+                + "dataVisEnabled: " + dataVisEnabled;
 
         Debug.Log(debugLine);
         logEntries.Add(currentLine);
