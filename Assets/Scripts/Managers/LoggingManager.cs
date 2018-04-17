@@ -205,7 +205,7 @@ public class LoggingManager : MonoBehaviour {
 			 	+ pulseSetting + sep
 				+ voiceSetting + sep
 				+ repeatVoiceSetting + sep
-				+ dataVisEnabled + sep;
+				+ dataVisEnabled;
 
         string debugLine =
                   "date: " + date + sep
@@ -255,7 +255,7 @@ public class LoggingManager : MonoBehaviour {
                 + "pulseSetting: " + pulseSetting + sep
                 + "voiceSetting: " + voiceSetting + sep
                 + "repeatVoiceSetting: " + repeatVoiceSetting + sep
-                + "dataVisEnabled: " + dataVisEnabled + sep;
+                + "dataVisEnabled: " + dataVisEnabled;
 
         Debug.Log(debugLine);
         logEntries.Add(currentLine);
