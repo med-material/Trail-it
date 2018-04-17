@@ -309,7 +309,9 @@ public class DataManager : MonoBehaviour {
                         xPositions.Add(hit.xPos);
                         yPositions.Add(hit.yPos);
                     }
-                    reactionTimes.Add(hit.time);
+                    if (hit.time > -1.0f) {
+                        reactionTimes.Add(hit.time);
+                    }
                 } else if (hit.type == HitType.WrongTargetHit) {
                     currentLevelData.errorCount++;
 
