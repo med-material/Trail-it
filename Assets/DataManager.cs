@@ -338,8 +338,12 @@ public class DataManager : MonoBehaviour {
             List<float> levelDistancesList = new List<float>();
 
             foreach (Hit hit in levelHitsList[field.xIndex, field.yIndex]) {
-                fieldTimes.Add(hit.time);
-                levelDistancesList.Add(hit.distance);
+                if (hit.time > -1.0f) {
+                    fieldTimes.Add(hit.time);
+                }
+                if (hit.distance > -1.0f) {
+                    levelDistancesList.Add(hit.distance);
+                }
             }
 
             float fieldTimeMedian = -1.0f;
