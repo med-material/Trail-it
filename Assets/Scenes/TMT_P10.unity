@@ -8420,6 +8420,7 @@ MonoBehaviour:
   - {fileID: 1219763009}
   - {fileID: 1450651249}
   - {fileID: 1594784961}
+  playContextText: {fileID: 1545156568}
   under40Toggles:
   - {fileID: 1390125473}
   - {fileID: 1795070537}
@@ -22929,7 +22930,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Hvor tr\xE6ner du med Trail it?"
+  m_Text: "{0}, hvor tr\xE6ner du med Trail it?"
 --- !u!23 &1545156569
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -15,6 +15,10 @@ public class QuestionnaireCanvas : MonoBehaviour {
 	[SerializeField]
 	Toggle[] playContextToggles;
 
+    [SerializeField]
+    Text playContextText;
+    private string playContextTextTemplate;
+
 	// ageGroup
 	[SerializeField]
 	Toggle[] under40Toggles;
@@ -33,6 +37,12 @@ public class QuestionnaireCanvas : MonoBehaviour {
 	// trainingReason
 	[SerializeField]
 	Toggle[] trainingReasonToggles;
+
+    public void Start()
+    {
+        playContextTextTemplate = playContextText.text;
+        playContextText.text = string.Format(playContextTextTemplate, profileManager.GetCurrentName());
+    }
 
 	public void SavePlayContext()
 	{
