@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
@@ -31,6 +31,7 @@ public class LoggingManager : MonoBehaviour {
 	private string deviceModel;				// The model of device which is being played on (ipads, iphones, android etc.)
 	private string date;					// The date in the formt YYYY-MM-DD
 	private string time;					// Timestamp at the time WriteLog was called in the format HH-MM-SS.MMMM
+    private string playerName;              // the player's name
 	private string email;                   // e-mail address of the player, if specified
 	private string playContext;             // whether the player is playing at home or in a clinical context. "Rehab", "Home", "RehabHome".
 	private string trainingReason;           // whether the player has diagnosed a type of neglect.
@@ -104,7 +105,7 @@ public class LoggingManager : MonoBehaviour {
         difficultyLevel = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1);
         levelFieldReactionTimes = levelData.fieldReactionTimes;
         levelFieldDistances = levelData.fieldDistances;
-
+        playerName = profileManager.GetCurrentName();
         version = profileManager.GetCurrentVersion().Replace(".", "-");
         deviceModel = SystemInfo.deviceModel.Replace(",","").Replace(";","");
         date = System.DateTime.Now.ToString("yyyy-MM-dd");
@@ -162,6 +163,7 @@ public class LoggingManager : MonoBehaviour {
                 + currentProfileID + sep
 			    + version + sep
 				+ deviceModel + sep
+                + playerName + sep
 				+ email + sep
 				+ playContext + sep
 				+ trainingReason + sep
@@ -214,6 +216,7 @@ public class LoggingManager : MonoBehaviour {
                 + "currentProfileID :" + currentProfileID + sep
                 + "version: " + version + sep
                 + "deviceModel: "+ deviceModel + sep
+                + "playerName: " + playerName + sep
                 + "email: " + email + sep
                 + "playContext: " + playContext + sep
                 + "trainingReason: " + trainingReason + sep
@@ -318,3 +321,4 @@ public class LoggingManager : MonoBehaviour {
 
 	}
 }
+
