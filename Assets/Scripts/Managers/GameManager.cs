@@ -133,6 +133,8 @@ public class GameManager : MonoBehaviour
         LoadPlayerPrefs();
 
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        lastHitPos = new Vector2(-1.0f, -1.0f);
+        lastHitTime = -1.0f;
     }
 
     public void LoadPlayerPrefs()
@@ -148,7 +150,6 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
 		LoadPlayerPrefs ();
-        lastHitPos = new Vector2(0.5f, 0.5f);
         gameOverlayCanvas.SetActive(true);
 
 		if (intro && !tutorialSeen)
@@ -197,61 +198,55 @@ public class GameManager : MonoBehaviour
 				HitType hitType = activeLevel.AttemptHit(input.TouchPos);
 				LD.DrawLine(input.TouchPos, hitType);
 
-				if (hitType == HitType.TargetHit || hitType == HitType.TargetHitLevelComplete)
+				if (hitType == HitType.TargetHit || hitType == HitType.TargetHitLevelComplete || hitType == HitType.WrongTargetHit)
 				{
 					float time = Time.time;
 
 					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
 					{
-                        if (lastHitTime == -1)
+                        // We don't measure reaction time for the first hit because it is affected
+                        // by the animation time and is hardly comparable to other times.
+                        float reactionTime = -1.0f;
+                        if (lastHitTime != -1.0f)
 						{
-							lastHitTime = levelTimeStart;
+                            reactionTime = Time.time - lastHitTime;
+                            levelReactionTimesList.Add(reactionTime);
+
+                            if (input.TouchPos.x > 0) {
+                                HitTimeRight.Add(Time.time - lastHitTime);
+                                levelReactionTimesRightList.Add(Time.time - lastHitTime);
+                                levelHitsRight++;
+                            } else {
+                                HitTimeLeft.Add(Time.time - lastHitTime);
+                                levelReactionTimesLeftList.Add(Time.time - lastHitTime);
+                                levelHitsLeft++;
+                            }
+
 						}
+
+                        // We don't measure distance of the first hit because
+                        // there is no sensible start position we can measure from.
+                        Vector2 hitPos = mainCam.WorldToViewportPoint(input.TouchPos);
+                        float distance = -1.0f;
+
+                        if (lastHitPos.x != -1.0f) {
+                            distance = Vector2.Distance(lastHitPos, hitPos);
+                        }
 
 						levelHitsTotal += 1;
 
-						float reactionTime = Time.time - lastHitTime;
-                        levelReactionTimesList.Add(reactionTime);
-                        Vector2 hitPos = mainCam.WorldToViewportPoint(input.TouchPos);
-                        float distance = Vector2.Distance(lastHitPos, hitPos);
-
                         dataManager.AddHit(hitPos, reactionTime, distance, hitType);
 
-						if (input.TouchPos.x > 0)
-						{
-							HitTimeRight.Add(Time.time - lastHitTime);
-							levelReactionTimesRightList.Add(Time.time - lastHitTime);
-							levelHitsRight++;
-						}
-						else
-						{
-							HitTimeLeft.Add(Time.time - lastHitTime);
-							levelReactionTimesLeftList.Add(Time.time - lastHitTime);
-							levelHitsLeft++;
-						}
-
 						lastHitTime = Time.time;
+                        lastHitPos = hitPos;
 					}
 
 					if (hitType == HitType.TargetHitLevelComplete)
 					{
                         TheLevelEnded();
-
 					}
 
-				} else if (hitType == HitType.WrongTargetHit)
-				{
-					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
-					{
-                        float reactionTime = Time.time - lastHitTime;
-                        Vector2 hitPos = mainCam.WorldToViewportPoint(input.TouchPos);
-                        float distance = Vector2.Distance(lastHitPos, hitPos);
-
-                        dataManager.AddHit(hitPos, reactionTime, distance, hitType);
-                    }
-
 				}
-
 
 			} else if (input.TouchUp)
 			{
@@ -424,8 +419,8 @@ public class GameManager : MonoBehaviour
         dataManager.NewLevel();
 		levelTimestampStart = System.DateTime.Now;
 		levelTimeStart = Time.time;
-		lastHitTime = levelTimeStart;
-        lastHitPos = new Vector2(0.5f, 0.5f);
+        lastHitTime = -1.0f;
+        lastHitPos = new Vector2(-1.0f, -1.0f);
 	}
 
     void OnApplicationQuit()
