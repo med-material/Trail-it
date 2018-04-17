@@ -106,7 +106,7 @@ public class LoggingManager : MonoBehaviour {
         levelFieldDistances = levelData.fieldDistances;
 
         version = profileManager.GetCurrentVersion().Replace(".", "-");
-        deviceModel = SystemInfo.deviceModel;
+        deviceModel = SystemInfo.deviceModel.Replace(",","").Replace(";","");
         date = System.DateTime.Now.ToString("yyyy-MM-dd");
         time = System.DateTime.Now.ToString("HH:mm:ss.ffff");
         email = profileManager.GetCurrentEmail();
@@ -154,6 +154,7 @@ public class LoggingManager : MonoBehaviour {
 		voiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1);
 		repeatVoiceSetting = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1);
 		dataVisEnabled = Utils.BoolToNumberString(PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DataVisEnabled", 0) == 1);
+        Debug.Log(deviceModel);
 
 		currentLine =
                   date + sep
