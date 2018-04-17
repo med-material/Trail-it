@@ -102,7 +102,6 @@ public class DataManager : MonoBehaviour {
         public float sessionLength;             // how long time the session took.
         public float bestCompletionTime;        // the best completion time for this level.
         public System.DateTime timestamp;       // timestamp marking the session start.
-        public List<Field> fields;              // how the screen is divided to calculate reaction times.
         public bool intro;                      // whether intro was turned on for this session
 
         public override string ToString()
@@ -172,7 +171,7 @@ public class DataManager : MonoBehaviour {
     private float cellHeight;
     private float margin = 0.1f;
     private List<Field> fields = new List<Field>();
-    private string directory;
+    private string directory = "";
     private bool hasInit = false;
 
     private SessionData currentSessionData;
@@ -189,12 +188,6 @@ public class DataManager : MonoBehaviour {
 
     public void Start()
     {
-        directory = Application.persistentDataPath + "/TrainingData/";
-
-        if (!Directory.Exists(directory)) {
-            Directory.CreateDirectory(directory);
-        }
-
         cellWidth = 1.0f / (float)cellRowCount;
         cellHeight = (1.0f - margin * 2) / (float)cellColumnCount;
         CalculateFields();
@@ -226,9 +219,6 @@ public class DataManager : MonoBehaviour {
     public void NewLevel()
     {
         Debug.Log("DataManager: New level!");
-        if (currentLevelData.levelNumber > 0) {
-            levelDataList.Add(currentLevelData);
-        }
         currentLevelData = new LevelData();
         levelHitsList = new List<Hit>[cellRowCount, cellColumnCount];
         for (int i = 0; i < cellColumnCount; i++) {
@@ -242,9 +232,6 @@ public class DataManager : MonoBehaviour {
     {
         Debug.Log("DataManager: New session!");
         hasInit = true;
-        if (currentSessionData.version != "") {
-            sessionDataList.Add(currentSessionData);
-        }
         currentSessionData = new SessionData();
         levelDataList = new List<LevelData>();
         NewLevel();
@@ -259,14 +246,17 @@ public class DataManager : MonoBehaviour {
         currentSessionData.bestCompletionTime = -1.0f;
         List<float> reactionTimes = new List<float>();
         foreach (var levelData in levelDataList) {
-            reactionTimes.Add(levelData.reactionTime);
-            currentSessionData.errorCount += levelData.errorCount;
-            currentSessionData.hitCount += levelData.hitCount;
+            // we should only count levels where we managed to get a hit.
+            // if a level starts right when the sessionTime ends, it doesn't count.
+            if (levelData.hitCount > 0) {
+                reactionTimes.Add(levelData.reactionTime);
+                currentSessionData.errorCount += levelData.errorCount;
+                currentSessionData.hitCount += levelData.hitCount;
 
-            if (levelData.completionTime > currentSessionData.bestCompletionTime) {
-                currentSessionData.bestCompletionTime = levelData.completionTime;
+                if (levelData.completionTime > currentSessionData.bestCompletionTime) {
+                    currentSessionData.bestCompletionTime = levelData.completionTime;
+                }
             }
-
             if (levelData.assistanceWasActive) {
                 currentSessionData.assistanceCount += 1;
             }
@@ -290,12 +280,13 @@ public class DataManager : MonoBehaviour {
         currentSessionData.levelCount = levelDataList.Count;
         currentSessionData.sessionLength = sessionLength;
         currentSessionData.timestamp = sessionStartTimestamp;
-        currentSessionData.fields = fields;
         currentSessionData.difficultyLevel = difficultyLevel;
         currentSessionData.gameType = gameType;
         currentSessionData.intro = intro;
         currentSessionData.version = profileManager.GetCurrentVersion();
+        currentSessionData.testNumber = 12;
         Debug.Log("AddSessionData: " + currentSessionData.ToString());
+        sessionDataList.Add(currentSessionData);
     }
 
     public void AddLevelData(int levelNumber, float completionTime, float sessionTime, bool assistanceWasActive,
@@ -363,11 +354,18 @@ public class DataManager : MonoBehaviour {
             currentLevelData.fieldDistances[field.xIndex, field.yIndex] = distanceAverage;
         }
 
-        // reaction times can be prone to outliers so we use the median.
-        currentLevelData.reactionTime = Utils.GetMedian(reactionTimes);
-
-        // distances are not prone to outliers, so we use average.
-        currentLevelData.distanceAverage = distances.Average(item => (float)item);
+        // if our level starts and the sessionTime simultaneously ends we have no data.
+        currentLevelData.reactionTime = -1.0f;
+        if (reactionTimes.Count > 0) {
+            // reaction times can be prone to outliers so we use the median.
+            currentLevelData.reactionTime = Utils.GetMedian(reactionTimes);
+        }
+        currentLevelData.distanceAverage = -1.0f;
+        if (distances.Count > 0) {
+            // distances are not prone to outliers, so we use average.
+            currentLevelData.distanceAverage = distances.Average(item => (float)item);
+        }
+        
         Debug.Log("Sum of distances: " + distances.Sum());
 
         currentLevelData.completionTime = completionTime;
@@ -381,6 +379,7 @@ public class DataManager : MonoBehaviour {
 
         Debug.Log("AddLevelData: " + currentLevelData.ToString());
         Debug.Log(currentLevelData.PrintHitLists());
+        levelDataList.Add(currentLevelData);    
     }
 
     public void AddHit(Vector2 viewportPos, float timeValue, float dist, HitType hitType)
@@ -428,10 +427,10 @@ public class DataManager : MonoBehaviour {
     public void SaveData()
     {
         if (hasInit && sessionDataList.Count > 0) {
+            Debug.Log("SaveData sees: " + sessionDataList.Last().testNumber);
             string profileID = profileManager.GetCurrentProfileID();
-            Debug.Log("Saving " + sessionDataList.Count + " sessions for ID" + profileID);
-            if (File.Exists(directory + "trainingData.dat")) {
-                File.Delete(directory + "trainingData.dat");
+            if (File.Exists(directory + profileID + ".dat")) {
+                File.Delete(directory + profileID + ".dat");
             }
             FileStream stream = new FileStream(directory + profileID + ".dat", FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
@@ -442,9 +441,14 @@ public class DataManager : MonoBehaviour {
 
     public void LoadData()
     {
+        directory = Application.persistentDataPath + "/TrainingData/";
+        if (!Directory.Exists(directory)) {
+            Directory.CreateDirectory(directory);
+        }
         string profileID = profileManager.GetCurrentProfileID();
+        Debug.Log(directory + profileID + ".dat");
         if (File.Exists(directory + profileID + ".dat")) {
-            FileStream stream = new FileStream(directory + "trainingData.dat", FileMode.Open);
+            FileStream stream = new FileStream(directory + profileID + ".dat", FileMode.Open);
             BinaryFormatter formatter = new BinaryFormatter();
             sessionDataList = (List<SessionData>)formatter.Deserialize(stream);
             stream.Close();

@@ -406,7 +406,8 @@ public class GameManager : MonoBehaviour
 
 	public void ResetGame()
 	{
-		//loggingManager.WriteLog ("Game Reset!");
+        //loggingManager.WriteLog ("Game Reset!");
+        dataManager.SaveData();
 		SceneManager.LoadSceneAsync("TMT_P10");
 	}
 
