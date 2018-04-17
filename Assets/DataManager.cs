@@ -299,12 +299,16 @@ public class DataManager : MonoBehaviour {
         List<float> yPositions = new List<float>();
         foreach (List<Hit> hitList in levelHitsList) {
             foreach (Hit hit in hitList) {
-                distances.Add(hit.distance);
+                if (hit.distance > -1.0f) {
+                    distances.Add(hit.distance);
+                }
 
                 if (hit.type == HitType.TargetHit || hit.type == HitType.TargetHitLevelComplete) {
                     currentLevelData.hitCount++;
-                    xPositions.Add(hit.xPos);
-                    yPositions.Add(hit.yPos);
+                    if (hit.xPos > -1.0f && hit.yPos > -1.0f) {
+                        xPositions.Add(hit.xPos);
+                        yPositions.Add(hit.yPos);
+                    }
                     reactionTimes.Add(hit.time);
                 } else if (hit.type == HitType.WrongTargetHit) {
                     currentLevelData.errorCount++;
