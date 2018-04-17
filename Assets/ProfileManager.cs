@@ -128,8 +128,8 @@ public class ProfileManager : MonoBehaviour {
 	public void AddNewProfile(string name = "Gæst", string email = "No Email", bool uploadPolicy = false,
                               bool protectSettings = false, string playContext = "Unknown", string ageGroup = "Unknown",
                               string trainingReason = "Unknown", bool oldProfile = false) {
-		CurrentName = name;
-		CurrentEmail = email;
+		CurrentName = name.Replace(",", "").Replace(";", "");
+		CurrentEmail = email.Replace(",", "").Replace(";", "");
 		CurrentPlayContext = playContext;
 		CurrentAgeGroup = ageGroup;
 		CurrentTrainingReason = trainingReason;
@@ -274,7 +274,7 @@ public class ProfileManager : MonoBehaviour {
 
 	public void SetEmail(string email)
 	{
-		CurrentEmail = email;
+        CurrentEmail = email.Replace(",", "").Replace(";", "");;
 		SaveProfiles();
 	}
 
