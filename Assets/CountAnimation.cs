@@ -36,8 +36,10 @@ public class CountAnimation : MonoBehaviour {
 
 	private bool startCounting = false;
 
+    private int wholeNumberFull = -1;
 	private float countTarget = -1.00f;
 	private int wholeNumberCurrentCount = 0;
+    private float startNumber = 0.00f;
 	private float decimalCurrentCount = 0.00f;
 	private float numberIncrement = 0.01f;
 
@@ -59,18 +61,23 @@ public class CountAnimation : MonoBehaviour {
 			numberIncrement += Time.deltaTime / duration;
 
 			if (interpolationType == InterpolationType.linear) {
-				decimalCurrentCount = Mathf.Lerp(0.00f, countTarget, numberIncrement);
+				decimalCurrentCount = Mathf.Lerp(startNumber, countTarget, numberIncrement);
 			} else if (interpolationType == InterpolationType.smoothstep) {
-				decimalCurrentCount = Mathf.SmoothStep(0.00f, countTarget, numberIncrement);
+				decimalCurrentCount = Mathf.SmoothStep(startNumber, countTarget, numberIncrement);
 			} else if (interpolationType == InterpolationType.overshoot) {
-				decimalCurrentCount = Berp(0.00f, countTarget, numberIncrement);
+				decimalCurrentCount = Berp(startNumber, countTarget, numberIncrement);
 			} else if (interpolationType == InterpolationType.sine) {
-				decimalCurrentCount = Sinerp(0.00f, countTarget, numberIncrement);
+				decimalCurrentCount = Sinerp(startNumber, countTarget, numberIncrement);
 			}
 
 			if (countType == CountType.wholeNumber) {
 				wholeNumberCurrentCount = (int)Mathf.Round(countTarget);
-				countText.text = string.Format(countTextTemplate, wholeNumberCurrentCount.ToString());
+                if (wholeNumberFull == -1) {
+                    countText.text = string.Format(countTextTemplate, wholeNumberCurrentCount.ToString());
+                } else {
+                    countText.text = string.Format(countTextTemplate, wholeNumberCurrentCount.ToString(), wholeNumberFull.ToString());
+                }
+
 			} else if (countType == CountType.decimalNumber) {
 				countText.text = string.Format(countTextTemplate, decimalCurrentCount.ToString("0.00"));
 			}
@@ -95,9 +102,12 @@ public class CountAnimation : MonoBehaviour {
 		}
 	}
 
-	public void SetTargetWholeNumber(int target)
+	public void SetTargetWholeNumber(int target, int theStartNumber = 0, int targetFullNumber = -1)
 	{
-		startCounting = true;
+        wholeNumberFull = targetFullNumber;
+        startNumber = theStartNumber;
+        wholeNumberCurrentCount = theStartNumber;
+        startCounting = true;
 		startTime = Time.time;
 		countTarget = target;
 
