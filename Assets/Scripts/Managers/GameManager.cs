@@ -402,6 +402,12 @@ public class GameManager : MonoBehaviour
 	public void ResetGame()
 	{
         //loggingManager.WriteLog ("Game Reset!");
+        bool shouldUpload = profileManager.GetUploadPolicy();
+        bool sessionFinished = (Time.time - sessionTimeStart > sessionLength * 60);
+        if (shouldUpload && loggingManager.hasLogs() && sessionFinished) {
+            loggingManager.DumpCurrentLog();
+            loggingManager.ClearLogEntries();
+        }
         dataManager.SaveData();
 		SceneManager.LoadSceneAsync("TMT_P10");
 	}
