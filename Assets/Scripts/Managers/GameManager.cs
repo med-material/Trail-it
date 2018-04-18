@@ -98,16 +98,6 @@ public class GameManager : MonoBehaviour
 	private CountAnimation endLevelAmount;
 	[SerializeField]
 	private CountAnimation endLevelAverage;
-	[SerializeField]
-	private CountAnimation totalAmount;
-	[SerializeField]
-	private Text endSessionAmount;
-	[SerializeField]
-	private CountAnimation bestCompletionTimeText;
-	[SerializeField]
-	private CountAnimation reactionTimeRightText;
-	[SerializeField]
-	private CountAnimation reactionTimeLeftText;
 
 	[SerializeField]
 	public Text countDownText;
@@ -328,10 +318,7 @@ public class GameManager : MonoBehaviour
 	private void UpdateEndScreenClock()
 	{
 		var timeSpan = TimeSpan.FromSeconds(Time.time - sessionTimeStart);
-		string formattedTime = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
 		endLevelDuration.text = string.Format(endLevelDurationTemplate, timeSpan.Minutes.ToString(), sessionLength.ToString());
-		               
-		endSessionAmount.text = formattedTime;
 	}
 
 
@@ -339,34 +326,15 @@ public class GameManager : MonoBehaviour
     {
 
         if (sessionActive) {
-			endLevelTime.SetTargetDecimalNumber(levelCompletionTime);
+            endLevelTime.SetTargetDecimalNumber(levelCompletionTime);
             if (bestCompletionTime < 0 || bestCompletionTime > levelCompletionTime) {
                 bestCompletionTime = levelCompletionTime;
             }
-			endLevelAmount.SetTargetWholeNumber(sessionHitsTotal);
-			endLevelAverage.SetTargetDecimalNumber(levelReactionTime);
+            endLevelAmount.SetTargetWholeNumber(sessionHitsTotal);
+            endLevelAverage.SetTargetDecimalNumber(levelReactionTime);
 
-		} else {
+        }
 
-			float hitTimeRightAverage;
-			float hitTimeLeftAverage;
-
-			if (currentProgress > 1) {
-				hitTimeLeftAverage = HitTimeLeft.Average(item => (float)item);
-				hitTimeRightAverage = HitTimeRight.Average(item => (float)item);
-			} else {
-				// If we only finish one level during the training time
-				// we need to take a couple of dedicated measures.
-				bestCompletionTime = levelCompletionTime;
-				hitTimeLeftAverage = 0.00f;
-				hitTimeRightAverage = 0.00f;
-			}
-            bestCompletionTimeText.SetTargetDecimalNumber(bestCompletionTime);
-
-            totalAmount.SetTargetWholeNumber(sessionHitsTotal);
-			reactionTimeLeftText.SetTargetDecimalNumber(hitTimeLeftAverage);
-			reactionTimeRightText.SetTargetDecimalNumber(hitTimeRightAverage);
-		}
     }
 
 	private void resetLevelCounters()
