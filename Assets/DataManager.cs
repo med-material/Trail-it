@@ -97,10 +97,12 @@ public class DataManager : MonoBehaviour {
         public int difficultyLevel;             // what difficultyLevel was this played at.
         public string gameType;                 // what type of game was played here.
         public float assistanceCount;           // how many times you used assistance.
-        public float sessionLength;             // how long time the session took.
+        public float sessionLength;             // how long time the session took (floating point value)
         public float bestCompletionTime;        // the best completion time for this level.
         public System.DateTime timestamp;       // timestamp marking the session start.
         public bool intro;                      // whether intro was turned on for this session
+        public float worstReactionTime;         // the worst reaction time done this session
+        public float bestReactionTime;          // the best reaction time done this session
 
         public override string ToString()
         {
@@ -242,12 +244,26 @@ public class DataManager : MonoBehaviour {
         currentSessionData.errorCount = 0;
         currentSessionData.hitCount = 0;
         currentSessionData.bestCompletionTime = -1.0f;
+        currentSessionData.worstReactionTime = -1.0f;
+        currentSessionData.bestReactionTime = -1.0f;
         List<float> reactionTimes = new List<float>();
         foreach (var levelData in levelDataList) {
             // we should only count levels where we managed to get a hit.
             // if a level starts right when the sessionTime ends, it doesn't count.
             if (levelData.hitCount > 0) {
-                reactionTimes.Add(levelData.reactionTime);
+                if (levelData.reactionTime > -1.0f) {
+                    if (levelData.reactionTime > currentSessionData.bestReactionTime) {
+                        currentSessionData.bestReactionTime = levelData.reactionTime;
+                    }
+                    if (currentSessionData.worstReactionTime > -1.0f) {
+                        if (levelData.reactionTime < currentSessionData.worstReactionTime) {
+                            currentSessionData.worstReactionTime = levelData.reactionTime;
+                        }
+                    } else {
+                        currentSessionData.worstReactionTime = levelData.reactionTime;
+                    }
+                    reactionTimes.Add(levelData.reactionTime);
+                }
                 currentSessionData.errorCount += levelData.errorCount;
                 currentSessionData.hitCount += levelData.hitCount;
 
@@ -274,7 +290,9 @@ public class DataManager : MonoBehaviour {
             currentSessionData.fieldReactionTimes[field.xIndex, field.yIndex] = average;
         }
 
-        currentSessionData.reactionTime = reactionTimes.Average(item => (float)item);
+        if (reactionTimes.Count > 1) {
+            currentSessionData.reactionTime = reactionTimes.Average(item => (float)item);
+        }
         currentSessionData.levelCount = levelDataList.Count;
         currentSessionData.sessionLength = sessionLength;
         currentSessionData.timestamp = sessionStartTimestamp;
