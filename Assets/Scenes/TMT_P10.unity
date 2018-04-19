@@ -3144,6 +3144,11 @@ Prefab:
       propertyPath: toolDelay
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 114940138181922602, guid: 7d6c141dfce714626b16c237c42f839b,
+        type: 2}
+      propertyPath: labelsB.Array.data[17]
+      value: i
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7d6c141dfce714626b16c237c42f839b, type: 2}
   m_IsPrefabParent: 0
