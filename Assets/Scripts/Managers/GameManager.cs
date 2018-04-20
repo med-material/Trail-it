@@ -226,7 +226,8 @@ public class GameManager : MonoBehaviour
 
 						levelHitsTotal += 1;
 
-                        dataManager.AddHit(hitPos, reactionTime, distance, hitType);
+                        dataManager.AddHit(hitPos, reactionTime, distance, hitType, activeLevelAssistance.GetAssistanceWasActive());
+                        activeLevelAssistance.resetAssistanceWasActive();
 
 						lastHitTime = Time.time;
                         lastHitPos = hitPos;
@@ -268,9 +269,8 @@ public class GameManager : MonoBehaviour
 		levelReactionTime = Utils.GetMedian(levelReactionTimesList);
 		levelReactionTimeLeft = Utils.GetMedian(levelReactionTimesLeftList);
 		levelReactionTimeRight = Utils.GetMedian(levelReactionTimesRightList);
-        bool assistanceWasActive = activeLevelAssistance.GetAssistanceWasActive();
         bool usedLineDrawing = LD.GetUsesLineDrawing();
-        dataManager.AddLevelData(currentProgress, levelCompletionTime, sessionTimeCurrent, assistanceWasActive,
+        dataManager.AddLevelData(currentProgress, levelCompletionTime, sessionTimeCurrent,
                                  levelTimestampStart, levelTimestampEnd, usedLineDrawing);
 		loggingManager.WriteAggregateLog("Level " + currentProgress.ToString() + " Completed!");
 		ShowTheEndLevelCanvas();
@@ -383,7 +383,6 @@ public class GameManager : MonoBehaviour
 		levelActive = true;
 		gameOverlayCanvas.SetActive(true);
 		_CurrentScene = "Level";
-		activeLevelAssistance.resetAssistanceWasActive();
 		currentProgress += 1;
 		activeLevel.LoadNextLevel();
         dataManager.NewLevel();

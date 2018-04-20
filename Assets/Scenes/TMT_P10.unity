@@ -12249,7 +12249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aggregateReactionTime: {fileID: 2067284776}
   trainingTime: {fileID: 2130726628}
-  heatMapCanvas: {fileID: 175629608}
+  heatMapCanvas: {fileID: 1568729997}
   heatMapController: {fileID: 175629610}
   hitsVis: {fileID: 345652387}
   errorVis: {fileID: 1944063289}
@@ -25796,7 +25796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1568729998
 RectTransform:
   m_ObjectHideFlags: 0

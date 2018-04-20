@@ -20,20 +20,21 @@ public class DataManager : MonoBehaviour {
         public float yPos;                      // the y position of this hit
         public float time;                      // the time it took to make this hit.
         public float distance;                  // the distance it took to get to this hit.
+		public bool assistanceWasActive;		// whether assistance was active in order to get this hit.
         public HitType type;                    // type of hit.
 
         public override string ToString()
         {
-            string hitString = hitNumber + ": [" + xPos + ", " + yPos + "] t(" + time + ") d(" + distance + ") ";
+            string hitString = hitNumber + ": [" + xPos + ", " + yPos + "] t(" + time + ") d(" + distance + ") a(" + assistanceWasActive + ")";
 
             if (type == HitType.TargetHit) {
-                hitString += "type(HitType.TargetHit)";
+                hitString += " type(HitType.TargetHit)";
             } else if (type == HitType.TargetHitLevelComplete) {
-                hitString += "type(HitType.TargetHitLevelComplete)";
+                hitString += " type(HitType.TargetHitLevelComplete)";
             } else if (type == HitType.WrongTargetHit) {
-                hitString += "type(HitType.WrongTargetHit)";
+                hitString += " type(HitType.WrongTargetHit)";
             } else {
-                hitString += "type(UNKNOWN)";
+                hitString += " type(UNKNOWN)";
             }
 
             return hitString;
@@ -46,6 +47,7 @@ public class DataManager : MonoBehaviour {
         public int errorCount;                  // how many errors were found.
         public int hitCount;                    // how many hits were found.
         public List<Hit>[,] levelHits;          // list of hits done in this level
+		public int[,] fieldAssistanceCount; // how many times assistance was active for a number in a given field.
         public float[,] fieldReactionTimes;     // median reaction time for each field.
         public float[,] fieldDistances;         // median reaction time for each field.
         public float reactionTime;              // the median reaction time of all hits this level.
@@ -53,7 +55,6 @@ public class DataManager : MonoBehaviour {
         public Vector2 centerOfHit;             // the center of hit / cancellation, calculated in viewport space.
         public float completionTime;            // how much time you spent completing the level.
         public float sessionTime;               // how much time of the sessionTime had passed.
-        public bool assistanceWasActive;        // whether the assistance was active or not.
         public int levelErrorsLeft;             // error count of hits to the left
         public int levelErrorsRight;            // error count of hits to the right
         public System.DateTime timestampStart;  // timestamp of when the level started.
@@ -62,11 +63,19 @@ public class DataManager : MonoBehaviour {
 
         public override string ToString()
         {
-            string levelData = levelNumber + ": [h" + hitCount + " e" + errorCount + "] reaction2,1(" + fieldReactionTimes[2, 1] + ") " +
-                               "reactT(" + reactionTime + ") distAvg(" + distanceAverage + ") dist0,0(" + fieldDistances[0, 0] +
-                                ") completionTime(" + completionTime + ") sessionTime(" + sessionTime +
-                               ") assist(" + assistanceWasActive + ") eR(" + levelErrorsRight + ") eL(" + levelErrorsRight + ") timestampStart(" +
-                               timestampStart + ") timestampEnd(" + timestampEnd;
+            string levelData = levelNumber + ": [h" + hitCount + " e" + errorCount + "] reactT(" + reactionTime +
+                                ") distAvg(" + distanceAverage + ") +" + ") completionTime(" + completionTime +
+                                 ") sessionTime(" + sessionTime +
+                                ") eR(" + levelErrorsRight + ") eL(" + levelErrorsRight + ") timestampStart(" +
+                                timestampStart + ") timestampEnd(" + timestampEnd + ")";
+
+            for (int i = 0; i < fieldReactionTimes.GetLength(1); i++) {
+                for (int j = 0; j < fieldReactionTimes.GetLength(0); j++) {
+                    string fieldData = " f" + j + "," + i + "(r[" + fieldReactionTimes[j, i].ToString() + "] d[" + fieldDistances[j, i] + "] a[" + fieldAssistanceCount[j, i] + "])";
+                    levelData += fieldData;
+                }
+            }
+
             return levelData;
 
         }
@@ -89,28 +98,37 @@ public class DataManager : MonoBehaviour {
     public struct SessionData
     {
         public string version;                  // version of the game this struct was saved with.
-        public float reactionTime;              // reaction time for the whole session.
+        public float reactionTime;              // reaction time for resetAssistanceWasActive()the whole session.
         public float[,] fieldReactionTimes;     // median reaction time for each field.
+        public int[,] fieldAssistanceCount;     // Count of how many times assistance was used in each field.
         public int errorCount;                  // total count of errors.
         public int hitCount;                    // total count of successful hits.
         public int levelCount;                  // total count of levels
         public int difficultyLevel;             // what difficultyLevel was this played at.
         public string gameType;                 // what type of game was played here.
-        public float assistanceCount;           // how many times you used assistance.
         public float sessionLength;             // how long time the session took (floating point value)
         public float bestCompletionTime;        // the best completion time for this level.
         public System.DateTime timestamp;       // timestamp marking the session start.
         public bool intro;                      // whether intro was turned on for this session
         public float worstReactionTime;         // the worst reaction time done this session
-        public float bestReactionTime;          // the best reaction time done this session
+        public float bestReactionTime;          // the best reaction time done this sssion
+
+        [System.NonSerialized]
+        public float assistanceCount;           // how many times you used assistance.
 
         public override string ToString()
         {
             string sessionData = timestamp.ToString("yyyy-MM-dd") + " " + timestamp.ToString("HH:mm") + " [h" + hitCount + " e" + errorCount + "] lvls(" + levelCount + ") difficulty(" +
-                      difficultyLevel + ") gType(" + gameType + ") assists(" + assistanceCount + ") sLength(" + sessionLength + ") reactT(" + reactionTime +
-                      ") f[0,0]" + fieldReactionTimes[0, 0] + ") f[1,0]" + fieldReactionTimes[1, 0] + ") f[2,0]" + fieldReactionTimes[2, 0] +
-                      ") f[0,1]" + fieldReactionTimes[0, 1] + ") f[1,1]" + fieldReactionTimes[1, 1] + ") f[2,1]" + fieldReactionTimes[2, 1] + ")" + 
+                      difficultyLevel + ") gType(" + gameType + ") sLength(" + sessionLength + ") reactT(" + reactionTime +
                       "intro (" + intro + ") v(" + version + ")";
+
+            for (int i = 0; i < fieldReactionTimes.GetLength(1); i++) {
+                for (int j = 0; j < fieldReactionTimes.GetLength(0); j++) {
+                    string fieldData = " f" + j + "," + i + "(r[" + fieldReactionTimes[j, i].ToString() + "] a[" + fieldAssistanceCount[j, i] + "])";
+                    sessionData += fieldData;
+                }
+            }
+
             return sessionData;
         }
     }
@@ -240,13 +258,14 @@ public class DataManager : MonoBehaviour {
     public void AddSessionData(string gameType, int difficultyLevel, float sessionLength, System.DateTime sessionStartTimestamp,
                                bool intro)
     {
-        currentSessionData.assistanceCount = 0;
         currentSessionData.errorCount = 0;
         currentSessionData.hitCount = 0;
         currentSessionData.bestCompletionTime = -1.0f;
         currentSessionData.worstReactionTime = -1.0f;
         currentSessionData.bestReactionTime = -1.0f;
         List<float> reactionTimes = new List<float>();
+        currentSessionData.fieldAssistanceCount = new int[cellRowCount, cellColumnCount];
+
         foreach (var levelData in levelDataList) {
             // we should only count levels where we managed to get a hit.
             // if a level starts right when the sessionTime ends, it doesn't count.
@@ -271,19 +290,18 @@ public class DataManager : MonoBehaviour {
                     currentSessionData.bestCompletionTime = levelData.completionTime;
                 }
             }
-            if (levelData.assistanceWasActive) {
-                currentSessionData.assistanceCount += 1;
-            }
         }
 
         currentSessionData.fieldReactionTimes = new float[cellRowCount, cellColumnCount];
         foreach (Field field in fields) {
             List<float> fieldTimes = new List<float>();
+            currentSessionData.fieldAssistanceCount[field.xIndex, field.yIndex] = 0;
 
             foreach (var levelData in levelDataList) {
                 if (levelData.fieldReactionTimes[field.xIndex, field.yIndex] != -1.0f) {
                     fieldTimes.Add(levelData.fieldReactionTimes[field.xIndex, field.yIndex]);
                 }
+                currentSessionData.fieldAssistanceCount[field.xIndex, field.yIndex] += levelData.fieldAssistanceCount[field.xIndex, field.yIndex];
             }
 
             float average = fieldTimes.Average(item => (float)item);
@@ -304,10 +322,9 @@ public class DataManager : MonoBehaviour {
         sessionDataList.Add(currentSessionData);
     }
 
-    public void AddLevelData(int levelNumber, float completionTime, float sessionTime, bool assistanceWasActive,
+    public void AddLevelData(int levelNumber, float completionTime, float sessionTime,
                              System.DateTime timestampStart, System.DateTime timestampEnd, bool usedLineDrawing)
     {
-        currentLevelData.levelHits = levelHitsList;
         currentLevelData.levelErrorsLeft = 0;
         currentLevelData.levelErrorsRight = 0;
         currentLevelData.hitCount = 0;
@@ -315,16 +332,14 @@ public class DataManager : MonoBehaviour {
         List<float> distances = new List<float>();
         List<float> xPositions = new List<float>();
         List<float> yPositions = new List<float>();
-
-        // if we load a new level just before session finishes, we might encounter levelData with no
-        // hits in them at all.
-        if (xPositions.Count > 0 && yPositions.Count > 0) {
-            currentLevelData.centerOfHit = new Vector2(xPositions.Average(item => (float)item), yPositions.Average(item => (float)item));
-        }
-            
+        currentLevelData.centerOfHit = new Vector2(-1.0f, -1.0f);
         currentLevelData.fieldReactionTimes = new float[cellRowCount, cellColumnCount];
         currentLevelData.fieldDistances = new float[cellRowCount, cellColumnCount];
+		currentLevelData.fieldAssistanceCount = new int[cellRowCount, cellColumnCount];
+		bool assistanceWasActive = false;
+
         foreach (Field field in fields) {
+            currentLevelData.fieldAssistanceCount[field.xIndex, field.yIndex] = 0;
             List<float> fieldTimes = new List<float>();
             List<float> levelDistancesList = new List<float>();
 
@@ -339,6 +354,12 @@ public class DataManager : MonoBehaviour {
                         xPositions.Add(hit.xPos);
                         yPositions.Add(hit.yPos);
                     }
+
+					if (hit.assistanceWasActive) {
+						currentLevelData.fieldAssistanceCount[field.xIndex, field.yIndex]++;
+						assistanceWasActive = true;
+					}
+
                     if (hit.time > -1.0f) {
                         reactionTimes.Add(hit.time);
                     }
@@ -376,12 +397,8 @@ public class DataManager : MonoBehaviour {
         // if our level starts and the sessionTime simultaneously ends we have no data.
         currentLevelData.reactionTime = -1.0f;
         if (reactionTimes.Count > 0) {
-            if (reactionTimes.Count == 1) {
-                currentLevelData.reactionTime = reactionTimes.Last();
-            } else {
                 // reaction times can be prone to outliers so we use the median.
                 currentLevelData.reactionTime = Utils.GetMedian(reactionTimes);
-            }
         }
         currentLevelData.distanceAverage = -1.0f;
         if (distances.Count > 0) {
@@ -392,12 +409,18 @@ public class DataManager : MonoBehaviour {
                 currentLevelData.distanceAverage = distances.Average(item => (float)item);
             }
         }
+        if (xPositions.Count > 0 && yPositions.Count > 0) {
+            if (xPositions.Count == 1 || yPositions.Count == 1) {
+                currentLevelData.centerOfHit = new Vector2(xPositions.Last(), yPositions.Last());
+            }
+            currentLevelData.centerOfHit = new Vector2(xPositions.Average(item => (float)item), yPositions.Average(item => (float)item));
+        }
 
+        currentLevelData.levelHits = levelHitsList;
         currentLevelData.completionTime = completionTime;
         currentLevelData.sessionTime = sessionTime;
         currentLevelData.assistanceWasActive = assistanceWasActive;
         currentLevelData.levelNumber = levelNumber;
-
         currentLevelData.timestampStart = timestampStart;
         currentLevelData.timestampEnd = timestampEnd;
         currentLevelData.usedLineDrawing = usedLineDrawing;
@@ -407,12 +430,12 @@ public class DataManager : MonoBehaviour {
         levelDataList.Add(currentLevelData);    
     }
 
-    public void AddHit(Vector2 viewportPos, float timeValue, float dist, HitType hitType)
+    public void AddHit(Vector2 viewportPos, float timeValue, float dist, HitType hitType, bool assistanceValue)
     {
-        Debug.Log("viewportPos[" + viewportPos.ToString() + "]");
         Field cell = matchPosToCell(viewportPos);
         Hit hit = new Hit { xPos = viewportPos.x, yPos = viewportPos.y, 
-                            time = timeValue, distance = dist, type = hitType};
+                            time = timeValue, distance = dist, type = hitType,
+							assistanceWasActive = assistanceValue};
         Debug.Log("Adding " + hit.time + "to cell " + cell.XYString());
         Debug.Log(hit.ToString());
         levelHitsList[cell.xIndex, cell.yIndex].Add(hit);
@@ -427,8 +450,8 @@ public class DataManager : MonoBehaviour {
         foreach (Field field in fields) {
             if (field.xMin <= posX && posX <= field.xMax) {
                 if (field.yMin <= posY && posY <= field.yMax) {
-                    Debug.Log("[" + field.xMin + "] " + posX + " [" + field.xMax + "]");
-                    Debug.Log("[" + field.yMin + "] " + posY + " [" + field.yMax + "]");
+                    //Debug.Log("[" + field.xMin + "] " + posX + " [" + field.xMax + "]");
+                    //Debug.Log("[" + field.yMin + "] " + posY + " [" + field.yMax + "]");
                     cell = field;
                     break;
                 }
@@ -503,6 +526,16 @@ public class DataManager : MonoBehaviour {
     public List<Field> GetFields()
     {
         return fields;
+    }
+
+	public int GetRowCount()
+    {
+        return cellRowCount;
+    }
+
+	public int GetColumnCount()
+    {
+        return cellColumnCount;
     }
 
 }
