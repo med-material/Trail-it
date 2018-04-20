@@ -175,8 +175,10 @@ public class GameManager : MonoBehaviour
 	public void Update()
 	{
 		//Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
-		if (_CurrentScene == "Level")
-		{
+        if (_CurrentScene == "Level") {
+            float time = Time.time;
+            sessionActive = (Time.time - sessionTimeStart < sessionLength * 60);
+
 			if (input.TouchDown)
 			{
 				LD.StartLine(input.TouchPos);
@@ -190,14 +192,13 @@ public class GameManager : MonoBehaviour
 
 				if (hitType == HitType.TargetHit || hitType == HitType.TargetHitLevelComplete || hitType == HitType.WrongTargetHit)
 				{
-					float time = Time.time;
 
-					if (Time.time - sessionTimeStart < sessionLength * 60 && sessionActive)
+					if (sessionActive)
 					{
                         // We don't measure reaction time for the first hit because it is affected
                         // by the animation time and is hardly comparable to other times.
                         float reactionTime = -1.0f;
-                        if (lastHitTime != -1.0f)
+                        if (lastHitTime > -1.0f)
 						{
                             reactionTime = Time.time - lastHitTime;
                             levelReactionTimesList.Add(reactionTime);
@@ -219,7 +220,7 @@ public class GameManager : MonoBehaviour
                         Vector2 hitPos = mainCam.WorldToViewportPoint(input.TouchPos);
                         float distance = -1.0f;
 
-                        if (lastHitPos.x != -1.0f) {
+                        if (lastHitPos.x > -1.0f && lastHitPos.y > -1.0f) {
                             distance = Vector2.Distance(lastHitPos, hitPos);
                         }
 
@@ -235,7 +236,8 @@ public class GameManager : MonoBehaviour
 					{
                         TheLevelEnded();
 					}
-
+                    Debug.Log("sessionActive: " + sessionActive + "sessionTime(" + (Time.time - sessionTimeStart) + ") lastHitPos[" + lastHitPos.x + lastHitPos.y +
+                              ") LastHitTime( " + lastHitTime + ")");
 				}
 
 			} else if (input.TouchUp)
@@ -258,7 +260,7 @@ public class GameManager : MonoBehaviour
         _CurrentScene = "LevelComplete";
 		levelTimeEnd = Time.time;
 		levelTimestampEnd = System.DateTime.Now;
-		sessionTimeCurrent = (levelTimeEnd - sessionTimeStart);
+        sessionTimeCurrent += levelCompletionTime;
 		levelCompletionTime = levelTimeEnd - levelTimeStart;
 		sessionTimeRemaining = sessionTimeRemaining - levelCompletionTime;
 		sessionHitsTotal += levelHitsTotal;
@@ -304,26 +306,20 @@ public class GameManager : MonoBehaviour
 
         endLevelCanvas.gameObject.SetActive(true);
 		gameOverlayCanvas.SetActive (false);
-		if (Time.time - sessionTimeStart > sessionLength*60 && sessionActive) {
+        if (!sessionActive) {
             dataManager.AddSessionData(gameType, difficultyLevel, sessionLength, sessionTimestampStart, intro);
             endSessionCanvas.gameObject.SetActive(true);
 			loggingManager.UploadLog();
-			sessionActive = false;
 		}
-		UpdateEndScreenClock ();
-		TimerPause ();
         SetEndScreenValues();
+        TimerPause ();
+
     }
-
-	private void UpdateEndScreenClock()
-	{
-		var timeSpan = TimeSpan.FromSeconds(Time.time - sessionTimeStart);
-		endLevelDuration.text = string.Format(endLevelDurationTemplate, timeSpan.Minutes.ToString(), sessionLength.ToString());
-	}
-
 
     private void SetEndScreenValues()
     {
+        var timeSpan = TimeSpan.FromSeconds(Time.time - sessionTimeStart);
+        endLevelDuration.text = string.Format(endLevelDurationTemplate, timeSpan.Minutes.ToString(), sessionLength.ToString());
 
         if (sessionActive) {
             endLevelTime.SetTargetDecimalNumber(levelCompletionTime);

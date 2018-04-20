@@ -315,8 +315,20 @@ public class DataManager : MonoBehaviour {
         List<float> distances = new List<float>();
         List<float> xPositions = new List<float>();
         List<float> yPositions = new List<float>();
-        foreach (List<Hit> hitList in levelHitsList) {
-            foreach (Hit hit in hitList) {
+
+        // if we load a new level just before session finishes, we might encounter levelData with no
+        // hits in them at all.
+        if (xPositions.Count > 0 && yPositions.Count > 0) {
+            currentLevelData.centerOfHit = new Vector2(xPositions.Average(item => (float)item), yPositions.Average(item => (float)item));
+        }
+            
+        currentLevelData.fieldReactionTimes = new float[cellRowCount, cellColumnCount];
+        currentLevelData.fieldDistances = new float[cellRowCount, cellColumnCount];
+        foreach (Field field in fields) {
+            List<float> fieldTimes = new List<float>();
+            List<float> levelDistancesList = new List<float>();
+
+            foreach (Hit hit in levelHitsList[field.xIndex, field.yIndex]) {
                 if (hit.distance > -1.0f) {
                     distances.Add(hit.distance);
                 }
@@ -340,22 +352,6 @@ public class DataManager : MonoBehaviour {
                     }
                 }
 
-            }
-        }
-
-        // if we load a new level just before session finishes, we might encounter levelData with no
-        // hits in them at all.
-        if (xPositions.Count > 0 && yPositions.Count > 0) {
-            currentLevelData.centerOfHit = new Vector2(xPositions.Average(item => (float)item), yPositions.Average(item => (float)item));
-        }
-            
-        currentLevelData.fieldReactionTimes = new float[cellRowCount, cellColumnCount];
-        currentLevelData.fieldDistances = new float[cellRowCount, cellColumnCount];
-        foreach (Field field in fields) {
-            List<float> fieldTimes = new List<float>();
-            List<float> levelDistancesList = new List<float>();
-
-            foreach (Hit hit in levelHitsList[field.xIndex, field.yIndex]) {
                 if (hit.time > -1.0f) {
                     fieldTimes.Add(hit.time);
                 }
@@ -364,34 +360,38 @@ public class DataManager : MonoBehaviour {
                 }
             }
 
-            float fieldTimeMedian = -1.0f;
-            if (fieldTimes.Count > 0) {
-                fieldTimeMedian = Utils.GetMedian(fieldTimes);
+	        float fieldTimeMedian = -1.0f;
+	        if (fieldTimes.Count > 0) {
+	            fieldTimeMedian = Utils.GetMedian(fieldTimes);
+	        }
 
-
-            }
-
-            float distanceAverage = -1.0f;
-            if (levelDistancesList.Count > 0) {
-                distanceAverage = levelDistancesList.Average(item => (float)item);
-            }
-            currentLevelData.fieldReactionTimes[field.xIndex, field.yIndex] = fieldTimeMedian;
-            currentLevelData.fieldDistances[field.xIndex, field.yIndex] = distanceAverage;
+			float distanceAverage = -1.0f;
+	        if (levelDistancesList.Count > 0) {
+	            distanceAverage = levelDistancesList.Average(item => (float)item);
+	        }
+	        currentLevelData.fieldReactionTimes[field.xIndex, field.yIndex] = fieldTimeMedian;
+	        currentLevelData.fieldDistances[field.xIndex, field.yIndex] = distanceAverage;
         }
 
         // if our level starts and the sessionTime simultaneously ends we have no data.
         currentLevelData.reactionTime = -1.0f;
         if (reactionTimes.Count > 0) {
-            // reaction times can be prone to outliers so we use the median.
-            currentLevelData.reactionTime = Utils.GetMedian(reactionTimes);
+            if (reactionTimes.Count == 1) {
+                currentLevelData.reactionTime = reactionTimes.Last();
+            } else {
+                // reaction times can be prone to outliers so we use the median.
+                currentLevelData.reactionTime = Utils.GetMedian(reactionTimes);
+            }
         }
         currentLevelData.distanceAverage = -1.0f;
         if (distances.Count > 0) {
-            // distances are not prone to outliers, so we use average.
-            currentLevelData.distanceAverage = distances.Average(item => (float)item);
+            if (distances.Count == 1) {
+                currentLevelData.distanceAverage = distances.Last();
+			} else {
+                // distances are not prone to outliers, so we use average.
+                currentLevelData.distanceAverage = distances.Average(item => (float)item);
+            }
         }
-        
-        Debug.Log("Sum of distances: " + distances.Sum());
 
         currentLevelData.completionTime = completionTime;
         currentLevelData.sessionTime = sessionTime;
