@@ -64,15 +64,7 @@ public class CircularLineVisualization : MonoBehaviour {
 
         radius = ((wRectMax.y - wRectMin.y) / 2.5f);
 
-        Debug.Log("centerX: " + centerX + ", centerY: " + centerY);
-        /*if (startNumber == 0.0f) {
-            theta = (0.0f / fullNumber) * (2 * Mathf.PI);
-            currentXPos = centerX + radius * (Mathf.Cos(theta));
-            currentYPos = centerY - radius * (Mathf.Sin(theta));
-            vertexIndex++;
-            lineRenderer.positionCount++;
-            lineRenderer.SetPosition(vertexIndex, new Vector3(currentXPos, currentYPos, 90.00f));
-        }*/
+        //Debug.Log("centerX: " + centerX + ", centerY: " + centerY);
 
 	}
 	
@@ -80,17 +72,17 @@ public class CircularLineVisualization : MonoBehaviour {
     public void Update() {
         if (shouldVis) {
             if (currentCount < countTarget && delay < (Time.time - startTime)) {
-                Debug.Log(numberIncrement);
+                //Debug.Log(numberIncrement);
                 currentCount = Mathf.Lerp(startNumber, fullNumber, numberIncrement);
                 theta = (currentCount / fullNumber) * (2 * Mathf.PI);
-                Debug.Log(theta + " = " + "((float)" + currentCount + " / (float)" + fullNumber + ") * 360");
+                //Debug.Log(theta + " = " + "((float)" + currentCount + " / (float)" + fullNumber + ") * 360");
                 currentXPos = centerX + radius * (Mathf.Cos(theta));
                 currentYPos = centerY - radius * (Mathf.Sin(theta));
                 vertexIndex++;
                 lineRenderer.positionCount++;
                 lineRenderer.SetPosition(vertexIndex, new Vector3(currentXPos, currentYPos, 90.00f));
                 numberIncrement += Time.fixedDeltaTime / duration;
-                Debug.Log("vertIndex[" + vertexIndex + "] x(" + currentXPos + ") y(" + currentYPos + ") positionCount[" + lineRenderer.positionCount + "] theta(" + theta + ")");
+                //Debug.Log("vertIndex[" + vertexIndex + "] x(" + currentXPos + ") y(" + currentYPos + ") positionCount[" + lineRenderer.positionCount + "] theta(" + theta + ")");
             } /*else if (currentCount >= countTarget) {
                 theta = (countTarget / fullNumber) * (2 * Mathf.PI);
                 currentXPos = centerX + radius * (Mathf.Cos(theta));
