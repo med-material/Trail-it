@@ -37,16 +37,8 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	private Toggle shouldProtectSettings;
 
 	public void SetNameAndCreateProfile() {
-		profileManager.AddNewProfile (nameField.text, emailField.text, shouldUpload.isOn, shouldProtectSettings.isOn);
-		if (shouldUpload.isOn)
-		{
-			questionnaireCanvas.SetActive(true);
-			this.gameObject.SetActive(false);
-		}
-		else
-		{
-			gameManager.ResetGame();
-		}
+		profileManager.AddNewProfile (nameField.text, emailField.text, false, shouldProtectSettings.isOn);
+		gameManager.ResetGame();
 	}
 
 }

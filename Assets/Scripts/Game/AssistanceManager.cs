@@ -65,7 +65,6 @@ public class AssistanceManager : MonoBehaviour {
 
 	private GameLevel gameLevel;
 	private GameManager gameManager;
-	private LoggingManager loggingManager;
 
 	private bool pulseOn = false;
 	private bool audioOn = false;
