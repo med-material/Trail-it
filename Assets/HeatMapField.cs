@@ -33,7 +33,7 @@ public class HeatMapField : MonoBehaviour {
 
     [SerializeField]
     private Text fieldText;
-    private string fieldTextTemplate;
+    private string fieldTextTemplate = "";
 
     [SerializeField]
     private Image fieldBackground;
@@ -45,13 +45,8 @@ public class HeatMapField : MonoBehaviour {
     private Image fieldBorderVertical;
 
     // Use this for initialization
-	void Start () {
+	void Awake () {
         fieldTextTemplate = fieldText.text;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
     public void SetHeatMapColor(HeatMapColor color)

@@ -35,7 +35,6 @@ public class SessionCompleteCanvas : MonoBehaviour {
     // Use this for initialization
 	void Start () {
         sessionData = dataManager.GetSessionData();
-        Debug.Log("SessionCompleteCanvas sessionData: " + sessionData);
 
         trainingTime.SetTargetWholeNumber(Mathf.RoundToInt(sessionData.sessionLength));
         aggregateReactionTime.SetTargetDecimalNumber(sessionData.reactionTime);
@@ -51,9 +50,9 @@ public class SessionCompleteCanvas : MonoBehaviour {
 		
 	}
 
-    public void HeatMap_Button_Cliked()
+    public void HeatMap_Button_Clicked()
     {
         heatMapCanvas.SetActive(true);
-        heatMapController.Init(sessionData.fieldReactionTimes, sessionData.bestReactionTime, sessionData.worstReactionTime);
+        heatMapController.Init(sessionData.fieldReactionTimes, sessionData.medianReactionTime);
     }
 }
