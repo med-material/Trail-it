@@ -14,15 +14,6 @@ public class ProfileManager : MonoBehaviour {
     [SerializeField]
     private DataManager dataManager;
 
-	[SerializeField]
-	private GameObject questionnaireCanvas;
-
-	[SerializeField]
-	private GameObject firstTimeCanvas;
-
-	[SerializeField]
-	private GameObject updatedCanvas;
-
 	private string currentProfileID = "Gæst";
 	private bool shouldUpload = false;
 	private bool shouldProtectSettings = false;
@@ -84,8 +75,6 @@ public class ProfileManager : MonoBehaviour {
 
 		if (profileString == "-1")
 		{
-			mainMenuCanvas.SetActive(false);
-			firstTimeCanvas.SetActive(true);
 
 			// if our profileString somehow is corrupted, at least we can insert the currentProfileID.
 			// (falls back to Gæst).
@@ -115,11 +104,6 @@ public class ProfileManager : MonoBehaviour {
 		// It is also important that it is called before MigrateProfile(), otherwise we
 		// overwrite our currentProfile's variables with fallback names.
 		SetCurrentProfile(currentProfileID);
-
-		if (CurrentVersion != Application.version)
-		{
-			MigrateProfile();
-		}
 
 		didInit = true;
 
@@ -163,29 +147,6 @@ public class ProfileManager : MonoBehaviour {
         Debug.Log("Current Profile: " + CurrentName + ", version " + CurrentVersion + ", playContext " + CurrentPlayContext + ", ageGroup " + CurrentAgeGroup
                   + ", trainingReason " + CurrentTrainingReason + "and uploadPolicy " + shouldUpload);
         SaveProfiles();
-    }
-
-    private void MigrateProfile()
-    {
-        if (CurrentVersion == "2017.04.04") // checking both for now, bot the one with dots will be the real one in the future.
-        {
-            Debug.Log("Migration from 2017.04.04 starting");
-
-            if (!didInit) {
-                updatedCanvas.SetActive(true);
-                mainMenuCanvas.SetActive(false);
-            } else if (shouldUpload) {
-                questionnaireCanvas.SetActive(true);
-                mainMenuCanvas.SetActive(false);
-            }
-            CurrentVersion = Application.version;
-        } else if (CurrentVersion == "2018.04.10") {
-            Debug.Log("Migration from 2017.04.10 starting");
-            // TODO: Implement Graph Litteracy Test in Questionnaire and activate it here.
-            CurrentVersion = Application.version;
-        }
-        SaveProfiles();
-
     }
 
     public void RemoveProfile(string idToRemove)

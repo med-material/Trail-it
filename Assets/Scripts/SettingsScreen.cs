@@ -188,7 +188,7 @@ public class SettingsScreen : MonoBehaviour
 		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
 		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 4);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
-		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
+		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 2);
         circleAmount = Utils.TargetAmountFromDifficulty(difficultyLevel);
     }
 

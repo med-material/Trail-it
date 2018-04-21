@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour {
     {
 		string currentProfileID = profileManager.GetCurrentProfileID ();
 		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 4);
-        difficultyLevel = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1);
+        difficultyLevel = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 2);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
    
