@@ -6,10 +6,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Collections.Generic;
 
-public class GameManager : MonoBehaviour
-{
-	[SerializeField]
-	public LoggingManager loggingManager;
+public class GameManager : MonoBehaviour {
 
 	[SerializeField]
 	public Camera mainCam;
@@ -65,6 +62,9 @@ public class GameManager : MonoBehaviour
 	private float sessionTimeCurrent = -1; 		// current time formatted in seconds
 	private float sessionTimeRemaining = -1;    // remaining time formatted in seconds
     private int difficultyLevel;
+
+    [SerializeField]
+    private Arduino arduino;
 
     // Canvas Stuff
     [SerializeField]
@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
     public void LoadPlayerPrefs()
     {
 		string currentProfileID = profileManager.GetCurrentProfileID ();
-		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 2);
+		sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 4);
         difficultyLevel = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour
 				_CurrentScene = "Level";
 			}
             dataManager.NewSession();
+            _CurrentScene = "LevelCountDown";
 			StartCoroutine(CountDownFirstLevel());
 
 		}
@@ -175,6 +176,27 @@ public class GameManager : MonoBehaviour
 	{
 		//Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
         if (_CurrentScene == "Level") {
+
+            Vector3 mousePos = mainCam.ScreenToViewportPoint(Input.mousePosition);
+            if (sessionActive && activeLevel != null) {
+                Target target = activeLevel.GetCurrentTarget();
+                if (target != null) {
+                    Vector3 targetPos = mainCam.WorldToViewportPoint(target.transform.position);
+                    if (targetPos.x - mousePos.x > 0.05f) {
+                        Debug.Log("Arduino vibrates to the right!");
+                        arduino.ERM1Power = 255;
+                        arduino.ERM2Power = 0;
+                    } else if (mousePos.x - targetPos.x > 0.05f) {
+                        Debug.Log("Arduino vibrates to the left!");
+                        arduino.ERM2Power = 255;
+                        arduino.ERM1Power = 0;
+                    } else {
+                        arduino.ERM2Power = 0;
+                        arduino.ERM1Power = 0;
+                    }
+                }
+            }
+
             float time = Time.time;
             sessionActive = (Time.time - sessionTimeStart < sessionLength * 60);
 
@@ -258,7 +280,6 @@ public class GameManager : MonoBehaviour
         bool usedLineDrawing = LD.GetUsesLineDrawing();
         dataManager.AddLevelData(currentProgress, levelCompletionTime, sessionTimeCurrent,
                                  levelTimestampStart, levelTimestampEnd, usedLineDrawing);
-		loggingManager.WriteLevelLog("Level " + currentProgress.ToString() + " Completed!");
 		ShowTheEndLevelCanvas();
     }
 
@@ -282,6 +303,7 @@ public class GameManager : MonoBehaviour
 			sessionTimeStart = Time.time;
 			sessionTimeRemaining = (sessionLength * 60);
 			levelTimeStart = sessionTimeStart;
+            _CurrentScene = "Level";
 		}
 	}
 
@@ -349,11 +371,6 @@ public class GameManager : MonoBehaviour
         if (sessionFinished) {
             
         }
-        if (shouldUpload && loggingManager.hasLogs() && sessionFinished) {
-            loggingManager.WriteSessionLog();
-            loggingManager.DumpCurrentLog();
-            loggingManager.ClearLogEntries();
-        }
         dataManager.SaveData();
 		SceneManager.LoadSceneAsync("TMT_P10");
 	}
@@ -380,11 +397,6 @@ public class GameManager : MonoBehaviour
         // if we fail to upload before user exit, we dump the logs disk.
         bool shouldUpload = profileManager.GetUploadPolicy();
         bool sessionFinished = (Time.time - sessionTimeStart > sessionLength * 60);
-        if (shouldUpload && loggingManager.hasLogs() && sessionFinished) {
-            loggingManager.WriteSessionLog();
-            loggingManager.DumpCurrentLog();
-            loggingManager.ClearLogEntries();
-        }
     }
 
     public bool GetHeatMapSeen()

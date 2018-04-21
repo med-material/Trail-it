@@ -67,7 +67,7 @@ public class SettingsScreen : MonoBehaviour
     private bool stemme;
 	private bool gentagStemme;
 	private bool intro;
-	private int trainingTime = 2;
+	private int trainingTime = 4;
 	private int difficultyLevel = 3;
 	private int circleAmount = 1;
 	private string circleAmountNumberTemplate;
@@ -186,7 +186,7 @@ public class SettingsScreen : MonoBehaviour
         stemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":Stemme", 0) == 1;
 		gentagStemme = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":GentagStemme", 0) == 1;
 		intro = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
-		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 2);
+		trainingTime = PlayerPrefs.GetInt("Settings:"+ currentProfileID +":Time", 4);
 		gameType = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":GameType", "gameA");
 		difficultyLevel = PlayerPrefs.GetInt("Settings:"+ currentProfileID + ":DifficultyLevel", 1);
         circleAmount = Utils.TargetAmountFromDifficulty(difficultyLevel);

@@ -4112,12 +4112,11 @@ GameObject:
   m_Component:
   - component: {fileID: 235454364}
   - component: {fileID: 235454365}
-  - component: {fileID: 235454368}
-  - component: {fileID: 235454371}
   - component: {fileID: 235454372}
-  - component: {fileID: 235454373}
   - component: {fileID: 235454374}
   - component: {fileID: 235454366}
+  - component: {fileID: 235454368}
+  - component: {fileID: 235454367}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4149,7 +4148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8da0e344ac6c05d49b90628d687e9e8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loggingManager: {fileID: 235454368}
   mainCam: {fileID: 1720051832}
   profileManager: {fileID: 235454372}
   dataManager: {fileID: 235454366}
@@ -4157,6 +4155,7 @@ MonoBehaviour:
   activeLevel: {fileID: 808461630}
   activeLevelAssistance: {fileID: 36167942}
   input: {fileID: 0}
+  arduino: {fileID: 235454368}
   menuCanvas: {fileID: 432501715}
   setupCanvas: {fileID: 1798151972}
   endLevelCanvas: {fileID: 1751727572}
@@ -4185,6 +4184,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profileManager: {fileID: 235454372}
+--- !u!114 &235454367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 235454363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 670d7dd8b3dbbc048b6b604a8447fa1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FileName: Arduino Log
+  FileFormat: .tsv
+  path: 
+  header: "UnityMillis\tArduinoMillis\tEDA\tIBI\tDistance"
+  MatchFittsLawLogging: 1
+  AltHeader: Date;Time;ArduinoMillis;EDA;IBI;RawPulse;Pressure
+  AltFileFormat: .csv
 --- !u!114 &235454368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4193,25 +4210,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 235454363}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7593cb7069cc0147af4ea58fa56dea0, type: 3}
+  m_Script: {fileID: 11500000, guid: b3087a2091a316a4d85abc8584dcd00b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataManager: {fileID: 235454366}
-  mySQL: {fileID: 235454371}
-  profileManager: {fileID: 235454372}
---- !u!114 &235454371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 235454363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab22e7b89d1224d5cb1ceb845cd6aead, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  loggingManager: {fileID: 235454368}
-  serverUrl: {fileID: 235454373}
+  PortName: COM5
+  BaudRate: 115200
+  StartFlag: 35
+  PollingRate: 100
+  PackagesLost: 0
+  readTimeouts: 0
+  ParseIncomingData: 1
+  NewestIncomingData: 
+  NewestOutgoingData: 
+  ArduinoMillis: 0
+  RawEDA: 0
+  IBI: 0
+  RawPulse: 0
+  rawPressure: 0
+  testStart: 0
+  useMouseControl: 0
+  ERM1Power: 0
+  ERM2Power: 0
 --- !u!114 &235454372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4229,17 +4248,6 @@ MonoBehaviour:
   questionnaireCanvas: {fileID: 564947306}
   firstTimeCanvas: {fileID: 1469693257}
   updatedCanvas: {fileID: 2096603660}
---- !u!114 &235454373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 235454363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a3744711b6ed46b5ad50f30505ab376, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &235454374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5167,10 +5175,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 1783319098}
   m_HandleRect: {fileID: 674059095}
   m_Direction: 0
-  m_MinValue: 2
+  m_MinValue: 4
   m_MaxValue: 20
   m_WholeNumbers: 1
-  m_Value: 2
+  m_Value: 4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -7827,7 +7835,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 462399590}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.30000007, z: 15}
+  m_LocalPosition: {x: -0.0031431504, y: 0.30000007, z: 15}
   m_LocalScale: {x: 0.6333333, y: 0.6333333, z: 0.6333333}
   m_Children: []
   m_Father: {fileID: 1720051833}
@@ -8480,7 +8488,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 235454368}
+      - m_Target: {fileID: 0}
         m_MethodName: LoadSettings
         m_Mode: 1
         m_Arguments:
