@@ -43,38 +43,36 @@ public class DataManager : MonoBehaviour {
 
     public struct LevelData
     {
+        public int hitCountLeft;                // amount of hits on the left side of screen.
+        public int hitCountRight;               // amount of hits on right side ofscreen.
+        public float reactionTimeRight;         // reaction time averaged on left side
+        public float reactionTimeLeft;          // reaction time averaged on right side
         public int levelNumber;                 // which level is this (how many has been played so far)
-        public int errorCount;                  // how many errors were found.
-        public int hitCount;                    // how many hits were found.
+        public int errorCount;                  // amount of errornous hits in the level, while we still have training time left.
+        public int hitCount;                    // total amount of successful hits in the level, while we still have training time left.
         public List<Hit>[,] levelHits;          // list of hits done in this level
-		public int[,] fieldAssistanceCount; // how many times assistance was active for a number in a given field.
-        public float[,] fieldReactionTimes;     // median reaction time for each field.
-        public float[,] fieldDistances;         // median reaction time for each field.
+
         public float reactionTime;              // the median reaction time of all hits this level.
         public float distanceAverage;           // the average distance of all distance travelled this level.
         public Vector2 centerOfHit;             // the center of hit / cancellation, calculated in viewport space.
         public float completionTime;            // how much time you spent completing the level.
         public float sessionTime;               // how much time of the sessionTime had passed.
-        public int levelErrorsLeft;             // error count of hits to the left
-        public int levelErrorsRight;            // error count of hits to the right
-        public System.DateTime timestampStart;  // timestamp of when the level started.
-        public System.DateTime timestampEnd;    // timestamp of when the level ended.
-        public bool usedLineDrawing;            // whether lineDrawing was used this level
+        public int levelErrorsLeft;             // amount of errornous hits in the left side, while we still have training time left.
+        public int levelErrorsRight;            // amount of errornous hits in the right side, while we still have training time left.
+
+        public System.DateTime timestampStart;  // timestamp in HH-MM-SS.MMMM for when the level started. (disregards training time)
+        public System.DateTime timestampEnd;    // timestamp in HH-MM-SS.MMMM for when the level finished. (disregards training time)
+        public bool usedLineDrawing;            // whether the player is using line drawing or just clicking. Determined based on 1 succesful line-drawn
+        public bool assistanceWasActive;        // whether assistance was active in that given level.
+
 
         public override string ToString()
         {
             string levelData = levelNumber + ": [h" + hitCount + " e" + errorCount + "] reactT(" + reactionTime +
-                                ") distAvg(" + distanceAverage + ") +" + ") completionTime(" + completionTime +
+                                ") distAvg(" + distanceAverage + ") completionTime(" + completionTime +
                                  ") sessionTime(" + sessionTime +
                                 ") eR(" + levelErrorsRight + ") eL(" + levelErrorsRight + ") timestampStart(" +
                                 timestampStart + ") timestampEnd(" + timestampEnd + ")";
-
-            for (int i = 0; i < fieldReactionTimes.GetLength(1); i++) {
-                for (int j = 0; j < fieldReactionTimes.GetLength(0); j++) {
-                    string fieldData = " f" + j + "," + i + "(r[" + fieldReactionTimes[j, i].ToString() + "] d[" + fieldDistances[j, i] + "] a[" + fieldAssistanceCount[j, i] + "])";
-                    levelData += fieldData;
-                }
-            }
 
             return levelData;
 
@@ -82,11 +80,10 @@ public class DataManager : MonoBehaviour {
 
         public string PrintHitLists()
         {
-            string hitString = levelNumber + "has " + levelHits.Length + " hitLists. ";
-            Debug.Log(hitString);
+            string hitString = "lvl" + levelNumber + " has " + levelHits.Length + " hitLists. ";
             for (int i = 0; i < levelHits.GetLength(1); i++) {
                 for (int j = 0; j < levelHits.GetLength(0); j++) {
-                    hitString += "[" + j + ", " + i + "](" + levelHits[j,i].Count + "), ";
+                    hitString += "f[" + j + ", " + i + "](" + levelHits[j,i].Count + "), ";
                 }
             }
             return hitString;
@@ -97,21 +94,37 @@ public class DataManager : MonoBehaviour {
     [System.Serializable]
     public struct SessionData
     {
+        public string currentProfileID;        // unique identifier of the player profile
+        public string deviceModel;             // The model of device which is being played on (ipads, iphones, android etc.)
+        public string playerName;              // the player's name
+        public string email;                   // e-mail address of the player, if specified
+        public string playContext;             // whether the player is playing at home or in a clinical context. "Rehab", "Home", "RehabHome".
+        public string trainingReason;          // whether the player has diagnosed a type of neglect.
+        public string ageGroup;                // Player age group: Below 13, 13-17, 18-24, 25-39, 40-59, 60-69, 70-79, Above 80
+        public bool tutorialSeen;              // whether tutorial was seen this training session or not.
+        public bool laneSetting;               // whether lanes are enabled or not.
+        public bool pulseSetting;              // whether blinking is enabled or not.
+        public bool voiceSetting;              // whether sound is enabled or not.
+        public bool repeatVoiceSetting;        // whether repeaing sound is enabled or not.
+        public bool dataVisEnabled;            // whether we show data visualization at the end of the training session. currently always false
         public string version;                  // version of the game this struct was saved with.
-        public float reactionTime;              // reaction time for resetAssistanceWasActive()the whole session.
-        public float[,] fieldReactionTimes;     // median reaction time for each field.
+        public float reactionTime;              // reaction time for the whole session.
+        public float[,] fieldReactionTimes;     // Average reaction time for each field averages.
+        public float[,] fieldDistances;         // Average distance moved for each field.
         public int[,] fieldAssistanceCount;     // Count of how many times assistance was used in each field.
+        public int[,] fieldOutlierCount;        // how many reaction times were outliers in each field.
         public int errorCount;                  // total count of errors.
         public int hitCount;                    // total count of successful hits.
         public int levelCount;                  // total count of levels
-        public int difficultyLevel;             // what difficultyLevel was this played at.
-        public string gameType;                 // what type of game was played here.
-        public float sessionLength;             // how long time the session took (floating point value)
+        public int difficultyLevel;             // From 1 (easy) to 3 (hard) corresponding to how many circles (not stored).
+        public string gameType;                 // "1-2-3-4" vs "1-A-2-B"
+        public float sessionLength;             // how long time the session took
         public float bestCompletionTime;        // the best completion time for this level.
         public System.DateTime timestamp;       // timestamp marking the session start.
         public bool intro;                      // whether intro was turned on for this session
         public float worstReactionTime;         // the worst reaction time done this session
         public float bestReactionTime;          // the best reaction time done this sssion
+        public float medianReactionTime;        // the median reaction time across all reaction times.
 
         [System.NonSerialized]
         public float assistanceCount;           // how many times you used assistance.
@@ -119,12 +132,18 @@ public class DataManager : MonoBehaviour {
         public override string ToString()
         {
             string sessionData = timestamp.ToString("yyyy-MM-dd") + " " + timestamp.ToString("HH:mm") + " [h" + hitCount + " e" + errorCount + "] lvls(" + levelCount + ") difficulty(" +
-                      difficultyLevel + ") gType(" + gameType + ") sLength(" + sessionLength + ") reactT(" + reactionTime +
-                      "intro (" + intro + ") v(" + version + ")";
+                                 difficultyLevel + ") gType(" + gameType + ") sLength(" + sessionLength + ") reactT(" + reactionTime +
+                                 ") intro (" + intro + ") v(" + version + ") profileID(" + currentProfileID + ") device(" + deviceModel +
+                                 ") playerName(" + playerName + ") email(" + email + ") playContext(" + playContext + ") trainingReason(" +
+                                 trainingReason + ") ageGroup(" + ageGroup + ") tutorialSeen(" + tutorialSeen + ") laneSetting(" + laneSetting +
+                                 ") pulseSetting(" + pulseSetting + ") voiceSetting(" + voiceSetting + ") repeatVoiceSetting(" + repeatVoiceSetting +
+                                 ") dataVisEnabled(" + dataVisEnabled + ") medianReactionTime(" + medianReactionTime + ") worstReactionTime(" + worstReactionTime +
+                                 ") bestReactionTime(" + bestReactionTime + ")";
 
             for (int i = 0; i < fieldReactionTimes.GetLength(1); i++) {
                 for (int j = 0; j < fieldReactionTimes.GetLength(0); j++) {
-                    string fieldData = " f" + j + "," + i + "(r[" + fieldReactionTimes[j, i].ToString() + "] a[" + fieldAssistanceCount[j, i] + "])";
+                    string fieldData = " f" + j + "," + i + "(r[" + fieldReactionTimes[j, i] + "] d[" + fieldDistances[j,i] +
+                                       "] a[" + fieldAssistanceCount[j, i] + "] o[" + fieldOutlierCount[j,i] + "])";
                     sessionData += fieldData;
                 }
             }
@@ -198,11 +217,18 @@ public class DataManager : MonoBehaviour {
     // contains each hit for the current level. Stored until the end of the level.
     private List<Hit>[,] levelHitsList;
 
+    // contains each hit time across a whole session, used to calculate outliers.
+    private List<float>[,] sessionHitTimesList;
+
+    // contains each hit time across a whole session, used to calculate outliers.
+    private List<float>[,] sessionHitDistancesList;
+
     // contains aggregated level data for the current session. Stored until next session.
     private List<LevelData> levelDataList;
 
     // contains aggregated session data for the current session. Stored until next session.
     private List<SessionData> sessionDataList;
+
 
     public void Start()
     {
@@ -252,17 +278,25 @@ public class DataManager : MonoBehaviour {
         hasInit = true;
         currentSessionData = new SessionData();
         levelDataList = new List<LevelData>();
+        sessionHitTimesList = new List<float>[cellRowCount, cellColumnCount];
+        sessionHitDistancesList = new List<float>[cellRowCount, cellColumnCount];
+            for (int i = 0; i < cellColumnCount; i++) {
+                for (int j = 0; j < cellRowCount; j++) {
+                    sessionHitTimesList[j, i] = new List<float>();
+                    sessionHitDistancesList[j, i] = new List<float>();
+                }
+            }
         NewLevel();
     }
 
-    public void AddSessionData(string gameType, int difficultyLevel, float sessionLength, System.DateTime sessionStartTimestamp,
-                               bool intro)
+    public void AddSessionData(System.DateTime sessionStartTimestamp, bool intro)
     {
         currentSessionData.errorCount = 0;
         currentSessionData.hitCount = 0;
         currentSessionData.bestCompletionTime = -1.0f;
         currentSessionData.worstReactionTime = -1.0f;
         currentSessionData.bestReactionTime = -1.0f;
+        currentSessionData.medianReactionTime = -1.0f;
         List<float> reactionTimes = new List<float>();
         currentSessionData.fieldAssistanceCount = new int[cellRowCount, cellColumnCount];
 
@@ -270,19 +304,6 @@ public class DataManager : MonoBehaviour {
             // we should only count levels where we managed to get a hit.
             // if a level starts right when the sessionTime ends, it doesn't count.
             if (levelData.hitCount > 0) {
-                if (levelData.reactionTime > -1.0f) {
-                    if (levelData.reactionTime > currentSessionData.bestReactionTime) {
-                        currentSessionData.bestReactionTime = levelData.reactionTime;
-                    }
-                    if (currentSessionData.worstReactionTime > -1.0f) {
-                        if (levelData.reactionTime < currentSessionData.worstReactionTime) {
-                            currentSessionData.worstReactionTime = levelData.reactionTime;
-                        }
-                    } else {
-                        currentSessionData.worstReactionTime = levelData.reactionTime;
-                    }
-                    reactionTimes.Add(levelData.reactionTime);
-                }
                 currentSessionData.errorCount += levelData.errorCount;
                 currentSessionData.hitCount += levelData.hitCount;
 
@@ -292,32 +313,75 @@ public class DataManager : MonoBehaviour {
             }
         }
 
-        currentSessionData.fieldReactionTimes = new float[cellRowCount, cellColumnCount];
-        foreach (Field field in fields) {
-            List<float> fieldTimes = new List<float>();
-            currentSessionData.fieldAssistanceCount[field.xIndex, field.yIndex] = 0;
+        foreach (var hitTimesList in sessionHitTimesList) {
+            foreach (var hitTime in hitTimesList) {
+                if (hitTime > -1.0f) {
+                    reactionTimes.Add(hitTime);
 
-            foreach (var levelData in levelDataList) {
-                if (levelData.fieldReactionTimes[field.xIndex, field.yIndex] != -1.0f) {
-                    fieldTimes.Add(levelData.fieldReactionTimes[field.xIndex, field.yIndex]);
+                    if (hitTime > currentSessionData.worstReactionTime) {
+                        currentSessionData.worstReactionTime = hitTime;
+                    }
+                    if (currentSessionData.bestReactionTime > -1.0f) {
+                        if (hitTime < currentSessionData.bestReactionTime) {
+                            currentSessionData.bestReactionTime = hitTime;
+                        }
+                    } else {
+                        currentSessionData.bestReactionTime = hitTime;
+                    }
                 }
-                currentSessionData.fieldAssistanceCount[field.xIndex, field.yIndex] += levelData.fieldAssistanceCount[field.xIndex, field.yIndex];
             }
-
-            float average = fieldTimes.Average(item => (float)item);
-            currentSessionData.fieldReactionTimes[field.xIndex, field.yIndex] = average;
         }
-
+        currentSessionData.medianReactionTime = Utils.GetMedian(reactionTimes);
         if (reactionTimes.Count > 1) {
             currentSessionData.reactionTime = reactionTimes.Average(item => (float)item);
         }
+
+        currentSessionData.fieldOutlierCount = new int[cellRowCount, cellColumnCount];
+        currentSessionData.fieldReactionTimes = new float[cellRowCount, cellColumnCount];
+        currentSessionData.fieldDistances = new float[cellRowCount, cellColumnCount];
+        foreach (Field field in fields) {
+            currentSessionData.fieldAssistanceCount[field.xIndex, field.yIndex] = 0;
+            currentSessionData.fieldOutlierCount[field.xIndex, field.yIndex] = 0;
+
+            foreach (var levelData in levelDataList) {
+                foreach (Hit hit in levelData.levelHits[field.xIndex, field.yIndex]) {
+                    if (hit.time > (currentSessionData.medianReactionTime * 2)) {
+                        currentSessionData.fieldOutlierCount[field.xIndex, field.yIndex]++;
+                    }
+
+                    if (hit.assistanceWasActive) {
+                        currentSessionData.fieldAssistanceCount[field.xIndex, field.yIndex]++;
+                    }
+                }
+            }
+
+            float reactionTimeAverage = sessionHitTimesList[field.xIndex, field.yIndex].Average(item => (float)item);
+            float distanceAverage = sessionHitDistancesList[field.xIndex, field.yIndex].Average(item => (float)item);
+            currentSessionData.fieldReactionTimes[field.xIndex, field.yIndex] = reactionTimeAverage;
+            currentSessionData.fieldDistances[field.xIndex, field.yIndex] = distanceAverage;
+        }
+
         currentSessionData.levelCount = levelDataList.Count;
-        currentSessionData.sessionLength = sessionLength;
         currentSessionData.timestamp = sessionStartTimestamp;
-        currentSessionData.difficultyLevel = difficultyLevel;
-        currentSessionData.gameType = gameType;
         currentSessionData.intro = intro;
         currentSessionData.version = profileManager.GetCurrentVersion();
+        string currentProfileID = profileManager.GetCurrentProfileID();
+        currentSessionData.currentProfileID = currentProfileID;
+        currentSessionData.deviceModel = SystemInfo.deviceModel;
+        currentSessionData.playerName = profileManager.GetCurrentName();
+        currentSessionData.email = profileManager.GetCurrentEmail();
+        currentSessionData.playContext = profileManager.GetCurrentPlayContext();
+        currentSessionData.trainingReason = profileManager.GetCurrentTrainingReason();
+        currentSessionData.ageGroup = profileManager.GetCurrentAgeGroup();
+        currentSessionData.sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 2);
+        currentSessionData.gameType = PlayerPrefs.GetString("Settings:" + currentProfileID + ":GameType", "gameA");
+        currentSessionData.tutorialSeen = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
+        currentSessionData.laneSetting = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Landingsbane", 0) == 1;
+        currentSessionData.pulseSetting = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
+        currentSessionData.voiceSetting = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1;
+        currentSessionData.repeatVoiceSetting = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1;
+        currentSessionData.dataVisEnabled = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DataVisEnabled", 0) == 1;
+
         Debug.Log("AddSessionData: " + currentSessionData.ToString());
         sessionDataList.Add(currentSessionData);
     }
@@ -328,21 +392,19 @@ public class DataManager : MonoBehaviour {
         currentLevelData.levelErrorsLeft = 0;
         currentLevelData.levelErrorsRight = 0;
         currentLevelData.hitCount = 0;
+        currentLevelData.hitCountLeft = 0;
+        currentLevelData.hitCountRight = 0;
         List<float> reactionTimes = new List<float>();
         List<float> distances = new List<float>();
         List<float> xPositions = new List<float>();
         List<float> yPositions = new List<float>();
+        List<float> reactionTimeLeft = new List<float>();
+        List<float> reactionTimeRight = new List<float>();
+
         currentLevelData.centerOfHit = new Vector2(-1.0f, -1.0f);
-        currentLevelData.fieldReactionTimes = new float[cellRowCount, cellColumnCount];
-        currentLevelData.fieldDistances = new float[cellRowCount, cellColumnCount];
-		currentLevelData.fieldAssistanceCount = new int[cellRowCount, cellColumnCount];
-		bool assistanceWasActive = false;
+        currentLevelData.assistanceWasActive = false;
 
         foreach (Field field in fields) {
-            currentLevelData.fieldAssistanceCount[field.xIndex, field.yIndex] = 0;
-            List<float> fieldTimes = new List<float>();
-            List<float> levelDistancesList = new List<float>();
-
             foreach (Hit hit in levelHitsList[field.xIndex, field.yIndex]) {
                 if (hit.distance > -1.0f) {
                     distances.Add(hit.distance);
@@ -356,12 +418,20 @@ public class DataManager : MonoBehaviour {
                     }
 
 					if (hit.assistanceWasActive) {
-						currentLevelData.fieldAssistanceCount[field.xIndex, field.yIndex]++;
-						assistanceWasActive = true;
+                        currentLevelData.assistanceWasActive = true;
 					}
 
                     if (hit.time > -1.0f) {
                         reactionTimes.Add(hit.time);
+
+                        if (hit.xPos > 0.5f) {
+                            reactionTimeRight.Add(hit.time);
+                            currentLevelData.hitCountRight++;
+                        } else {
+                            reactionTimeLeft.Add(hit.time);
+                            currentLevelData.hitCountLeft++;
+                        }
+
                     }
                 } else if (hit.type == HitType.WrongTargetHit) {
                     currentLevelData.errorCount++;
@@ -372,26 +442,8 @@ public class DataManager : MonoBehaviour {
                         currentLevelData.levelErrorsLeft++;
                     }
                 }
-
-                if (hit.time > -1.0f) {
-                    fieldTimes.Add(hit.time);
-                }
-                if (hit.distance > -1.0f) {
-                    levelDistancesList.Add(hit.distance);
-                }
             }
 
-	        float fieldTimeMedian = -1.0f;
-	        if (fieldTimes.Count > 0) {
-	            fieldTimeMedian = Utils.GetMedian(fieldTimes);
-	        }
-
-			float distanceAverage = -1.0f;
-	        if (levelDistancesList.Count > 0) {
-	            distanceAverage = levelDistancesList.Average(item => (float)item);
-	        }
-	        currentLevelData.fieldReactionTimes[field.xIndex, field.yIndex] = fieldTimeMedian;
-	        currentLevelData.fieldDistances[field.xIndex, field.yIndex] = distanceAverage;
         }
 
         // if our level starts and the sessionTime simultaneously ends we have no data.
@@ -415,18 +467,23 @@ public class DataManager : MonoBehaviour {
             }
             currentLevelData.centerOfHit = new Vector2(xPositions.Average(item => (float)item), yPositions.Average(item => (float)item));
         }
+        if (reactionTimeLeft.Count > 0) {
+            currentLevelData.reactionTimeLeft = reactionTimeLeft.Average(item => (float)item);
+        }
+        if (reactionTimeRight.Count > 0) {
+            currentLevelData.reactionTimeRight = reactionTimeRight.Average(item => (float)item);
+        }
 
         currentLevelData.levelHits = levelHitsList;
         currentLevelData.completionTime = completionTime;
         currentLevelData.sessionTime = sessionTime;
-        currentLevelData.assistanceWasActive = assistanceWasActive;
         currentLevelData.levelNumber = levelNumber;
         currentLevelData.timestampStart = timestampStart;
         currentLevelData.timestampEnd = timestampEnd;
         currentLevelData.usedLineDrawing = usedLineDrawing;
 
         Debug.Log("AddLevelData: " + currentLevelData.ToString());
-        Debug.Log(currentLevelData.PrintHitLists());
+        Debug.Log("currentLevelData Hitlists: " + currentLevelData.PrintHitLists());
         levelDataList.Add(currentLevelData);    
     }
 
@@ -436,9 +493,15 @@ public class DataManager : MonoBehaviour {
         Hit hit = new Hit { xPos = viewportPos.x, yPos = viewportPos.y, 
                             time = timeValue, distance = dist, type = hitType,
 							assistanceWasActive = assistanceValue};
-        Debug.Log("Adding " + hit.time + "to cell " + cell.XYString());
-        Debug.Log(hit.ToString());
+
+        Debug.Log("AddHit: " + hit.ToString() + " to cell " + cell.XYString());
         levelHitsList[cell.xIndex, cell.yIndex].Add(hit);
+        if (hit.time > -1.0f) {
+            sessionHitTimesList[cell.xIndex, cell.yIndex].Add(hit.time);
+        }
+        if (hit.distance > -1.0f) {
+            sessionHitDistancesList[cell.xIndex, cell.yIndex].Add(hit.distance);
+        }
     }
 
     private Field matchPosToCell(Vector2 viewportPos)
@@ -461,7 +524,7 @@ public class DataManager : MonoBehaviour {
         return cell;
     }
 
-    public void printResults()
+    public void PrintResults()
     {
         Debug.Log("STATS:");
         for (int i = 0; i < cellColumnCount; i++) {

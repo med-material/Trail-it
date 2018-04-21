@@ -72,7 +72,7 @@ public class ConnectToMySQL : MonoBehaviour {
 	public void UploadLog(List<string> input) {
 		WWWForm form = new WWWForm ();
 
-		form.AddField ("purposePost", "submitLogs_v2018.04.10");
+		form.AddField ("purposePost", "submitLogs_v2018.04.20");
 		form.AddField ("hashPost", hash);
 
 		// Create a string with the data

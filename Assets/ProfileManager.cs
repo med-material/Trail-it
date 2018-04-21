@@ -179,6 +179,10 @@ public class ProfileManager : MonoBehaviour {
                 mainMenuCanvas.SetActive(false);
             }
             CurrentVersion = Application.version;
+        } else if (CurrentVersion == "2018.04.10") {
+            Debug.Log("Migration from 2017.04.10 starting");
+            // TODO: Implement Graph Litteracy Test in Questionnaire and activate it here.
+            CurrentVersion = Application.version;
         }
         SaveProfiles();
 
