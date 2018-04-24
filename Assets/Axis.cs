@@ -56,6 +56,9 @@ public class Axis : MonoBehaviour
     private float currentSpacing = -1.0f;
     private float maximumSpacing = 300.0f;
 
+    // used to determine if we should announce our GetMaxWidth as shorter
+    // if fx we only have 1 or 2 datapoints present.
+    private bool limitSpace = false;
 
 
     [SerializeField]
@@ -103,6 +106,8 @@ public class Axis : MonoBehaviour
             if (labelAmount * (labelRect.rect.width + labelSpacing) > timeVisCanvas.rect.width) {
                 float height = scrollRect.sizeDelta.y;
                 scrollRect.sizeDelta = new Vector2(labelAmount * (labelRect.rect.width + labelSpacing), height);
+            } else if (labelAmount * (labelRect.rect.width + labelSpacing) < timeVisCanvas.rect.width * 0.6f) {
+                limitSpace = true;
             }
         }
 
@@ -130,7 +135,19 @@ public class Axis : MonoBehaviour
 
 		float relativeRawValue = (rawDataValue - rawDisplayRange[0]);
 		float relativeMaxDisplayRange = rawDisplayRange[1] - rawDisplayRange[0];
-		float dataPointPosition = (viewWidth / relativeMaxDisplayRange) * relativeRawValue;
+
+        // cap the raw value to the highest position if it is higher than what our display range allows.
+        if (relativeRawValue > rawDisplayRange[1]) {
+            relativeRawValue = rawDisplayRange[1];
+        }
+
+        float dataPointPosition = 0.0f;
+        if (relativeMaxDisplayRange > 0) {
+            dataPointPosition = (viewWidth / relativeMaxDisplayRange) * relativeRawValue;
+        } else {
+            dataPointPosition = (viewWidth / rawDisplayRange[1]) * relativeRawValue;
+        }
+		
 		Debug.Log(dataPointPosition + " = (" + viewWidth + " / " + rawDisplayRange[1] + ") * " + relativeRawValue);
 
         if (showAxis == false) {
@@ -227,8 +244,11 @@ public class Axis : MonoBehaviour
     {
         if (axisType == AxisType.x) {
             Debug.Log("AxisX ViewMax: " + visualAxisRect.rect.width);
-            return visualAxisRect.rect.width;
-
+            if (limitSpace) {
+                return visualAxisRect.rect.width * 0.6f;
+            } else {
+                return visualAxisRect.rect.width;
+            }
         } else {
             Debug.Log("axisY ViewMax: " + visualAxisRect.rect.height);
             return visualAxisRect.rect.height;            
