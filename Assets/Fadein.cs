@@ -15,6 +15,7 @@ public class Fadein : MonoBehaviour {
 	private float startTime;
 	private Image[] fadeImages;
 	private Text[] fadeTexts;
+    private LineRenderer lineRenderer = null;
 
 	public bool fadeInChildren = false;
 
@@ -41,6 +42,7 @@ public class Fadein : MonoBehaviour {
 			fadeImages[0] = this.GetComponent<Image>();
 			fadeTexts = new Text[1];
 			fadeTexts[0] = this.GetComponent<Text>();
+            lineRenderer = this.GetComponent<LineRenderer>();
 		}
 		this.ResetFade ();
 		if (startNow)
@@ -85,6 +87,11 @@ public class Fadein : MonoBehaviour {
 				}
 			}
 
+            if (lineRenderer != null) {
+                lineRenderer.startColor = new Color(lineRenderer.startColor.r, lineRenderer.startColor.g, lineRenderer.startColor.b, f);
+                lineRenderer.endColor = new Color(lineRenderer.endColor.r, lineRenderer.endColor.g, lineRenderer.endColor.b, f);
+            }
+
 			if (f >= 1)
 			{
 				fadeIn = false;
@@ -122,6 +129,11 @@ public class Fadein : MonoBehaviour {
 				}
 			}
 		}
+
+        if (lineRenderer != null) {
+            lineRenderer.startColor = new Color(lineRenderer.startColor.r, lineRenderer.startColor.g, lineRenderer.startColor.b, 0f);
+            lineRenderer.endColor = new Color(lineRenderer.endColor.r, lineRenderer.endColor.g, lineRenderer.endColor.b, 0f);
+        }
 
 		startTime = Time.fixedTime;
 	}
