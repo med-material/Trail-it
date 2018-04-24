@@ -35,6 +35,7 @@ public class TimeVisController : MonoBehaviour {
     private int vertexIndex = -1;
 
     private List<string> axisXLabels;
+    private List<string> axisXSubLabels;
 
     private int highestDayOfYear;
     private int lowestDayOfYear;
@@ -44,6 +45,8 @@ public class TimeVisController : MonoBehaviour {
         sessionDataList = dataManager.GetSessionDataList();
         visualDataPoints = new List<VisualDataPoint>();
         axisXLabels = new List<string>();
+        axisXSubLabels = new List<string>();
+
         // use some sensible defaults based on the data from the latest session.
 
         if (sessionDataList.Count > 0) {
@@ -90,8 +93,12 @@ public class TimeVisController : MonoBehaviour {
 
             for (int i = lowestDayOfYear; i <= highestDayOfYear; i++) {
                 System.DateTime val = new System.DateTime(1111, 1, 1).AddDays(i - 1);
-                string labelString = string.Format("{0}. {1}", val.Day, val.ToString("MMMM"));
+
+
+                string labelString = val.DayOfWeek.ToString();
+                string subLabelString = string.Format("{0}. {1}", val.Day, val.ToString("MMMM"));
                 axisXLabels.Add(labelString);
+                axisXSubLabels.Add(subLabelString);
             }
             Debug.Log("highestDayOfYear is: " + highestDayOfYear + ", lowestDayOfYear is: " + lowestDayOfYear);
 
@@ -121,7 +128,7 @@ public class TimeVisController : MonoBehaviour {
 
         GameObject obj = Instantiate(visualDataPointPrefab, dataPointCanvas.transform);
 		VisualDataPoint visualDataPoint = obj.GetComponent<VisualDataPoint>();
-        visualDataPoint.rawDatapoints = rawDataPoints;
+        visualDataPoint.SetRawDataPoints(rawDataPoints);
         visualDataPoints.Add(visualDataPoint);
     }
 
@@ -130,7 +137,7 @@ public class TimeVisController : MonoBehaviour {
         axisX.SetShowAxis(true);
         // Set AxisLabels to use at every 1.0f step.
         axisX.SetRawDisplayRange(lowestDayOfYear, highestDayOfYear);
-        axisX.SetAxisLabels(axisXLabels, 1.0f);
+        axisX.SetAxisLabels(axisXLabels, 1.0f, axisXSubLabels);
 
         Debug.Log("axisX rawDiplayRange: (" + lowestDayOfYear + "," + highestDayOfYear + ")");
     }

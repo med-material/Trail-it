@@ -6,22 +6,37 @@ using UnityEngine.UI;
 
 public class VisualDataPoint : MonoBehaviour {
 
-    public List<DataPoint> rawDatapoints;
+    private List<DataPoint> rawDatapoints;
 
     public float x = 0.5f;
     public float y = 0.5f;
 
     public RectTransform canvas;
+    private Text subText = null;
+    private string subTextTemplate;
 
     // Use this for initialization
-	void Start () {
-		
+	void Awake () {
+        if (subText == null) {
+            InitText();
+        }
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    public void SetRawDataPoints(List<DataPoint> newRawDataPoints)
+    {
+        rawDatapoints = newRawDataPoints;
+        if (rawDatapoints.Count > 0) {
+            UpdateText();
+        }
+    }
+
+    public void AddRawDataPoint(DataPoint dataPoint)
+    {
+        rawDatapoints.Add(dataPoint);
+        if (rawDatapoints.Count > 0) {
+            UpdateText();
+        }
+    }
 
     public float GetRepresentedXValue()
     {
@@ -41,6 +56,27 @@ public class VisualDataPoint : MonoBehaviour {
             yValues.Add(datapoint.y);
         }
         return yValues.Average(item => (float)item);
+    }
+
+    private void InitText()
+    {
+        subText = this.gameObject.GetComponentInChildren<Text>();
+        subTextTemplate = subText.text;
+        subText.text = "???";
+    }
+
+    public void UpdateText()
+    {
+        if (subText == null) {
+            InitText();
+        }
+        subText.text = string.Format(subTextTemplate, GetRepresentedYValue().ToString("0.00"));
+    }
+
+    public void SetPrimary(bool isPrimary)
+    {
+        // change opacity of our labelBg
+        // change color of our text
     }
 
 

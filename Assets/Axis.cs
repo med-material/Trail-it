@@ -11,6 +11,7 @@ public enum AxisType
 
 public struct AxisLabel {
 	public Text textComp;
+    public Text subTextComp;
 	public float  rawValue;
 	public GameObject obj;
 }
@@ -37,6 +38,7 @@ public class Axis : MonoBehaviour
     [SerializeField]
     private RectTransform timeVisCanvas;
 
+    private float labelSpacing = 0.0f;
     private float labeloffset = 0.0f;
 
     //[SerializeField]
@@ -70,16 +72,16 @@ public class Axis : MonoBehaviour
         visualAxisRect = visualAxisHolder.GetComponent<RectTransform>();
         labelParent.SetActive(false);
         visualAxis.SetActive(false);
-
-        RectTransform labelRect = labelTemplate.GetComponent<RectTransform>();
-        labeloffset = labelRect.rect.width;
     }
 
     public void SetShowAxis(bool showTheAxis)
     {
         labelParent.SetActive(true);
         visualAxis.SetActive(true);
-        showAxis = showTheAxis;   
+        showAxis = showTheAxis;
+        RectTransform labelRect = labelTemplate.GetComponent<RectTransform>();
+        labeloffset = labelRect.rect.width;
+        labelSpacing = 100.0f;
     }
 
     public void SetAxisType(AxisType type)
@@ -87,7 +89,7 @@ public class Axis : MonoBehaviour
         axisType = type;
     }
 
-    public void SetAxisLabels(List<string> newAxisLabels, float frequency)
+    public void SetAxisLabels(List<string> newAxisLabels, float frequency, List<string> newAxisSubLabels = null)
     {
         // axisLabels should contain every single possible label from start to end, by the frequency specified
         labelFrequency = frequency;
@@ -98,15 +100,22 @@ public class Axis : MonoBehaviour
         float labelAmount = (rawDisplayRange[1] - rawDisplayRange[0]) / labelFrequency;
         RectTransform labelRect = labelTemplate.GetComponent<RectTransform>();
         if (axisType == AxisType.x) {
-            if (labelAmount * labelRect.rect.width > timeVisCanvas.rect.width) {
+            if (labelAmount * (labelRect.rect.width + labelSpacing) > timeVisCanvas.rect.width) {
                 float height = scrollRect.sizeDelta.y;
-                scrollRect.sizeDelta = new Vector2(labelAmount * labelRect.rect.width, height);
+                scrollRect.sizeDelta = new Vector2(labelAmount * (labelRect.rect.width + labelSpacing), height);
             }
         }
 
 		for (float i = rawDisplayRange[0]; i <= rawDisplayRange[1]; i += frequency) {
 			string currentText = newAxisLabels[0];
-			CreateAxisLabel(currentText, i);
+
+            string currentSubText = null;
+            if (newAxisSubLabels != null) {
+                currentSubText = newAxisSubLabels[0];
+                newAxisSubLabels.RemoveAt(0);
+            }
+
+			CreateAxisLabel(currentText, i, currentSubText);
 			newAxisLabels.RemoveAt(0);
 		}
 
@@ -117,14 +126,17 @@ public class Axis : MonoBehaviour
     {
         float maxView = GetViewMax();
         float minView = GetViewMin();
-		float viewWidth = (maxView - minView) - (labeloffset);
+        float viewWidth = (maxView - minView) - labeloffset;
 
 		float relativeRawValue = (rawDataValue - rawDisplayRange[0]);
 		float relativeMaxDisplayRange = rawDisplayRange[1] - rawDisplayRange[0];
 		float dataPointPosition = (viewWidth / relativeMaxDisplayRange) * relativeRawValue;
 		Debug.Log(dataPointPosition + " = (" + viewWidth + " / " + rawDisplayRange[1] + ") * " + relativeRawValue);
 
-        if (isLabel || showAxis == false) {
+        if (showAxis == false) {
+            return dataPointPosition;
+        }
+        else if (isLabel) {
             return dataPointPosition;
         } else {
             float result = (labeloffset / 2) + dataPointPosition;
@@ -145,7 +157,7 @@ public class Axis : MonoBehaviour
 
     }
 
-	public void CreateAxisLabel(string text, float labelRawValue) {
+	public void CreateAxisLabel(string text, float labelRawValue, string subtext = null) {
 			AxisLabel label = new AxisLabel();
 
     		label.rawValue = labelRawValue;	
@@ -156,13 +168,22 @@ public class Axis : MonoBehaviour
             if (axisType == AxisType.x) {
                 labelRect.anchoredPosition = new Vector3(viewPosition, 0.0f, 0.0f);
             }
-
-            label.textComp = label.obj.GetComponent<Text>();
+            
+            Text[] textComps = label.obj.GetComponentsInChildren<Text>();
+            label.textComp = textComps[0];
 			label.textComp.text = text;
 
-            labels.Add(label);
-            
+            label.subTextComp = textComps[1];
+            if (subtext != null) {
+                label.subTextComp.text = subtext.ToUpper();
+                label.subTextComp.gameObject.SetActive(true);
+            } else {
+                label.subTextComp.text = "";
+                label.subTextComp.gameObject.SetActive(false);
+            }
 
+
+            labels.Add(label);
             
 	}
 
