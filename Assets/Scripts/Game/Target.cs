@@ -3,7 +3,8 @@ using System.Collections;
 
 public class Target : MonoBehaviour {
 
-	public Sprite whiteTarget;
+
+    public Sprite whiteTarget;
 	public Sprite greenTarget;
 	public Sprite greenOutline;
 	public Sprite redTarget;
@@ -12,8 +13,12 @@ public class Target : MonoBehaviour {
 	private int targetID;
     [SerializeField]
 	private TextMesh targetLabel;
-	private SpriteRenderer sprite;
-	private Animation pulse;
+	
+    [SerializeField]
+    private SpriteRenderer sprite;
+	
+    [SerializeField]
+    private Animation pulse;
 	private bool obstacle = false;
 	private bool rightSide;
 	private bool red = false;

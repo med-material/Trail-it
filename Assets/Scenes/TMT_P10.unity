@@ -4115,9 +4115,9 @@ GameObject:
   - component: {fileID: 235454368}
   - component: {fileID: 235454371}
   - component: {fileID: 235454372}
-  - component: {fileID: 235454373}
   - component: {fileID: 235454374}
   - component: {fileID: 235454366}
+  - component: {fileID: 235454367}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4185,6 +4185,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profileManager: {fileID: 235454372}
+--- !u!114 &235454367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 235454363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7c64cdaa6b484d0fafddf6fb4a863b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &235454368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4211,7 +4222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loggingManager: {fileID: 235454368}
-  serverUrl: {fileID: 235454373}
+  serverUrl: {fileID: 235454367}
 --- !u!114 &235454372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4229,17 +4240,6 @@ MonoBehaviour:
   questionnaireCanvas: {fileID: 564947306}
   firstTimeCanvas: {fileID: 1469693257}
   updatedCanvas: {fileID: 2096603660}
---- !u!114 &235454373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 235454363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a3744711b6ed46b5ad50f30505ab376, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &235454374
 MonoBehaviour:
   m_ObjectHideFlags: 0
