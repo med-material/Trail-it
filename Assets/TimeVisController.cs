@@ -53,37 +53,41 @@ public class TimeVisController : MonoBehaviour {
             // Instantiate data points based on the session data list
             List<List<DataPoint>> dataPointLists = new List<List<DataPoint>>();
 
+            var curSession = sessionDataList.Last();
+
             int currentDate = -1;
             lowestDayOfYear = currentDate;
             highestDayOfYear = currentDate;
             List<DataPoint> dpList = new List<DataPoint>();
             dataPointLists.Add(dpList);
             foreach (var session in sessionDataList) {
-                if (session.timestamp.Year > 1 && session.reactionTime > -1.0f) {
-                    if (currentDate == session.timestamp.DayOfYear || currentDate == -1) {
-                        currentDate = session.timestamp.DayOfYear;
-                        DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
-                        dataPoint.x = session.timestamp.DayOfYear;
-                        dataPoint.y = session.reactionTime;
-                        dataPoint.sessionData = session;
-                        dataPointLists.Last().Add(dataPoint);
-                    } else if (session.timestamp.Year > 1) {
-                        dpList = new List<DataPoint>();
-                        dataPointLists.Add(dpList);
-                        DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
-                        dataPoint.x = session.timestamp.DayOfYear;
-                        dataPoint.y = session.reactionTime;
-                        dataPoint.sessionData = session;
-                        dataPointLists.Last().Add(dataPoint);
+                if (session.reactionTime > -1.0f && session.gameType == curSession.gameType && session.difficultyLevel == curSession.difficultyLevel) {
+                    if (session.timestamp.Year > 1 && session.reactionTime > -1.0f) {
+                        if (currentDate == session.timestamp.DayOfYear || currentDate == -1) {
+                            currentDate = session.timestamp.DayOfYear;
+                            DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
+                            dataPoint.x = session.timestamp.DayOfYear;
+                            dataPoint.y = session.reactionTime;
+                            dataPoint.sessionData = session;
+                            dataPointLists.Last().Add(dataPoint);
+                        } else if (session.timestamp.Year > 1) {
+                            dpList = new List<DataPoint>();
+                            dataPointLists.Add(dpList);
+                            DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
+                            dataPoint.x = session.timestamp.DayOfYear;
+                            dataPoint.y = session.reactionTime;
+                            dataPoint.sessionData = session;
+                            dataPointLists.Last().Add(dataPoint);
 
-                        currentDate = session.timestamp.DayOfYear;
-                    }
+                            currentDate = session.timestamp.DayOfYear;
+                        }
 
-                    if (lowestDayOfYear > currentDate || lowestDayOfYear == -1) {
-                        lowestDayOfYear = currentDate;
-                    }
-                    if (highestDayOfYear < currentDate || highestDayOfYear == -1) {
-                        highestDayOfYear = currentDate;
+                        if (lowestDayOfYear > currentDate || lowestDayOfYear == -1) {
+                            lowestDayOfYear = currentDate;
+                        }
+                        if (highestDayOfYear < currentDate || highestDayOfYear == -1) {
+                            highestDayOfYear = currentDate;
+                        }
                     }
                 }
             }
@@ -100,7 +104,6 @@ public class TimeVisController : MonoBehaviour {
 
             for (int i = lowestDayOfYear; i <= highestDayOfYear; i++) {
                 System.DateTime val = new System.DateTime(1111, 1, 1).AddDays(i - 1);
-
 
                 string labelString = val.DayOfWeek.ToString();
                 if (i == highestDayOfYear) {
