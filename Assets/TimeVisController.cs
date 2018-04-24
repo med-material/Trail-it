@@ -65,6 +65,7 @@ public class TimeVisController : MonoBehaviour {
                         DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
                         dataPoint.x = session.timestamp.DayOfYear;
                         dataPoint.y = session.reactionTime;
+                        dataPoint.sessionData = session;
                         dataPointLists.Last().Add(dataPoint);
                     } else if (session.timestamp.Year > 1) {
                         dpList = new List<DataPoint>();
@@ -72,6 +73,7 @@ public class TimeVisController : MonoBehaviour {
                         DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
                         dataPoint.x = session.timestamp.DayOfYear;
                         dataPoint.y = session.reactionTime;
+                        dataPoint.sessionData = session;
                         dataPointLists.Last().Add(dataPoint);
 
                         currentDate = session.timestamp.DayOfYear;
@@ -91,11 +93,19 @@ public class TimeVisController : MonoBehaviour {
                 Debug.Log("Created VisualDataPoint for " + list.Count + " datapoints.");
             }
 
+            CalculateHighScores();
+
+            // Highlight the latest training session
+            visualDataPoints.Last().SetPrimary(true);
+
             for (int i = lowestDayOfYear; i <= highestDayOfYear; i++) {
                 System.DateTime val = new System.DateTime(1111, 1, 1).AddDays(i - 1);
 
 
                 string labelString = val.DayOfWeek.ToString();
+                if (i == highestDayOfYear) {
+                    labelString = "i Dag";
+                }
                 string subLabelString = string.Format("{0}. {1}", val.Day, val.ToString("MMMM"));
                 axisXLabels.Add(labelString);
                 axisXSubLabels.Add(subLabelString);
@@ -107,6 +117,7 @@ public class TimeVisController : MonoBehaviour {
 
             // Calculate the mapping of our datapoints.
             CalculateMapping();
+            StartCoroutine(SpawnDataPoints());
 
         } else {
             Debug.Log("Not enough data!");
@@ -121,6 +132,15 @@ public class TimeVisController : MonoBehaviour {
             // Call CalculateMapping to re-calculate positions of the visualDatapoints.
 	}
 
+    private void CalculateHighScores()
+    {
+        List<VisualDataPoint> rankedDataPoints = visualDataPoints.OrderBy(p => p.GetRepresentedYValue()).ToList();
+        for (int i = 0; i < rankedDataPoints.Count; i++) {
+            rankedDataPoints[i].score = i + 1;
+        }
+
+    }
+
     // This function creates a visual representation based on 
     private void CreateVisualDataPoint(List<DataPoint> rawDataPoints)
     {
@@ -129,6 +149,13 @@ public class TimeVisController : MonoBehaviour {
         GameObject obj = Instantiate(visualDataPointPrefab, dataPointCanvas.transform);
 		VisualDataPoint visualDataPoint = obj.GetComponent<VisualDataPoint>();
         visualDataPoint.SetRawDataPoints(rawDataPoints);
+
+        Debug.Log("rawDataPoints length: " + rawDataPoints.Count);
+        foreach (var dp in rawDataPoints) {
+            visualDataPoint.timeSpent += dp.sessionData.sessionLength;
+        }
+        Debug.Log("visualDataPoint.timeSpent = " + visualDataPoint.timeSpent);
+
         visualDataPoints.Add(visualDataPoint);
     }
 
@@ -153,8 +180,15 @@ public class TimeVisController : MonoBehaviour {
 			}
 		}
 
-		// Y axis is not tied to any visual representation currently so we just instantiate a new Axis object.
-        axisY.SetRawDisplayRange(0.0f, currentSession.reactionTime * 2);
+        // Y axis is not tied to any visual representation currently so we just instantiate a new Axis object.
+        float upperY = currentSession.reactionTime * 2;
+
+        // our Y axis should minimum show a 2 second range.
+        if (upperY < 5.0f) {
+            upperY = 5.0f;
+        }
+
+        axisY.SetRawDisplayRange(0.0f, upperY);
         //axisY.SetValueLimits(0.0f, maxLimit);
         Debug.Log("axisY rawDisplayRange: (" + 0.0f + "," + currentSession.reactionTime * 2 + ")");
     }
@@ -165,6 +199,22 @@ public class TimeVisController : MonoBehaviour {
         // 2. We need to tell the axis to zoom a step in or out depending on the direction.
     }
 
+    IEnumerator SpawnDataPoints()
+    {
+        float t = 0.05f;
+
+        foreach (var dp in visualDataPoints) {
+            dp.dataPointVisual.Play("dataPointPopUp");
+            dp.gameObject.SetActive(true);
+            if (dp.GetPrimary()) {
+                dp.StartPrimaryAnimation();
+            }
+            yield return new WaitForSeconds(t);
+        }
+
+        yield return null;
+    }
+
     private void CalculateMapping()
     {
         lineRenderer.positionCount = 0;
@@ -173,7 +223,7 @@ public class TimeVisController : MonoBehaviour {
             float y = axisY.RawPointToViewportPoint(dp.GetRepresentedYValue());
             RectTransform dpRect = dp.GetComponent<RectTransform>();
             dpRect.anchoredPosition = new Vector3(x, y, 0.0f);
-            dp.gameObject.SetActive(true);
+
 
             RectTransform dpCanvasRect = dataPointCanvas.GetComponent<RectTransform>();
             float xoffset = dpCanvasRect.rect.width / 2;

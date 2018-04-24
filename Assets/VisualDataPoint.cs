@@ -4,23 +4,52 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VisualDataPoint : MonoBehaviour {
+public class VisualDataPoint : MonoBehaviour
+{
 
     private List<DataPoint> rawDatapoints;
+
+    public float timeSpent = 0.0f;
+    public int score = -1;
 
     public float x = 0.5f;
     public float y = 0.5f;
 
-    public RectTransform canvas;
-    private Text subText = null;
-    private string subTextTemplate;
+    [SerializeField]
+    private GameObject defaultHolder;
+    [SerializeField]
+    private Text defaultText;
+
+    [SerializeField]
+    private GameObject primaryHolder;
+    [SerializeField]
+    private Text primaryText;
+
+    [SerializeField]
+    public Animator dataPointVisual;
+
+    [SerializeField]
+    private Text trainingSummaryText;
+    private string trainingSummaryTemplate;
+
+    [SerializeField]
+    private Text trainingHighScoreText;
+    private string trainingHighScoreTemplate;
+
+    private bool primary = false;
+
+    private string textTemplate = null;
 
     // Use this for initialization
-	void Awake () {
-        if (subText == null) {
+    void Awake()
+    {
+        trainingSummaryTemplate = trainingSummaryText.text;
+        trainingHighScoreTemplate = trainingHighScoreText.text;
+
+        if (textTemplate == null) {
             InitText();
         }
-	}
+    }
 
     public void SetRawDataPoints(List<DataPoint> newRawDataPoints)
     {
@@ -36,6 +65,11 @@ public class VisualDataPoint : MonoBehaviour {
         if (rawDatapoints.Count > 0) {
             UpdateText();
         }
+    }
+
+    public int GetDataPointCount()
+    {
+        return rawDatapoints.Count();
     }
 
     public float GetRepresentedXValue()
@@ -60,29 +94,57 @@ public class VisualDataPoint : MonoBehaviour {
 
     private void InitText()
     {
-        subText = this.gameObject.GetComponentInChildren<Text>();
-        subTextTemplate = subText.text;
-        subText.text = "???";
+        Text text = this.gameObject.GetComponentInChildren<Text>();
+        textTemplate = text.text;
     }
 
     public void UpdateText()
     {
-        if (subText == null) {
+        if (textTemplate == null) {
             InitText();
         }
-        subText.text = string.Format(subTextTemplate, GetRepresentedYValue().ToString("0.00"));
+
+        Text textToChange;
+
+        if (primary) {
+            defaultHolder.SetActive(false);
+            primaryHolder.SetActive(true);
+            textToChange = primaryText;
+        } else {
+            defaultHolder.SetActive(true);
+            primaryHolder.SetActive(false);
+            textToChange = defaultText;
+        }
+
+        textToChange.text = string.Format(textTemplate, GetRepresentedYValue().ToString("0.00"));
+    }
+
+    public bool GetPrimary()
+    {
+        return primary;
     }
 
     public void SetPrimary(bool isPrimary)
     {
-        // change opacity of our labelBg
-        // change color of our text
+        primary = isPrimary;
+        UpdateText();
     }
 
+    public void StartPrimaryAnimation()
+    {
+        dataPointVisual.SetBool("Primary", primary);
+    }
 
     public void DataPoint_Clicked()
     {
-        
+        trainingSummaryText.text = string.Format(trainingSummaryTemplate, timeSpent);
+        if (score > 1) {
+            trainingHighScoreText.text = string.Format(trainingHighScoreTemplate, score.ToString() + ". ");
+        } else {
+            trainingHighScoreText.text = string.Format(trainingHighScoreTemplate, "");
+        }
+
+        // somehow connect annotation here?
     }
 
 }

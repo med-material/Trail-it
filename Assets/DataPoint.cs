@@ -12,7 +12,7 @@ public class DataPoint : ScriptableObject {
 
     public float x = -1.0f;
     public float y = -1.0f;
-
+    public DataManager.SessionData sessionData;
     public DataType dataTypeX;
     public DataType dataTypeY;
 
