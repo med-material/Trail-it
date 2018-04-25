@@ -540,36 +540,51 @@ public class DataManager : MonoBehaviour {
     {
         if (hasInit && sessionDataList.Count > 0) {
             string profileID = profileManager.GetCurrentProfileID();
-            Debug.Log("Saving " + sessionDataList.Count + " sessions to" + directory + profileID + ".dat");
-            if (File.Exists(directory + profileID + ".dat")) {
-                File.Delete(directory + profileID + ".dat");
+            string profileDirectory = directory + profileID + "/";
+            Debug.Log("Saving new sessions to" + sessionDataList.Count + " sessions to" + profileDirectory);
+
+            foreach (var session in sessionDataList) {
+                if (session.timestamp.Year > 1) {
+                    string fileName = session.timestamp.ToString();
+                    fileName = fileName.Replace('/', '-');
+                    fileName = fileName.Replace(':', '-');
+                    if (!File.Exists(profileDirectory + fileName + ".dat")) {
+                        FileStream stream = new FileStream(profileDirectory + fileName + ".dat", FileMode.Create);
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.Serialize(stream, session);
+                        stream.Close();
+                    }
+                }
             }
-            FileStream stream = new FileStream(directory + profileID + ".dat", FileMode.Create);
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(stream, sessionDataList);
-            stream.Close(); 
         }
     }
 
     public void LoadData()
     {
+        sessionDataList = new List<SessionData>();
+        List<SessionData> newSessionDataList = new List<SessionData>();
         directory = Application.persistentDataPath + "/TrainingData/";
         if (!Directory.Exists(directory)) {
             Directory.CreateDirectory(directory);
         }
         string profileID = profileManager.GetCurrentProfileID();
-        Debug.Log(directory + profileID + ".dat");
-        if (File.Exists(directory + profileID + ".dat")) {
-            FileStream stream = new FileStream(directory + profileID + ".dat", FileMode.Open);
-            BinaryFormatter formatter = new BinaryFormatter();
-            sessionDataList = (List<SessionData>)formatter.Deserialize(stream);
-            stream.Close();
-            Debug.Log("Loaded " + sessionDataList.Count + " sessions for ID " + profileID);
-        } else {
-            sessionDataList = new List<SessionData>();
-            Debug.Log("no sessionDataList on disk, creating new list for ID " + profileID);
-        }
+        string profileDirectory = directory + profileID + "/";
 
+        if (!Directory.Exists(profileDirectory)) {
+            Directory.CreateDirectory(profileDirectory);
+        }
+        foreach (string file in Directory.GetFiles(profileDirectory, "*.dat")) {
+            FileStream stream = new FileStream(file, FileMode.Open);
+            BinaryFormatter formatter = new BinaryFormatter();
+            newSessionDataList.Add((SessionData)formatter.Deserialize(stream));
+            stream.Close();
+        }
+        sessionDataList = newSessionDataList.OrderBy(s => s.timestamp).ToList();
+        if (sessionDataList.Count < 1) {
+            Debug.Log("no sessionDataList on disk, creating new list for ID " + profileID);
+        } else {
+            Debug.Log("Loaded " + sessionDataList.Count + " sessions for ID " + profileID);
+        }
     }
 
     public LevelData GetLevelData()
