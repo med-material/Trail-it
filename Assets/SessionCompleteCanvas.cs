@@ -13,12 +13,6 @@ public class SessionCompleteCanvas : MonoBehaviour {
     CountAnimation trainingTime;
 
     [SerializeField]
-    GameObject heatMapCanvas;
-
-    [SerializeField]
-    HeatMapController heatMapController;
-
-    [SerializeField]
     CircularLineVisualization hitsVis;
 
     [SerializeField]
@@ -49,10 +43,4 @@ public class SessionCompleteCanvas : MonoBehaviour {
 	void Update () {
 		
 	}
-
-    public void HeatMap_Button_Clicked()
-    {
-        heatMapCanvas.SetActive(true);
-        heatMapController.Init(sessionData.fieldReactionTimes, sessionData.medianReactionTime);
-    }
 }
