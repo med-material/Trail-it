@@ -136,11 +136,10 @@ public class Axis : MonoBehaviour
     {
         float maxView = GetViewMax();
         float minView = GetViewMin();
-        float viewWidth = (maxView - minView) - labeloffset;
+		float viewWidth = Mathf.Abs((maxView - minView) - labeloffset);
 
 		float relativeRawValue = (rawDataValue - rawDisplayRange[0]);
 		float relativeMaxDisplayRange = rawDisplayRange[1] - rawDisplayRange[0];
-
         // cap the raw value to the highest position if it is higher than what our display range allows.
         if (relativeRawValue > rawDisplayRange[1]) {
             relativeRawValue = rawDisplayRange[1];
@@ -150,7 +149,7 @@ public class Axis : MonoBehaviour
         if (relativeMaxDisplayRange > 0) {
             dataPointPosition = (viewWidth / relativeMaxDisplayRange) * relativeRawValue;
         } else {
-            dataPointPosition = (viewWidth / rawDisplayRange[1]) * relativeRawValue;
+			dataPointPosition = (viewWidth / rawDisplayRange[1]) * relativeRawValue;
         }
 		
 		Debug.Log(dataPointPosition + " = (" + viewWidth + " / " + rawDisplayRange[1] + ") * " + relativeRawValue);
