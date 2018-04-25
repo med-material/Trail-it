@@ -138,7 +138,7 @@ public class LoggingManager : MonoBehaviour {
             logEntries[i] = logEntries[i] + sep
                     + sD.currentProfileID + sep
                     + sD.version + sep
-                    + sD.deviceModel + sep
+                    + sD.deviceModel.Replace(',', '-').Replace(';', '-') + sep
                     + sD.playerName + sep
                     + sD.email + sep
                     + sD.playContext + sep
