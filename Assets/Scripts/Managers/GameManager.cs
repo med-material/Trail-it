@@ -89,12 +89,6 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	private CountAnimation endLevelAverage;
 
-    [SerializeField]
-    private GameObject heatMap;
-
-    [SerializeField]
-    private GameObject timeVis;
-
     private bool seenHeatMap = false;
     private bool seenTimeVis = false;
 
