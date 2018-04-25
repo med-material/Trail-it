@@ -134,7 +134,7 @@ public class Utils : MonoBehaviour {
 
     public static int TargetAmountFromDifficulty(int difficulty = 1)
     {
-        int circleAmount = 12;
+        int circleAmount = -1;
         switch (difficulty) {
             case 1:
                 circleAmount = 12;
@@ -146,7 +146,7 @@ public class Utils : MonoBehaviour {
                 circleAmount = 30;
                 break;
             default:
-                circleAmount = 12;
+                circleAmount = -1;
                 break;
         }
 
