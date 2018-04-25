@@ -17,7 +17,10 @@ public class updatedCanvas : MonoBehaviour
 	public void NextButtonClicked()
 	{
 		bool shouldUpload = profileManager.GetUploadPolicy();
-		if (shouldUpload)
+        string trainingReason = profileManager.GetCurrentTrainingReason();
+        string ageGroup = profileManager.GetCurrentAgeGroup();
+        string context = profileManager.GetCurrentPlayContext();
+		if (shouldUpload && trainingReason == "Unknown" && ageGroup == "Unknown" && context == "Unknown")
 		{
 			QuestionnaireCanvas.SetActive(true);
 			this.gameObject.SetActive(false);
