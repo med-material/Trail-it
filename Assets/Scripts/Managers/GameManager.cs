@@ -183,13 +183,13 @@ public class GameManager : MonoBehaviour {
                 if (target != null) {
                     Vector3 targetPos = mainCam.WorldToViewportPoint(target.transform.position);
                     if (targetPos.x - mousePos.x > 0.05f) {
-                        Debug.Log("Arduino vibrates to the right!");
-                        arduino.ERM1Power = 255;
-                        arduino.ERM2Power = 0;
-                    } else if (mousePos.x - targetPos.x > 0.05f) {
                         Debug.Log("Arduino vibrates to the left!");
-                        arduino.ERM2Power = 255;
                         arduino.ERM1Power = 0;
+                        arduino.ERM2Power = 255;
+                    } else if (mousePos.x - targetPos.x > 0.05f) {
+                        Debug.Log("Arduino vibrates to the right!");
+                        arduino.ERM2Power = 0;
+                        arduino.ERM1Power = 255;
                     } else {
                         arduino.ERM2Power = 0;
                         arduino.ERM1Power = 0;
