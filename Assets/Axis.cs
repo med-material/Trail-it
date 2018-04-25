@@ -31,20 +31,16 @@ public class Axis : MonoBehaviour
     [SerializeField]
     private GameObject visualAxis;
 
-
     [SerializeField]
     private RectTransform scrollRect;
+    private Vector2 defaultScrollRectSize;
 
     [SerializeField]
     private RectTransform timeVisCanvas;
 
+
     private float labelSpacing = 0.0f;
     private float labeloffset = 0.0f;
-
-    //[SerializeField]
-    //private float MinimumSpacing = 0.25f;
-    //[SerializeField]
-    //private float MaximumSpacing = 1.00f;
 
     private GameObject visualAxisHolder;
     private RectTransform visualAxisRect;
@@ -75,6 +71,7 @@ public class Axis : MonoBehaviour
         visualAxisRect = visualAxisHolder.GetComponent<RectTransform>();
         labelParent.SetActive(false);
         visualAxis.SetActive(false);
+        defaultScrollRectSize = new Vector2 (scrollRect.sizeDelta.x, scrollRect.sizeDelta.y);
     }
 
     public void SetShowAxis(bool showTheAxis)
@@ -90,6 +87,14 @@ public class Axis : MonoBehaviour
     public void SetAxisType(AxisType type)
     {
         axisType = type;
+    }
+
+    public void OnDestroy()
+    {
+        if (axisType == AxisType.x) {
+            Debug.Log("Resetting canvas to " + defaultScrollRectSize.x + ", " + defaultScrollRectSize.y);
+            scrollRect.sizeDelta = defaultScrollRectSize;
+        }
     }
 
     public void SetAxisLabels(List<string> newAxisLabels, float frequency, List<string> newAxisSubLabels = null)

@@ -13,7 +13,7 @@ public enum ZoomType
 public class TimeVisController : MonoBehaviour {
 
     [SerializeField]
-    DataManager dataManager;
+    private DataManager dataManager;
     List<DataManager.SessionData> sessionDataList;
 
 	List<VisualDataPoint> visualDataPoints;
@@ -25,14 +25,19 @@ public class TimeVisController : MonoBehaviour {
     private GameObject dataPointCanvas;
 
     [SerializeField]
-	private Axis axisY;
+	private GameObject axisYTemplate;
+    private Axis axisY;
 
     [SerializeField]
-	private Axis axisX;
+	private GameObject axisXTemplate;
+    private Axis axisX;
 
     [SerializeField]
     private LineRenderer lineRenderer;
     private int vertexIndex = -1;
+
+    [SerializeField]
+    private GameObject timeVisCanvas;
 
     private List<string> axisXLabels;
     private List<string> axisXSubLabels;
@@ -40,28 +45,44 @@ public class TimeVisController : MonoBehaviour {
     private int highestDayOfYear;
     private int lowestDayOfYear;
 
-	// Use this for initialization
-	void Start () {
-        sessionDataList = dataManager.GetSessionDataList();
+    public void InitWithCurrentSettings()
+    {
+        this.Init();
+    }
+
+    public void Init(string gameType = null, int difficultyLevel = -1)
+    {
         visualDataPoints = new List<VisualDataPoint>();
         axisXLabels = new List<string>();
         axisXSubLabels = new List<string>();
+        vertexIndex = -1;
 
-        // use some sensible defaults based on the data from the latest session.
+        // use some sensible defaults based on the data from the latest session (filtered).
+        sessionDataList = dataManager.GetSessionDataList();
 
         if (sessionDataList.Count > 0) {
             // Instantiate data points based on the session data list
             List<List<DataPoint>> dataPointLists = new List<List<DataPoint>>();
 
-            var curSession = sessionDataList.Last();
+            int dL;
+            string gT;
+
+            if (gameType == null && difficultyLevel == -1) {
+                dL = sessionDataList.Last().difficultyLevel;
+                gT = sessionDataList.Last().gameType;
+            } else {
+                dL = difficultyLevel;
+                gT = gameType;
+            }
 
             int currentDate = -1;
+            List<DataPoint> dpList;
+            dpList = new List<DataPoint>();
+            dataPointLists.Add(dpList);
             lowestDayOfYear = currentDate;
             highestDayOfYear = currentDate;
-            List<DataPoint> dpList = new List<DataPoint>();
-            dataPointLists.Add(dpList);
             foreach (var session in sessionDataList) {
-                if (session.reactionTime > -1.0f && session.gameType == curSession.gameType && session.difficultyLevel == curSession.difficultyLevel) {
+                if (session.reactionTime > -1.0f && session.gameType == gT && session.difficultyLevel == dL) {
                     if (session.timestamp.Year > 1 && session.reactionTime > -1.0f) {
                         if (currentDate == session.timestamp.DayOfYear || currentDate == -1) {
                             currentDate = session.timestamp.DayOfYear;
@@ -80,6 +101,7 @@ public class TimeVisController : MonoBehaviour {
                             dataPointLists.Last().Add(dataPoint);
 
                             currentDate = session.timestamp.DayOfYear;
+                            Debug.Log("session DayOfYear: " + currentDate);
                         }
 
                         if (lowestDayOfYear > currentDate || lowestDayOfYear == -1) {
@@ -92,41 +114,45 @@ public class TimeVisController : MonoBehaviour {
                 }
             }
             Debug.Log("Created " + dataPointLists.Count + " lists with datapoints.");
-            foreach (var list in dataPointLists) {
-                CreateVisualDataPoint(list);
-                Debug.Log("Created VisualDataPoint for " + list.Count + " datapoints.");
-            }
+            if (dataPointLists.Count > 0) {
+                foreach (var list in dataPointLists) {
+                    if (list.Count > 0) {
+                        CreateVisualDataPoint(list);
+                        Debug.Log("Created VisualDataPoint for " + list.Count + " datapoints.");
+                    }
 
-            CalculateHighScores();
-
-            // Highlight the latest training session
-            visualDataPoints.Last().SetPrimary(true);
-
-            for (int i = lowestDayOfYear; i <= highestDayOfYear; i++) {
-                System.DateTime val = new System.DateTime(1111, 1, 1).AddDays(i - 1);
-
-                string labelString = val.DayOfWeek.ToString();
-                if (i == highestDayOfYear) {
-                    labelString = "i Dag";
                 }
-                string subLabelString = string.Format("{0}. {1}", val.Day, val.ToString("MMMM"));
-                axisXLabels.Add(labelString);
-                axisXSubLabels.Add(subLabelString);
+
+                CalculateHighScores();
+
+                // Highlight the latest training session
+                visualDataPoints.Last().SetPrimary(true);
+
+                for (int i = lowestDayOfYear; i <= highestDayOfYear; i++) {
+                    System.DateTime val = new System.DateTime(1111, 1, 1).AddDays(i - 1);
+
+                    string labelString = val.DayOfWeek.ToString();
+                    if (i == System.DateTime.Today.DayOfYear) {
+                        labelString = "i Dag";
+                    }
+                    string subLabelString = string.Format("{0}. {1}", val.Day, val.ToString("MMMM"));
+                    axisXLabels.Add(labelString);
+                    axisXSubLabels.Add(subLabelString);
+                }
+                Debug.Log("highestDayOfYear is: " + highestDayOfYear + ", lowestDayOfYear is: " + lowestDayOfYear);
+
+                CreateXAxis();
+                CreateYAxis();
+
+                // Calculate the mapping of our datapoints.
+                CalculateMapping();
+                StartCoroutine(SpawnDataPoints());
             }
-            Debug.Log("highestDayOfYear is: " + highestDayOfYear + ", lowestDayOfYear is: " + lowestDayOfYear);
-
-            CreateXAxis();
-            CreateYAxis();
-
-            // Calculate the mapping of our datapoints.
-            CalculateMapping();
-            StartCoroutine(SpawnDataPoints());
 
         } else {
             Debug.Log("Not enough data!");
         }
-
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -142,6 +168,22 @@ public class TimeVisController : MonoBehaviour {
             rankedDataPoints[i].score = i + 1;
         }
 
+    }
+
+    public void ClearTimeVis()
+    {
+        foreach (var dp in visualDataPoints) {
+            Destroy(dp.gameObject);
+        }
+
+        Destroy(axisX.gameObject);
+        Destroy(axisY.gameObject);
+
+        if (lineRenderer.positionCount > 0) {
+            lineRenderer.positionCount = 0;
+            vertexIndex = -1;
+        }
+        timeVisCanvas.SetActive(false);
     }
 
     // This function creates a visual representation based on 
@@ -164,6 +206,9 @@ public class TimeVisController : MonoBehaviour {
 
     private void CreateXAxis()
     {
+        GameObject axis = (GameObject)Instantiate(axisXTemplate, this.transform);
+        axis.SetActive(true);
+        axisX = axis.GetComponent<Axis>();
         axisX.SetShowAxis(true);
         // Set AxisLabels to use at every 1.0f step.
         axisX.SetRawDisplayRange(lowestDayOfYear, highestDayOfYear);
@@ -174,6 +219,9 @@ public class TimeVisController : MonoBehaviour {
 
     private void CreateYAxis()
     {
+        GameObject axis = (GameObject)Instantiate(axisYTemplate, this.transform);
+        axis.SetActive(true);
+        axisY = axis.GetComponent<Axis>();
 		var currentSession = sessionDataList.Last();
 
         float maxLimit = -1.0f;

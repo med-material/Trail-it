@@ -18,6 +18,7 @@ public class HeatMapController : MonoBehaviour {
     DataManager dataManager;
 
     List<DataManager.SessionData> sessionDataList;
+    List<DataManager.SessionData> CompleteSessionDataList;
 
     int currentSessionIndex = 0;
     DataManager.SessionData currentSession;
@@ -27,17 +28,36 @@ public class HeatMapController : MonoBehaviour {
     [SerializeField]
     HeatMapField[] lowerFields;
 
-    public void Start()
+    public void InitWithCurrentSettings()
     {
-        sessionDataList = dataManager.GetSessionDataList();
-        currentSessionIndex = sessionDataList.Count -1;
+        this.Init();
+    }
+
+    public void Init(string gameType = null, int difficultyLevel = -1)
+    {
+        Debug.Log("Init called");
+        CompleteSessionDataList = dataManager.GetSessionDataList();
+        Debug.Log("CompleteSessionDataLength: " + CompleteSessionDataList.Count);
+
+        if (gameType == null && difficultyLevel == -1) {
+            currentSession = CompleteSessionDataList[CompleteSessionDataList.Count - 1];
+            sessionDataList = CompleteSessionDataList.FindAll(s => s.difficultyLevel == currentSession.difficultyLevel && s.gameType == currentSession.gameType);
+        } else {
+            sessionDataList = CompleteSessionDataList.FindAll(s => s.difficultyLevel == difficultyLevel && s.gameType == gameType);
+            currentSession = sessionDataList[sessionDataList.Count - 1];
+        }
+
+        currentSessionIndex = sessionDataList.Count - 1;
+
+        Debug.Log("sessionDataListLength: " + sessionDataList.Count);
 
         if (sessionDataList.Count > 1) {
             sessionSlider.gameObject.SetActive(true);
-            sessionSlider.minValue = 1;
-            sessionSlider.maxValue = sessionDataList.Count-1;
+            sessionSlider.minValue = 0;
+            sessionSlider.maxValue = sessionDataList.Count - 1;
             sessionSlider.value = sessionDataList.Count - 1;
         }
+
         currentSession = sessionDataList[currentSessionIndex];
         PopulateHeatmap();
         UpdateDay();
@@ -52,7 +72,7 @@ public class HeatMapController : MonoBehaviour {
             } else {
                 weekdayText.text = timestamp.DayOfWeek.ToString();
             }
-            dateText.text = string.Format("{0}. {1}", timestamp.Day, timestamp.ToString("MMMM").ToUpper());
+            dateText.text = string.Format("{0}. {1}, KL. {2}", timestamp.Day, timestamp.ToString("MMMM").ToUpper(), timestamp.ToString("HH:MM"));
         } else {
             weekdayText.text = "???";
             dateText.text = "???";
@@ -62,6 +82,7 @@ public class HeatMapController : MonoBehaviour {
     public void PopulateHeatmap()
     {
         try {
+            Debug.Log("currentSession fieldReactionTimes: " + currentSession.fieldReactionTimes);
             float[,] heatMapValues = currentSession.fieldReactionTimes;
             float medianValue = currentSession.medianReactionTime;
 
@@ -85,10 +106,12 @@ public class HeatMapController : MonoBehaviour {
                     }
 
                     if (i == 1) {
+                        upperFields[j].ResetField();
                         upperFields[j].SetHeatMapColor(color);
                         upperFields[j].SetHeatMapValue(heatMapValues[j, i]);
                         upperFields[j].SetHeatMapDetails(currentSession.fieldOutlierCount[j, i], currentSession.fieldAssistanceCount[j, i]);
                     } else if (i == 0) {
+                        lowerFields[j].ResetField();
                         lowerFields[j].SetHeatMapColor(color);
                         lowerFields[j].SetHeatMapValue(heatMapValues[j, i]);
                         lowerFields[j].SetHeatMapDetails(currentSession.fieldOutlierCount[j, i], currentSession.fieldAssistanceCount[j, i]);
@@ -97,6 +120,7 @@ public class HeatMapController : MonoBehaviour {
             }
 
         } catch (System.NullReferenceException e) {
+            Debug.LogError(e);
             foreach (var field in upperFields) {
                 field.SetHeatMapColor(HeatMapField.HeatMapColor.Unknown);
                 field.SetHeatMapValue(-1.0f);

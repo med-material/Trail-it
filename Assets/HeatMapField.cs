@@ -48,7 +48,7 @@ public class HeatMapField : MonoBehaviour {
     [SerializeField]
     private Image fieldBorderVertical;
 
-    private bool showingDetails = false;
+    public bool showingDetails = false;
     // Use this for initialization
 	void Awake () {
         fieldTextTemplate = fieldText.text;
@@ -105,12 +105,17 @@ public class HeatMapField : MonoBehaviour {
         }
     }
 
+    public void ResetField()
+    {
+        fieldText.gameObject.SetActive(true);
+        fieldDetails.gameObject.SetActive(false);
+        showingDetails = false;
+    }
+
     public void Field_Clicked()
     {
         if (showingDetails) {
-            fieldText.gameObject.SetActive(true);
-            fieldDetails.gameObject.SetActive(false);
-            showingDetails = false;
+            ResetField();
         } else {
             fieldText.gameObject.SetActive(false);
             fieldDetails.gameObject.SetActive(true);
