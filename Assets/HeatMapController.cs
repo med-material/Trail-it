@@ -72,7 +72,7 @@ public class HeatMapController : MonoBehaviour {
             } else {
                 weekdayText.text = timestamp.DayOfWeek.ToString();
             }
-            dateText.text = string.Format("{0}. {1}, KL. {2}", timestamp.Day, timestamp.ToString("MMMM").ToUpper(), timestamp.ToString("HH:MM"));
+            dateText.text = string.Format("{0}. {1}, KL. {2}", timestamp.Day, timestamp.ToString("MMMM").ToUpper(), timestamp.ToString("HH:mm"));
         } else {
             weekdayText.text = "???";
             dateText.text = "???";
