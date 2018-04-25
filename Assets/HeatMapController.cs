@@ -87,9 +87,11 @@ public class HeatMapController : MonoBehaviour {
                     if (i == 1) {
                         upperFields[j].SetHeatMapColor(color);
                         upperFields[j].SetHeatMapValue(heatMapValues[j, i]);
+                        upperFields[j].SetHeatMapDetails(currentSession.fieldOutlierCount[j, i], currentSession.fieldAssistanceCount[j, i]);
                     } else if (i == 0) {
                         lowerFields[j].SetHeatMapColor(color);
                         lowerFields[j].SetHeatMapValue(heatMapValues[j, i]);
+                        lowerFields[j].SetHeatMapDetails(currentSession.fieldOutlierCount[j, i], currentSession.fieldAssistanceCount[j, i]);
                     }
                 }
             }
@@ -98,11 +100,13 @@ public class HeatMapController : MonoBehaviour {
             foreach (var field in upperFields) {
                 field.SetHeatMapColor(HeatMapField.HeatMapColor.Unknown);
                 field.SetHeatMapValue(-1.0f);
+                field.SetHeatMapDetails(-1, -1);
             }
 
             foreach (var field in lowerFields) {
                 field.SetHeatMapColor(HeatMapField.HeatMapColor.Unknown);
                 field.SetHeatMapValue(-1.0f);
+                field.SetHeatMapDetails(-1, -1);
             }
         }
     }

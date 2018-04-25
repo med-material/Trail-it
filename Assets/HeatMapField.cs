@@ -36,6 +36,10 @@ public class HeatMapField : MonoBehaviour {
     private string fieldTextTemplate = "";
 
     [SerializeField]
+    private Text fieldDetails;
+    private string fieldDetailsTemplate = "";
+
+    [SerializeField]
     private Image fieldBackground;
 
     [SerializeField]
@@ -44,9 +48,11 @@ public class HeatMapField : MonoBehaviour {
     [SerializeField]
     private Image fieldBorderVertical;
 
+    private bool showingDetails = false;
     // Use this for initialization
 	void Awake () {
         fieldTextTemplate = fieldText.text;
+        fieldDetailsTemplate = fieldDetails.text;
 	}
 
     public void SetHeatMapColor(HeatMapColor color)
@@ -75,6 +81,7 @@ public class HeatMapField : MonoBehaviour {
 
         fieldBackground.color = backgroundColor;
         fieldText.color = foregroundColor;
+        fieldDetails.color = foregroundColor;
         fieldBorderHorizontal.color = foregroundColor;
         fieldBorderVertical.color = foregroundColor;
 
@@ -86,6 +93,28 @@ public class HeatMapField : MonoBehaviour {
             fieldText.text = string.Format(fieldTextTemplate, heatMapValue.ToString("0.00"));
         } else {
             fieldText.text = "???";
+        }
+    }
+
+    public void SetHeatMapDetails(int outlierCount, int assistanceCount)
+    {
+        if (assistanceCount > -1 && outlierCount > -1) {
+            fieldDetails.text = string.Format(fieldDetailsTemplate, outlierCount, assistanceCount);
+        } else {
+            fieldDetails.text = "Ingen detaljer tilgængelige..";
+        }
+    }
+
+    public void Field_Clicked()
+    {
+        if (showingDetails) {
+            fieldText.gameObject.SetActive(true);
+            fieldDetails.gameObject.SetActive(false);
+            showingDetails = false;
+        } else {
+            fieldText.gameObject.SetActive(false);
+            fieldDetails.gameObject.SetActive(true);
+            showingDetails = true;
         }
     }
 }
