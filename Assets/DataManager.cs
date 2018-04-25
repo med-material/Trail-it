@@ -373,6 +373,7 @@ public class DataManager : MonoBehaviour {
         currentSessionData.playContext = profileManager.GetCurrentPlayContext();
         currentSessionData.trainingReason = profileManager.GetCurrentTrainingReason();
         currentSessionData.ageGroup = profileManager.GetCurrentAgeGroup();
+        currentSessionData.difficultyLevel = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DifficultyLevel", 1);
         currentSessionData.sessionLength = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Time", 2);
         currentSessionData.gameType = PlayerPrefs.GetString("Settings:" + currentProfileID + ":GameType", "gameA");
         currentSessionData.tutorialSeen = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Intro", 1) == 1;
