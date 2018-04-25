@@ -219,7 +219,7 @@ public class TimeVisController : MonoBehaviour {
 
     private void CreateYAxis()
     {
-        GameObject axis = (GameObject)Instantiate(axisYTemplate, this.transform);
+        GameObject axis = (GameObject)Instantiate(axisYTemplate, dataPointCanvas.transform);
         axis.SetActive(true);
         axisY = axis.GetComponent<Axis>();
 		var currentSession = sessionDataList.Last();
