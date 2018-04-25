@@ -142,7 +142,7 @@ public class Arduino : MonoBehaviour {
 
         // Example code for using the Y position of the mouse to control the ERMs
         // ERM 1
-        if(useMouseControl = true){
+        if(useMouseControl == true){
 	        if((Screen.height / 2 - Input.mousePosition.y) < 0){
 	        	ERM2Power = 0;
 	        	if(Input.mousePosition.y - (Screen.height / 2) > 254){
