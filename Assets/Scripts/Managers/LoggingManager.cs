@@ -131,14 +131,17 @@ public class LoggingManager : MonoBehaviour {
         var sD = dataManager.GetSessionData();
         var difficultyLevel = PlayerPrefs.GetInt("Settings:" + sD.currentProfileID + ":DifficultyLevel", 1);
         var circleAmount = Utils.TargetAmountFromDifficulty(sD.difficultyLevel).ToString();
-        bool seenHeatMap = gameManager.GetHeatMapSeen();               
-        bool seenTimeVis = gameManager.GetTimeVisSeen();               
+		string seenHeatMap = Utils.BoolToNumberString(gameManager.GetHeatMapSeen());               
+		string seenTimeVis = Utils.BoolToNumberString(gameManager.GetTimeVisSeen());
+		string deviceModel = sD.deviceModel.Replace (',', '_');
+		deviceModel = deviceModel.Replace (';', '_');
+		Debug.Log ("seenTimeVis: " + seenTimeVis + ", seenHeatMap: " + seenHeatMap);
 
         for (int i = 0; i < logEntries.Count; i++){
             logEntries[i] = logEntries[i] + sep
                     + sD.currentProfileID + sep
                     + sD.version + sep
-                    + sD.deviceModel.Replace(',', '-').Replace(';', '-') + sep
+                    + deviceModel + sep
                     + sD.playerName + sep
                     + sD.email + sep
                     + sD.playContext + sep
@@ -147,12 +150,12 @@ public class LoggingManager : MonoBehaviour {
                     + sD.gameType + sep
                     + circleAmount + sep
                     + sD.sessionLength + sep
-                    + sD.tutorialSeen + sep
-                    + sD.laneSetting + sep
-                    + sD.pulseSetting + sep
-                    + sD.voiceSetting + sep
-                    + sD.repeatVoiceSetting + sep
-                    + sD.dataVisEnabled + sep
+					+ Utils.BoolToNumberString(sD.tutorialSeen) + sep
+					+ Utils.BoolToNumberString(sD.laneSetting) + sep
+					+ Utils.BoolToNumberString(sD.pulseSetting) + sep
+					+ Utils.BoolToNumberString(sD.voiceSetting) + sep
+					+ Utils.BoolToNumberString(sD.repeatVoiceSetting) + sep
+					+ Utils.BoolToNumberString(sD.dataVisEnabled) + sep
                     + sD.worstReactionTime + sep
                     + sD.bestReactionTime + sep
                     + sD.medianReactionTime + sep
