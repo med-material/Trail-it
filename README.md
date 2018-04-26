@@ -1,6 +1,6 @@
 # Trail it - Cognitive Training
 ![Trail it trains your sight and concentration](https://i1.wp.com/bastianilso.com/wp-content/uploads/2018/04/trailit_in_game_full_res.png?fit=640%2C480)
-Latest stable: v2018.04.10.2
+Latest stable: v2018.04.20
 
 Trail it (TrailiT) is a game which trains your eye sight and concentration 
 ability. In the game you connect circles in the order 1-2-3-4 or in 
@@ -14,15 +14,14 @@ to play this game on iPad. The game is developed by students at Aalborg
 University who is researching digital apps for use in rehabilitation and 
 at home.
 
-Please see README.pdf for help on how to start the game. For publications and more information, visit [our website].
-[our website]: http://rehab.bastianilso.com
+Please see README.pdf for help on how to start the game. For publications and more information, visit [our website](http://rehab.bastianilso.com).
 
-## Trail it 2017.04.10 Key Features:
- * New Voice-over
- * Improved End level screen with animated counting
- * Auto-generated levels
- * Better Reaction Time Calculations
- * Improved Data Logging
+## Trail it 2017.04.20 Key Features:
+ * Heatmap Visualization
+ * Timeline Visualization 
+ * Outlier Detection
+ * Overview and Exploration of previous training results
+ * Improved Data Management
 
 
 Trail it (c) Stephanie Githa Nadarajah, Camilla Gisela Hansen 
