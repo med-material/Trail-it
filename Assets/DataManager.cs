@@ -381,7 +381,7 @@ public class DataManager : MonoBehaviour {
         currentSessionData.pulseSetting = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Pulse", 0) == 1;
         currentSessionData.voiceSetting = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":Stemme", 0) == 1;
         currentSessionData.repeatVoiceSetting = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":GentagStemme", 0) == 1;
-        currentSessionData.dataVisEnabled = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DataVisEnabled", 0) == 1;
+        currentSessionData.dataVisEnabled = PlayerPrefs.GetInt("Settings:" + currentProfileID + ":DataVisEnabled", 1) == 1;
 
         Debug.Log("AddSessionData: " + currentSessionData.ToString());
         sessionDataList.Add(currentSessionData);
