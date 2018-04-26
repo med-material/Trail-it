@@ -28,6 +28,8 @@ public class HeatMapController : MonoBehaviour {
     [SerializeField]
     HeatMapField[] lowerFields;
 
+	bool hasInit = false;
+
     public void InitWithCurrentSettings()
     {
         this.Init();
@@ -35,7 +37,7 @@ public class HeatMapController : MonoBehaviour {
 
     public void Init(string gameType = null, int difficultyLevel = -1)
     {
-        Debug.Log("Init called");
+		Debug.Log("Init called");
         CompleteSessionDataList = dataManager.GetSessionDataList();
         Debug.Log("CompleteSessionDataLength: " + CompleteSessionDataList.Count);
 
@@ -51,16 +53,19 @@ public class HeatMapController : MonoBehaviour {
 
         Debug.Log("sessionDataListLength: " + sessionDataList.Count);
 
-        if (sessionDataList.Count > 1) {
-            sessionSlider.gameObject.SetActive(true);
-            sessionSlider.minValue = 0;
-            sessionSlider.maxValue = sessionDataList.Count - 1;
-            sessionSlider.value = sessionDataList.Count - 1;
-        }
+		if (sessionDataList.Count > 1) {
+			sessionSlider.gameObject.SetActive (true);
+			sessionSlider.minValue = 0;
+			sessionSlider.maxValue = sessionDataList.Count - 1;
+			sessionSlider.value = sessionDataList.Count - 1;
+		} else {
+			sessionSlider.gameObject.SetActive (false);
+		}
 
         currentSession = sessionDataList[currentSessionIndex];
         PopulateHeatmap();
         UpdateDay();
+		hasInit = true;
     }
 
     private void UpdateDay()
@@ -137,10 +142,12 @@ public class HeatMapController : MonoBehaviour {
 
     public void SessionSlider_OnValueChanged()
     {
-        currentSessionIndex = (int)sessionSlider.value;
-        currentSession = sessionDataList[currentSessionIndex];
-        PopulateHeatmap();
-        UpdateDay();
+		currentSessionIndex = (int)sessionSlider.value;
+		if (currentSessionIndex < sessionDataList.Count) {
+			currentSession = sessionDataList [currentSessionIndex];
+			PopulateHeatmap ();
+			UpdateDay ();
+		}
     }
 
 }
