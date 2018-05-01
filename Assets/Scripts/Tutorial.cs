@@ -178,8 +178,6 @@ public class Tutorial : MonoBehaviour {
 
 	private void StartStage1 () {
 
-		gameManager.LD.ClearAll ();
-
 		startTime = Time.time;
 		handStartTime = Time.time;
 		handStage = 0;
@@ -250,8 +248,6 @@ public class Tutorial : MonoBehaviour {
 	private void StartStage2 () {
 
 		startTime = Time.time;
-		gameManager.LD.ClearAll ();
-		//gameManager.LD.gameObject.SetActive (false);
 		tutorialVoice.Stop();
 		tutorialVoice.PlayOneShot(endClip);
 		//endSound.Play ();
@@ -269,11 +265,6 @@ public class Tutorial : MonoBehaviour {
 
 	private void RunGame() {
 
-		if (gameManager.input.TouchDown)
-		{
-			gameManager.LD.StartLine(gameManager.input.TouchPos);
-		}
-
 		if(gameManager.input.TouchActive) {
 
 			colliderHit = Physics2D.OverlapPoint(mainCam.ScreenToWorldPoint(Input.mousePosition));
@@ -287,8 +278,6 @@ public class Tutorial : MonoBehaviour {
 					hit = colliderHit.GetComponent<Target>().GetID();
 					
 					if(hit == currentTarget) {
-
-						gameManager.LD.DrawLine(gameManager.input.TouchPos, HitType.TargetHit);
 
 						if(hit == targets.Length-1){
 							//loggingManager.WriteLog("Target Hit - Level Complete");
@@ -361,14 +350,12 @@ public class Tutorial : MonoBehaviour {
 				}
 			}
 			else {
-				gameManager.LD.DrawLine(gameManager.input.TouchPos, HitType.NoHit);
 				tempHit = null;
 			}
 		}
 		else if (gameManager.input.TouchUp) {
 			
 			tempHit = null;
-			gameManager.LD.EndLine();
 		}
 	}
 	

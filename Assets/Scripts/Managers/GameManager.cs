@@ -103,8 +103,6 @@ public class GameManager : MonoBehaviour
     // the state we're in. 
     public static string _CurrentScene = "";
 
-    public LineDrawer LD;
-
     void Start()
     {
 		GameLevel._DidInit = false;
@@ -172,16 +170,10 @@ public class GameManager : MonoBehaviour
             float time = Time.time;
             sessionActive = (Time.time - sessionTimeStart < sessionLength * 60);
 
-			if (input.TouchDown)
-			{
-				LD.StartLine(input.TouchPos);
-			}
-
 			if (input.TouchActive)
 			{
 				//Debug.Log("touchInput: [" + mainCam.WorldToViewportPoint(input.TouchPos) + "]");
 				HitType hitType = activeLevel.AttemptHit(input.TouchPos);
-				LD.DrawLine(input.TouchPos, hitType);
 
 				if (hitType == HitType.TargetHit || hitType == HitType.TargetHitLevelComplete || hitType == HitType.WrongTargetHit)
 				{
@@ -227,7 +219,6 @@ public class GameManager : MonoBehaviour
 			} else if (input.TouchUp)
 			{
 				activeLevel.TempHit = null;
-				LD.EndLine();
 			}
 		}
 
@@ -249,7 +240,7 @@ public class GameManager : MonoBehaviour
 		sessionTimeRemaining = sessionTimeRemaining - levelCompletionTime;
 		sessionHitsTotal += levelHitsTotal;
 		levelReactionTime = Utils.GetMedian(levelReactionTimesList);
-        bool usedLineDrawing = LD.GetUsesLineDrawing();
+        bool usedLineDrawing = false;
         dataManager.AddLevelData(currentProgress, levelCompletionTime, sessionTimeCurrent,
                                  levelTimestampStart, levelTimestampEnd, usedLineDrawing);
 		loggingManager.WriteLevelLog("Level " + currentProgress.ToString() + " Completed!");
