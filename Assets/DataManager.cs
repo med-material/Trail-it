@@ -355,9 +355,9 @@ public class DataManager : MonoBehaviour {
                 }
             }
 
-            float reactionTimeAverage = sessionHitTimesList[field.xIndex, field.yIndex].Average(item => (float)item);
+            float reactionTimeMedian = Utils.GetMedian(sessionHitTimesList[field.xIndex, field.yIndex]);
             float distanceAverage = sessionHitDistancesList[field.xIndex, field.yIndex].Average(item => (float)item);
-            currentSessionData.fieldReactionTimes[field.xIndex, field.yIndex] = reactionTimeAverage;
+            currentSessionData.fieldReactionTimes[field.xIndex, field.yIndex] = reactionTimeMedian;
             currentSessionData.fieldDistances[field.xIndex, field.yIndex] = distanceAverage;
         }
 

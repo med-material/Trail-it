@@ -82,13 +82,13 @@ public class TimeVisController : MonoBehaviour {
             lowestDayOfYear = currentDate;
             highestDayOfYear = currentDate;
             foreach (var session in sessionDataList) {
-                if (session.reactionTime > -1.0f && session.gameType == gT && session.difficultyLevel == dL) {
-                    if (session.timestamp.Year > 1 && session.reactionTime > -1.0f) {
+                if (session.medianReactionTime > -1.0f && session.gameType == gT && session.difficultyLevel == dL) {
+                    if (session.timestamp.Year > 1 && session.medianReactionTime > -1.0f) {
                         if (currentDate == session.timestamp.DayOfYear || currentDate == -1) {
                             currentDate = session.timestamp.DayOfYear;
                             DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
                             dataPoint.x = session.timestamp.DayOfYear;
-                            dataPoint.y = session.reactionTime;
+                            dataPoint.y = session.medianReactionTime;
                             dataPoint.sessionData = session;
                             dataPointLists.Last().Add(dataPoint);
                         } else if (session.timestamp.Year > 1) {
@@ -96,7 +96,7 @@ public class TimeVisController : MonoBehaviour {
                             dataPointLists.Add(dpList);
                             DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
                             dataPoint.x = session.timestamp.DayOfYear;
-                            dataPoint.y = session.reactionTime;
+                            dataPoint.y = session.medianReactionTime;
                             dataPoint.sessionData = session;
                             dataPointLists.Last().Add(dataPoint);
 
@@ -226,13 +226,13 @@ public class TimeVisController : MonoBehaviour {
 
         float maxLimit = -1.0f;
 		foreach (var session in sessionDataList) {
-			if (maxLimit < session.reactionTime) {
-				maxLimit = session.reactionTime;
+			if (maxLimit < session.medianReactionTime) {
+				maxLimit = session.medianReactionTime;
 			}
 		}
 
         // Y axis is not tied to any visual representation currently so we just instantiate a new Axis object.
-        float upperY = currentSession.reactionTime * 2;
+        float upperY = currentSession.medianReactionTime * 2;
 
         // our Y axis should minimum show a 2 second range.
         if (upperY < 5.0f) {
@@ -241,7 +241,7 @@ public class TimeVisController : MonoBehaviour {
 
         axisY.SetRawDisplayRange(0.0f, upperY);
         //axisY.SetValueLimits(0.0f, maxLimit);
-        Debug.Log("axisY rawDisplayRange: (" + 0.0f + "," + currentSession.reactionTime * 2 + ")");
+        Debug.Log("axisY rawDisplayRange: (" + 0.0f + "," + currentSession.medianReactionTime * 2 + ")");
     }
 
     public void Zoom(ZoomType zoomType)

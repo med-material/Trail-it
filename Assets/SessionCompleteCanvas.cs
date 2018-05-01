@@ -31,7 +31,7 @@ public class SessionCompleteCanvas : MonoBehaviour {
         sessionData = dataManager.GetSessionData();
 
         trainingTime.SetTargetWholeNumber(Mathf.RoundToInt(sessionData.sessionLength));
-        aggregateReactionTime.SetTargetDecimalNumber(sessionData.reactionTime);
+        aggregateReactionTime.SetTargetDecimalNumber(sessionData.medianReactionTime);
 
         hitsVis.SetTargetWholeNumber(sessionData.hitCount, 0, (sessionData.hitCount + sessionData.errorCount));
         errorVis.SetTargetWholeNumber((sessionData.hitCount + sessionData.errorCount), sessionData.hitCount, (sessionData.hitCount + sessionData.errorCount));
