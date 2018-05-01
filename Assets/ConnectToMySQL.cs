@@ -97,12 +97,11 @@ public class ConnectToMySQL : MonoBehaviour {
 
 		if (www.error == null) {
 			Debug.Log ("Posted successfully");
+			loggingManager.ClearLogsToUpload ();
 		} else {
-			Debug.Log ("log submission error: " + www.error);
-			Debug.LogError ("Dumping Log To Disk For Later Uploading");
-			loggingManager.DumpCurrentLog ();
+			Debug.Log("Unable to submit logs: " + www.error);
 		}
-		loggingManager.ClearLogEntries ();
+
 	}
 		
 }

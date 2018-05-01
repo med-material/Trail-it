@@ -32,7 +32,14 @@ public class GameManager : MonoBehaviour
 	private bool tutorialSeen = false;
     private float levelCompletionTime = -1;
 	private float lastHitTime = -1;
+
+	// The difference between sessionFinished and sessionActive is
+	// that sessionFinished is only true if we just finished a session.
+	// While sessionActive can be true even if a session was never started.
+	// (fx we just entered the main menu).
+
 	private bool sessionActive = true;
+	private bool sessionFinished = false;
 	private bool levelActive = false;
 	private float pauseTime = 0;
 	private bool intro = false;
@@ -280,6 +287,7 @@ public class GameManager : MonoBehaviour
         if (!sessionActive) {
             dataManager.AddSessionData(sessionTimestampStart, intro);
             endSessionCanvas.gameObject.SetActive(true);
+			sessionFinished = true;
             //loggingManager.WriteSessionLog();
 			//loggingManager.UploadLog();
 		}
@@ -328,12 +336,13 @@ public class GameManager : MonoBehaviour
 
 	public void ResetGame()
 	{
-        //loggingManager.WriteLog ("Game Reset!");
+		Debug.Log ("Game Reset!");
         bool shouldUpload = profileManager.GetUploadPolicy();
-		if (shouldUpload && loggingManager.hasLogs() && !sessionActive) {
+		Debug.Log ("shouldUpload: " + shouldUpload);
+		Debug.Log ("!sessionActive: " + !sessionActive);
+		if (shouldUpload && sessionFinished) {
             loggingManager.WriteSessionLog();
-            loggingManager.DumpCurrentLog();
-            loggingManager.ClearLogEntries();
+			loggingManager.SetCurrentLogsToUpload ();
         }
         dataManager.SaveData();
 		SceneManager.LoadSceneAsync("TMT_P10");
@@ -358,14 +367,15 @@ public class GameManager : MonoBehaviour
     void OnApplicationQuit()
     {
         dataManager.SaveData();
-        // if we fail to upload before user exit, we dump the logs disk.
+        // If we have a finished session, we should prepare it for upload.
         bool shouldUpload = profileManager.GetUploadPolicy();
-        bool sessionFinished = (Time.time - sessionTimeStart > sessionLength * 60);
-        if (shouldUpload && loggingManager.hasLogs() && sessionFinished) {
+		if (shouldUpload && sessionFinished) {
             loggingManager.WriteSessionLog();
-            loggingManager.DumpCurrentLog();
-            loggingManager.ClearLogEntries();
+			loggingManager.SetCurrentLogsToUpload ();
         }
+
+		// if we have any logs to upload, we should dump them to disk before quitting.
+		loggingManager.DumpLogsToUpload ();
     }
 
     public bool GetHeatMapSeen()

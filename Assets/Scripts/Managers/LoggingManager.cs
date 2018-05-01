@@ -19,6 +19,8 @@ public class LoggingManager : MonoBehaviour {
 	private ProfileManager profileManager;
 
 	private List<string> logEntries;
+	private static List<string> logsToUpload;
+	private static bool init = false;
 
 	private StreamWriter writer;
 	private string directory;
@@ -29,6 +31,10 @@ public class LoggingManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		if (init == false) {
+			logsToUpload = new List<string> ();
+			init = true;
+		}
 		logEntries = new List<string>();
 		gameManager = this.GetComponent<GameManager> ();
 
@@ -38,7 +44,8 @@ public class LoggingManager : MonoBehaviour {
 			Directory.CreateDirectory(directory);
 		}
 
-		DetectDumpedLogs ();
+		DetectLogs ();
+		UploadLogs ();
 		NewLog ();
 	}
 
@@ -234,50 +241,54 @@ public class LoggingManager : MonoBehaviour {
     }
 
 	public void NewLog() {
-
+		logEntries.Clear ();
 		fileName = "User" + profileManager.GetCurrentProfileID() + " - " + System.DateTime.Now.ToString() + ".txt";
 		fileName = fileName.Replace ('/', '-');
 		fileName = fileName.Replace (':', '-');
 	}
 
-	public void UploadLog() {
+	public void UploadLogs() {
 		bool shouldUpload = profileManager.GetUploadPolicy ();
-		if (shouldUpload && logEntries.Count > 0) {
-			mySQL.UploadLog(logEntries);
+		if (shouldUpload && logsToUpload.Count > 0) {
+			Debug.Log ("Attempting to upload " + logsToUpload.Count + " logs.");
+			mySQL.UploadLog(logsToUpload);
 		}
 	}
 
-	public void ClearLogEntries() {
-        logEntries.Clear ();
+	public void SetCurrentLogsToUpload() {
+		if (logEntries.Count > 0) {
+			logsToUpload.AddRange (logEntries);
+			Debug.Log ("logEntries added to logsToUpload, logsToUpload is now " + logsToUpload.Count + " in size.");
+		}
 	}
 
-	public bool hasLogs()
-	{
-		return (logEntries.Count > 0);
+	public void ClearLogsToUpload() {
+		logsToUpload.Clear ();
 	}
 
-	public void DumpCurrentLog() {
-		for(int i = 0; i < logEntries.Count; i++) {
-			using (StreamWriter writer = File.AppendText(directory + "offlinelogs"))
-			{
-				writer.WriteLine(logEntries[i]);
+	public void DumpLogsToUpload() {
+		if (logsToUpload.Count > 0) {
+			for (int i = 0; i < logsToUpload.Count; i++) {
+				using (StreamWriter writer = File.AppendText (directory + "offlinelogs")) {
+					writer.WriteLine (logsToUpload [i]);
+				}
 			}
+
+			Debug.Log ("Writing " + logsToUpload.Count + "logs to disk.");
 		}
 	}
 
-	public void DetectDumpedLogs() {
+	public void DetectLogs() {
 		if (File.Exists (directory + "offlinelogs")) {
-
 			string line;
-			List<string> offlineLogs = new List<string>();
 			using (StreamReader reader = new StreamReader(directory + "offlinelogs")) {
 				while((line = reader.ReadLine()) != null)  
 				{  
-					offlineLogs.Add (line);
+					logsToUpload.Add (line);
 				}
 			}
 			File.Delete (directory + "offlinelogs");
-			mySQL.UploadLog (offlineLogs);
+			Debug.Log ("Detected " + logsToUpload.Count + " dumped entries");
 		}
 
 	}
