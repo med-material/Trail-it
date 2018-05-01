@@ -330,11 +330,7 @@ public class GameManager : MonoBehaviour
 	{
         //loggingManager.WriteLog ("Game Reset!");
         bool shouldUpload = profileManager.GetUploadPolicy();
-        bool sessionFinished = (Time.time - sessionTimeStart > sessionLength * 60);
-        if (sessionFinished) {
-            
-        }
-        if (shouldUpload && loggingManager.hasLogs() && sessionFinished) {
+		if (shouldUpload && loggingManager.hasLogs() && !sessionActive) {
             loggingManager.WriteSessionLog();
             loggingManager.DumpCurrentLog();
             loggingManager.ClearLogEntries();
