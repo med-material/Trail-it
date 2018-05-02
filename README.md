@@ -1,5 +1,5 @@
 # Trail it - Cognitive Training
-![Trail it trains your sight and concentration](http://bastianilso.com/wp-content/uploads/2018/05/vr-icons-teaser-image.png)
+![Trail it trains your sight and concentration](https://i1.wp.com/bastianilso.com/wp-content/uploads/2018/04/trailit_in_game_full_res.png?fit=640%2C480)
 
 Latest stable: v2018.05.01
 
