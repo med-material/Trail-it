@@ -1,6 +1,7 @@
 # Trail it - Cognitive Training
-![Trail it trains your sight and concentration](https://i1.wp.com/bastianilso.com/wp-content/uploads/2018/04/trailit_in_game_full_res.png?fit=640%2C480)
-Latest stable: v2018.04.20
+![Trail it trains your sight and concentration](http://bastianilso.com/wp-content/uploads/2018/05/vr-icons-teaser-image.png)
+
+Latest stable: v2018.05.01
 
 Trail it (TrailiT) is a game which trains your eye sight and concentration 
 ability. In the game you connect circles in the order 1-2-3-4 or in 
