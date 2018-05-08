@@ -74,24 +74,24 @@ public class TimeVisController : MonoBehaviour {
                 dL = difficultyLevel;
                 gT = gameType;
             }
-
-            int currentDate = -1;
+				
+            int currentDayOfYear = -1;
+			List<System.DateTime> dates = new List<System.DateTime> ();
             List<DataPoint> dpList;
             dpList = new List<DataPoint>();
             dataPointLists.Add(dpList);
-            lowestDayOfYear = currentDate;
-            highestDayOfYear = currentDate;
+            lowestDayOfYear = currentDayOfYear;
+            highestDayOfYear = currentDayOfYear;
             foreach (var session in sessionDataList) {
                 if (session.medianReactionTime > -1.0f && session.gameType == gT && session.difficultyLevel == dL) {
                     if (session.timestamp.Year > 1 && session.medianReactionTime > -1.0f) {
-                        if (currentDate == session.timestamp.DayOfYear || currentDate == -1) {
-                            currentDate = session.timestamp.DayOfYear;
+						if (dates.Count > 0 && dates.Last().DayOfYear == session.timestamp.DayOfYear) {
                             DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
                             dataPoint.x = session.timestamp.DayOfYear;
                             dataPoint.y = session.medianReactionTime;
                             dataPoint.sessionData = session;
                             dataPointLists.Last().Add(dataPoint);
-                        } else if (session.timestamp.Year > 1) {
+                        } else {
                             dpList = new List<DataPoint>();
                             dataPointLists.Add(dpList);
                             DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
@@ -99,20 +99,18 @@ public class TimeVisController : MonoBehaviour {
                             dataPoint.y = session.medianReactionTime;
                             dataPoint.sessionData = session;
                             dataPointLists.Last().Add(dataPoint);
-
-                            currentDate = session.timestamp.DayOfYear;
-                            Debug.Log("session DayOfYear: " + currentDate);
+							dates.Add (session.timestamp);
                         }
-
-                        if (lowestDayOfYear > currentDate || lowestDayOfYear == -1) {
-                            lowestDayOfYear = currentDate;
-                        }
-                        if (highestDayOfYear < currentDate || highestDayOfYear == -1) {
-                            highestDayOfYear = currentDate;
-                        }
+							
                     }
                 }
             }
+			dates = dates.OrderBy (x => x.Date).ToList ();
+			highestDayOfYear = dates.Last ().DayOfYear;
+			lowestDayOfYear = dates.First ().DayOfYear;
+			Debug.Log ("lowestDayOfYear is " + lowestDayOfYear);
+			Debug.Log ("highestDayOfYear is " + highestDayOfYear);
+
             Debug.Log("Created " + dataPointLists.Count + " lists with datapoints.");
             if (dataPointLists.Count > 0) {
                 foreach (var list in dataPointLists) {
@@ -128,18 +126,18 @@ public class TimeVisController : MonoBehaviour {
                 // Highlight the latest training session
                 visualDataPoints.Last().SetPrimary(true);
 
-                for (int i = lowestDayOfYear; i <= highestDayOfYear; i++) {
-                    System.DateTime val = new System.DateTime(1111, 1, 1).AddDays(i - 1);
 
-                    string labelString = val.DayOfWeek.ToString();
-                    if (i == System.DateTime.Today.DayOfYear) {
-                        labelString = "i Dag";
-                    }
-                    string subLabelString = string.Format("{0}. {1}", val.Day, val.ToString("MMMM"));
-                    axisXLabels.Add(labelString);
-                    axisXSubLabels.Add(subLabelString);
-                }
-                Debug.Log("highestDayOfYear is: " + highestDayOfYear + ", lowestDayOfYear is: " + lowestDayOfYear);
+
+				for (var day = dates.First().Date; day.Date <= dates.Last().Date; day = day.AddDays(1)) {
+					string labelString = day.DayOfWeek.ToString();
+					if (day.DayOfYear == System.DateTime.Today.DayOfYear) {
+						labelString = "i Dag";
+					}
+					string subLabelString = string.Format("{0}. {1}", day.Day, day.ToString("MMMM"));
+					axisXLabels.Add(labelString);
+					axisXSubLabels.Add(subLabelString);
+				}
+
 
                 CreateXAxis();
                 CreateYAxis();

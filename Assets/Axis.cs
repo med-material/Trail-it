@@ -116,18 +116,25 @@ public class Axis : MonoBehaviour
             }
         }
 
+		Debug.Log ("newAxisLabels Count before population: " + newAxisLabels.Count);
+
 		for (float i = rawDisplayRange[0]; i <= rawDisplayRange[1]; i += frequency) {
-			string currentText = newAxisLabels[0];
+			if (newAxisLabels.Count > 0) {
+				string currentText = newAxisLabels [0];
 
-            string currentSubText = null;
-            if (newAxisSubLabels != null) {
-                currentSubText = newAxisSubLabels[0];
-                newAxisSubLabels.RemoveAt(0);
-            }
+				string currentSubText = null;
+				if (newAxisSubLabels != null) {
+					currentSubText = newAxisSubLabels [0];
+					newAxisSubLabels.RemoveAt (0);
+				}
 
-			CreateAxisLabel(currentText, i, currentSubText);
-			newAxisLabels.RemoveAt(0);
+				CreateAxisLabel (currentText, i, currentSubText);
+				newAxisLabels.RemoveAt (0);
+			}
+
 		}
+
+		Debug.Log ("newAxisLabels Count after population: " + newAxisLabels.Count);
 
         Debug.Log("Axis: Created " + labels.Count + " labels.");
     }
