@@ -56,9 +56,6 @@ public class GameManager : MonoBehaviour
 
 	private int levelErrorsTotal = 0;
 
-	private List<float> levelReactionTimesList = new List<float>();
-	private float levelReactionTime = 0.0f;
-
 	private float levelTimeStart = -1;		  // used for calculations (Time.time based)
 	private float levelTimeEnd = -1;		  // used for calculations (Time.time based)
 	private DateTime levelTimestampStart;     // used for logging (System.Datetime.now based)
@@ -193,7 +190,6 @@ public class GameManager : MonoBehaviour
                         if (lastHitTime > -1.0f)
 						{
                             reactionTime = Time.time - lastHitTime;
-                            levelReactionTimesList.Add(reactionTime);
 
 						}
 
@@ -246,7 +242,6 @@ public class GameManager : MonoBehaviour
         sessionTimeCurrent += levelCompletionTime;
 		sessionTimeRemaining = sessionTimeRemaining - levelCompletionTime;
 		sessionHitsTotal += levelHitsTotal;
-		levelReactionTime = Utils.GetMedian(levelReactionTimesList);
         bool usedLineDrawing = false;
         dataManager.AddLevelData(currentProgress, levelCompletionTime, sessionTimeCurrent,
                                  levelTimestampStart, levelTimestampEnd, usedLineDrawing);
@@ -301,10 +296,12 @@ public class GameManager : MonoBehaviour
         var timeSpan = TimeSpan.FromSeconds(Time.time - sessionTimeStart);
         endLevelDuration.text = string.Format(endLevelDurationTemplate, timeSpan.Minutes.ToString(), sessionLength.ToString());
 
+        var levelData = dataManager.GetLevelData();
+
         if (sessionActive) {
             endLevelTime.SetTargetDecimalNumber(levelCompletionTime);
             endLevelAmount.SetTargetWholeNumber(sessionHitsTotal);
-            endLevelAverage.SetTargetDecimalNumber(levelReactionTime);
+            endLevelAverage.SetTargetDecimalNumber(levelData.reactionTime);
 
         }
 
@@ -314,8 +311,6 @@ public class GameManager : MonoBehaviour
 	{
 		levelHitsTotal = 0;
 		levelErrorsTotal = 0;
-		levelReactionTime = 0.0f;
-		levelReactionTimesList.Clear();
 	}
 
 	public void TimerPause()
