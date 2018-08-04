@@ -21,7 +21,8 @@ public class ConnectToMySQL : MonoBehaviour {
 	private static bool isConnected = false;
 	private int retries = 0;
 	//private Dictionary<string, string> wwwHeader = new Dictionary<string, string> ();
-	private string hash;
+	private string secHash;
+    private string dataHash;
 
 	void Awake() {
 		// Setting the headers in order to get through the security of the server
@@ -35,8 +36,8 @@ public class ConnectToMySQL : MonoBehaviour {
 		url = serverUrl.GetServerUrl();
 		WWWForm testForm = new WWWForm ();
 		testForm.AddField ("purposePost", "connectionTest");
-		hash = Utils.Md5Sum (securityCode);
-		testForm.AddField ("hashPost", hash);
+		secHash = Utils.Md5Sum (securityCode);
+		testForm.AddField ("secHashPost", secHash);
 
 		if (instance == null) {
 			instance = this;
@@ -72,8 +73,8 @@ public class ConnectToMySQL : MonoBehaviour {
 	public void UploadLog(List<string> input) {
 		WWWForm form = new WWWForm ();
 
-		form.AddField ("purposePost", "submitLogs_v2018.05.01");
-		form.AddField ("hashPost", hash);
+		form.AddField ("purposePost", "submitLogs_v2018.07.01");    
+		form.AddField ("secHashPost", secHash);
 
 		// Create a string with the data
 		string data = "";
@@ -83,6 +84,9 @@ public class ConnectToMySQL : MonoBehaviour {
 			}
 			data += input[i];
 		}
+        dataHash = Utils.Md5Sum(data);
+        form.AddField("dataHashPost", dataHash);
+
 		Debug.Log ("data to submit: " + data);
 		form.AddField ("dataPost", data);
 

@@ -263,7 +263,7 @@ public class LoggingManager : MonoBehaviour {
 	}
 
 	public void ClearLogsToUpload() {
-		logsToUpload.Clear ();
+		//logsToUpload.Clear ();
 	}
 
 	public void DumpLogsToUpload() {
