@@ -179,7 +179,7 @@ public class ProfileManager : MonoBehaviour {
                 mainMenuCanvas.SetActive(false);
             }
             CurrentVersion = Application.version;
-        } else if (CurrentVersion == "2018.04.10" || CurrentVersion == "2018.04.20") {
+        } else if (CurrentVersion == "2018.04.10" || CurrentVersion == "2018.04.20" || CurrentVersion == "2018.05.01") {
             if (!didInit) {
                 updatedCanvas.SetActive(true);
                 mainMenuCanvas.SetActive(false);
