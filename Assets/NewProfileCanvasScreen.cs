@@ -33,11 +33,8 @@ public class NewProfileCanvasScreen : MonoBehaviour {
 	[SerializeField]
 	private Toggle shouldUpload;
 
-	[SerializeField]
-	private Toggle shouldProtectSettings;
-
 	public void SetNameAndCreateProfile() {
-		profileManager.AddNewProfile (nameField.text, emailField.text, shouldUpload.isOn, shouldProtectSettings.isOn);
+		profileManager.AddNewProfile (nameField.text, emailField.text, shouldUpload.isOn);
 		if (shouldUpload.isOn)
 		{
 			questionnaireCanvas.SetActive(true);
