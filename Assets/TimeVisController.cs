@@ -85,9 +85,9 @@ public class TimeVisController : MonoBehaviour {
             foreach (var session in sessionDataList) {
                 if (session.medianReactionTime > -1.0f && session.gameType == gT && session.difficultyLevel == dL) {
                     if (session.timestamp.Year > 1 && session.medianReactionTime > -1.0f) {
-						if (dates.Count > 0 && dates.Last().DayOfYear == session.timestamp.DayOfYear) {
+						if (dates.Count > 0 && (dates.Last().Year-2000)*365 + dates.Last().DayOfYear == (session.timestamp.Year-2000)*365 + session.timestamp.DayOfYear) {
                             DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
-                            dataPoint.x = session.timestamp.DayOfYear;
+							dataPoint.x = (session.timestamp.Year-2000)*365 + session.timestamp.DayOfYear;
                             dataPoint.y = session.medianReactionTime;
                             dataPoint.sessionData = session;
                             dataPointLists.Last().Add(dataPoint);
@@ -95,7 +95,7 @@ public class TimeVisController : MonoBehaviour {
                             dpList = new List<DataPoint>();
                             dataPointLists.Add(dpList);
                             DataPoint dataPoint = ScriptableObject.CreateInstance<DataPoint>();
-                            dataPoint.x = session.timestamp.DayOfYear;
+							dataPoint.x = (session.timestamp.Year-2000)*365 + session.timestamp.DayOfYear;
                             dataPoint.y = session.medianReactionTime;
                             dataPoint.sessionData = session;
                             dataPointLists.Last().Add(dataPoint);
@@ -106,8 +106,8 @@ public class TimeVisController : MonoBehaviour {
                 }
             }
 			dates = dates.OrderBy (x => x.Date).ToList ();
-			highestDayOfYear = dates.Last ().DayOfYear;
-			lowestDayOfYear = dates.First ().DayOfYear;
+			highestDayOfYear = (dates.Last().Year-2000)*365 + dates.Last ().DayOfYear;
+			lowestDayOfYear = (dates.First().Year-2000)*365 + dates.First ().DayOfYear;
 			Debug.Log ("lowestDayOfYear is " + lowestDayOfYear);
 			Debug.Log ("highestDayOfYear is " + highestDayOfYear);
 
@@ -130,7 +130,7 @@ public class TimeVisController : MonoBehaviour {
 
 				for (var day = dates.First().Date; day.Date <= dates.Last().Date; day = day.AddDays(1)) {
 					string labelString = day.DayOfWeek.ToString();
-					if (day.DayOfYear == System.DateTime.Today.DayOfYear) {
+					if ((day.Year-2000)*365 + day.DayOfYear == (System.DateTime.Today.Year-2000)*365 + System.DateTime.Today.DayOfYear) {
 						labelString = "i Dag";
 					}
 					string subLabelString = string.Format("{0}. {1}", day.Day, day.ToString("MMMM"));
