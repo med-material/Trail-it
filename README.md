@@ -15,7 +15,7 @@ to play this game on iPad. The game is developed by students at Aalborg
 University who is researching digital apps for use in rehabilitation and 
 at home.
 
-Please see README.pdf for help on how to start the game. For publications and more information, visit [our website](http://rehab.bastianilso.com).
+Please see README.pdf for help on how to start the game. 
 
 ## Trail it 2017.04.20 Key Features:
  * Heatmap Visualization
@@ -30,3 +30,10 @@ Schnatterbeck, Bastian Ilsø Hougaard, Kasper Hald, Alexander Arrendtorp,
 Mads Bang Hoffensetz
 
 Trail it is licensed under GPLv3
+
+## Publications
+ * [https://doi.org/10.4108/eai.8-12-2017.153400](How annotated visualizations in self-care technology supported a stroke survivor in goal setting and reflection)
+ * [https://doi.org/10.1145/3329189.3329239](Telling the Story Right: How Therapists Aid Stroke Patients Interpret Personal Visualized Game Performance Data)
+
+## Data Collection in Trail it
+Trail it by default will collect data offline on your device, but will not share it. To remove your Trail it data from your deivce, simply uninstall Trail it or find it in Settings -> Apps and use "Clear Storage". This will also remove any progress made in the game and your profiles.
