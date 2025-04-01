@@ -20,11 +20,15 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public DataManager dataManager;
 
+    [SerializeField]
+    public ProgressionManager progressManager;
+
 	[SerializeField]
 	public Tutorial tutorial;
 
 	public GameLevel activeLevel;
 	public AssistanceManager activeLevelAssistance;
+	public BackgroundRotation backgroundRotation;
 
     private bool player;
     private bool gameA;
@@ -73,6 +77,8 @@ public class GameManager : MonoBehaviour
     // Canvas Stuff
     [SerializeField]
     private Canvas menuCanvas;
+	[SerializeField]
+    private GameObject gameCanvas;
     [SerializeField]
     private Canvas setupCanvas;
     [SerializeField]
@@ -135,6 +141,9 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
 		LoadPlayerPrefs ();
+		LevelData level = progressManager.GetCurrentLevel();
+		activeLevelAssistance.LoadPlayerPrefs();
+		backgroundRotation.SetBackground(level.background);
         gameOverlayCanvas.SetActive(true);
 
 		if (intro && !tutorialSeen)
@@ -164,7 +173,10 @@ public class GameManager : MonoBehaviour
 			StartCoroutine(CountDownFirstLevel());
 
 		}
+		gameCanvas.gameObject.SetActive(true);
 		menuCanvas.gameObject.SetActive(false);
+		endLevelCanvas.gameObject.SetActive(false);
+		levelActive = true;
     }
 
 	public void Update()
@@ -172,7 +184,7 @@ public class GameManager : MonoBehaviour
 		//Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward * 10f, Color.red);
         if (_CurrentScene == "Level") {
             float time = Time.time;
-            sessionActive = (Time.time - sessionTimeStart < sessionLength * 60);
+            sessionActive = (Time.time - sessionTimeStart < sessionLength * 10); // 60
 
 			if (input.TouchActive)
 			{
@@ -247,6 +259,7 @@ public class GameManager : MonoBehaviour
                                  levelTimestampStart, levelTimestampEnd, usedLineDrawing);
 		loggingManager.WriteLevelLog("Level " + currentProgress.ToString() + " Completed!");
 		ShowTheEndLevelCanvas();
+
     }
 
 	private IEnumerator CountDownFirstLevel()
@@ -327,6 +340,23 @@ public class GameManager : MonoBehaviour
 		LoadPlayerPrefs();
 		activeLevel.ReloadLevel();
 		//loggingManager.WriteLog ("Game Resumed");
+	}
+
+	public void ResetOrProceedGame()
+	{
+		int level = progressManager.AdvanceLevel();
+		if (level == -1) {
+			//int track = progressManager.AdvanceTrack();
+			profileManager.SetTrackCompletion();
+			profileManager.SetLevel(); // saves the level.
+			ResetGame();
+		} else {
+			profileManager.SetLevel();
+			GameLevel._DidInit = false;
+			sessionTimeStart = Time.time;
+			endSessionCanvas.gameObject.SetActive(false);
+			StartGame();
+		}
 	}
 
 	public void ResetGame()

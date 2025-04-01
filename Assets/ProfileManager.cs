@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Globalization;
 
 public class ProfileManager : MonoBehaviour {
 
@@ -13,6 +15,9 @@ public class ProfileManager : MonoBehaviour {
 
     [SerializeField]
     private DataManager dataManager;
+
+    [SerializeField]
+    private ProgressionManager progressManager;
 
 	[SerializeField]
 	private GameObject questionnaireCanvas;
@@ -39,6 +44,22 @@ public class ProfileManager : MonoBehaviour {
 	{
 		get { return _currentVersion == "" ? Application.version : _currentVersion; }
 		set { _currentVersion = value; }
+	}
+
+	// User settable information.
+	private string _CurrentTrack = "-1";
+	private string CurrentTrack
+	{
+		get { return _CurrentTrack == "" ? "-1" : _CurrentTrack; }
+		set { _CurrentTrack = value; }
+	}
+
+	// User settable information.
+	private string _CurrentLevel = "-1";
+	private string CurrentLevel
+	{
+		get { return _CurrentLevel == "" ? "-1" : _CurrentLevel; }
+		set { _CurrentLevel = value; }
 	}
 
 	// User settable information.
@@ -77,6 +98,20 @@ public class ProfileManager : MonoBehaviour {
 		set { _currentTrainingReason = value; }
 	}
 
+	private string _currentBackground = "1";
+	private string CurrentBackground
+	{
+		get { return _currentBackground == "" ? "1" : _currentBackground; }
+		set { _currentBackground = value; }
+	}
+
+	private string _currentCompletion = "-1";
+	private string CurrentCompletion
+	{
+		get { return _currentCompletion == "" ? "-1" : _currentCompletion; }
+		set { _currentCompletion = value; }
+	}
+
 	public void Awake() {
 		string profileString = PlayerPrefs.GetString ("Settings:ProfileIDs", "-1");
 		currentProfileID = PlayerPrefs.GetString("Settings:CurrentProfileID", "Gæst");
@@ -110,6 +145,9 @@ public class ProfileManager : MonoBehaviour {
 			profiles.Add(profileString);
 		}
 
+		// Initialize ProgressionManager
+		progressManager.Init();
+
 		// It is important that we call SetCurrentProfile after populating the profileString
 		// Otherwise we accidentically overwrite all our profiles with an empty string.
 		// It is also important that it is called before MigrateProfile(), otherwise we
@@ -136,7 +174,11 @@ public class ProfileManager : MonoBehaviour {
 
 		string newProfileID = Utils.Md5Sum(System.DateTime.Now.ToString() + CurrentName + CurrentEmail);
 		CurrentVersion = Application.version;
+		CurrentTrack = "1";
+		CurrentLevel = "1";
 
+		progressManager.SetCurrentTrack(int.Parse(CurrentTrack));
+		progressManager.SetCurrentLevel(int.Parse(CurrentLevel));
 		currentProfileID = newProfileID;
 		shouldUpload = uploadPolicy;
 		shouldProtectSettings = protectSettings;
@@ -154,16 +196,54 @@ public class ProfileManager : MonoBehaviour {
         CurrentVersion = PlayerPrefs.GetString("Settings:" + newProfileID + ":Version", "2017.04.04");
         CurrentPlayContext = PlayerPrefs.GetString("Settings:" + newProfileID + ":PlayContext", "Unknown");
         CurrentAgeGroup = PlayerPrefs.GetString("Settings:" + newProfileID + ":AgeGroup", "Unknown");
+		CurrentTrack = PlayerPrefs.GetString("Settings:" + newProfileID + ":Track", "-1");
+		CurrentLevel = PlayerPrefs.GetString("Settings:" + newProfileID + ":Level", "-1");
         CurrentTrainingReason = PlayerPrefs.GetString("Settings:" + newProfileID + ":TrainingReason", "Unknown");
         shouldUpload = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":UploadData", 0) == 1);
         shouldProtectSettings = (PlayerPrefs.GetInt("Settings:" + newProfileID + ":ProtectSettings", 0) == 1);
 
+		CurrentCompletion = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":Completion", "-1");
+		if (CurrentCompletion != "-1") {
+			DateTime savedCompletion = DateTime.ParseExact(CurrentCompletion, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+			DateTime timeNow = DateTime.Now;
+			double totalHours = (timeNow - savedCompletion).TotalHours;
+			Debug.Log("total hours since completion: " + totalHours.ToString());
+			if (totalHours > 6) { // 6 hour release time.
+				CurrentCompletion = "-1";
+				CurrentTrack = progressManager.AdvanceTrack().ToString();
+			}
+		}
+
         dataManager.LoadData();
+		Debug.Log("CurrentTrack: " + CurrentTrack);
+		Debug.Log("CurrentLevel: " + CurrentLevel);
+		if (CurrentTrack != "-1") {
+			progressManager.SetCurrentTrack(int.Parse(CurrentTrack));
+		}
+		if (CurrentLevel != "-1") {
+			progressManager.SetCurrentLevel(int.Parse(CurrentLevel));
+		}
+		SetLevel();
+
         Debug.Log("profileID: " + currentProfileID);
         Debug.Log("Current Profile: " + CurrentName + ", version " + CurrentVersion + ", playContext " + CurrentPlayContext + ", ageGroup " + CurrentAgeGroup
                   + ", trainingReason " + CurrentTrainingReason + "and uploadPolicy " + shouldUpload);
         SaveProfiles();
     }
+
+	private void EvaluateCompletion() {
+		CurrentCompletion = PlayerPrefs.GetString ("Settings:" + currentProfileID + ":Completion", "-1");
+		if (CurrentCompletion != "-1") {
+			DateTime savedCompletion = DateTime.ParseExact(CurrentCompletion, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+			DateTime timeNow = DateTime.Now;
+			double totalHours = (timeNow - savedCompletion).TotalHours;
+			Debug.Log("total hours since completion: " + totalHours.ToString());
+			if (totalHours > 6) { // 6 hour release time.
+				CurrentCompletion = "-1";
+				CurrentTrack = progressManager.AdvanceTrack().ToString();
+			}
+		}
+	}
 
     private void MigrateProfile()
     {
@@ -216,6 +296,8 @@ public class ProfileManager : MonoBehaviour {
         PlayerPrefs.SetString("Settings:" + currentProfileID + ":Version", CurrentVersion);
         PlayerPrefs.SetString("Settings:" + currentProfileID + ":PlayContext", CurrentPlayContext);
         PlayerPrefs.SetString("Settings:" + currentProfileID + ":AgeGroup", CurrentAgeGroup);
+		PlayerPrefs.SetString("Settings:" + currentProfileID + ":Track", CurrentTrack);
+		PlayerPrefs.SetString("Settings:" + currentProfileID + ":Level", CurrentLevel);
         PlayerPrefs.SetString("Settings:" + currentProfileID + ":TrainingReason", CurrentTrainingReason);
         PlayerPrefs.SetInt("Settings:" + currentProfileID + ":UploadData", int.Parse((Utils.BoolToNumberString(shouldUpload))));
         PlayerPrefs.SetInt("Settings:" + currentProfileID + ":ProtectSettings", int.Parse((Utils.BoolToNumberString(shouldProtectSettings))));
@@ -235,6 +317,16 @@ public class ProfileManager : MonoBehaviour {
 	public string GetCurrentEmail()
 	{
 		return CurrentEmail;
+	}
+
+	public string GetCurrentTrack()
+	{
+		return CurrentTrack;
+	}
+
+	public string GetCurrentLevel()
+	{
+		return CurrentLevel;
 	}
 
 	public string GetCurrentVersion()
@@ -272,6 +364,11 @@ public class ProfileManager : MonoBehaviour {
 		return currentProfileID;
 	}
 
+	public string GetCurrentCompletion()
+	{
+		return CurrentCompletion;
+	}
+
 	public int GetProfileAmount()
 	{
 		int profileAmount = profiles.Count;
@@ -302,11 +399,37 @@ public class ProfileManager : MonoBehaviour {
 		SaveProfiles();
 	}
 
+	public void SetTrack(string track)
+	{
+		CurrentTrack = track;
+		SaveProfiles();
+	}
+
+	public void SetLevel()
+	{
+		// set player prefs based on current progression.
+		LevelData levelData = progressManager.GetCurrentLevel();
+		CurrentLevel = levelData.level.ToString();
+		Debug.Log("CurrentLevel set to " + CurrentLevel);
+		PlayerPrefs.SetInt("Settings:" + currentProfileID + ":Time", levelData.trainingMinutes); // 1
+        PlayerPrefs.SetInt("Settings:" + currentProfileID + ":DifficultyLevel", levelData.difficulty);
+		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":GameType", levelData.gameType);
+		SaveProfiles();
+	}
+
+	public void SetTrackCompletion()
+	{
+		//CurrentTrack = nextTrack;
+		//PlayerPrefs.SetString("Settings:" + currentProfileID + ":Track", nextTrack);
+		PlayerPrefs.SetString ("Settings:" + currentProfileID + ":Completion", DateTime.Now.ToString("yyyy-MM-dd HH:mm"));
+	}
+
 	public void SetTrainingReason(string trainingReason)
 	{
 		CurrentTrainingReason = trainingReason;
 		SaveProfiles();
 	}
+
 
 	public List<string> GetProfileList()
 	{

@@ -1,0 +1,268 @@
+{
+    "data": [ 
+    {
+    "difficulty": 1,
+    "trainingMinutes": 2,
+    "gameType": "gameA",
+    "background": 1,
+    "track": 1,
+    "level": 1
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 1,
+    "level": 2
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 2,
+    "gameType": "gameA",
+    "background": 1,
+    "track": 2,
+    "level": 1
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 4,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 2,
+    "level": 2
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 1,
+    "track": 3,
+    "level": 1
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 3,
+    "level": 2
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 1,
+    "track": 4,
+    "level": 1
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 2,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 4,
+    "level": 2
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 3,
+    "track": 4,
+    "level": 3
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 2,
+    "gameType": "gameA",
+    "background": 1,
+    "track": 5,
+    "level": 1
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 4,
+    "gameType": "gameB",
+    "background": 2,
+    "track": 5,
+    "level": 2
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 2,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 6,
+    "level": 1
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 4,
+    "gameType": "gameA",
+    "background": 3,
+    "track": 6,
+    "level": 2
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 4,
+    "gameType": "gameB",
+    "background": 3,
+    "track": 6,
+    "level": 3
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 7,
+    "level": 1
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 5,
+    "gameType": "gameA",
+    "background": 4,
+    "track": 7,
+    "level": 2
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 2,
+    "gameType": "gameB",
+    "background": 3,
+    "track": 8,
+    "level": 1
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 5,
+    "gameType": "gameA",
+    "background": 4,
+    "track": 8,
+    "level": 2
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 2,
+    "gameType": "gameA",
+    "background": 3,
+    "track": 9,
+    "level": 1
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 5,
+    "gameType": "gameB",
+    "background": 4,
+    "track": 9,
+    "level": 2
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 5,
+    "gameType": "gameA",
+    "background": 4,
+    "track": 9,
+    "level": 3
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 2,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 10,
+    "level": 1
+    },
+    {
+    "difficulty": 2,
+    "trainingMinutes": 2,
+    "gameType": "gameB",
+    "background": 3,
+    "track": 10,
+    "level": 2
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 5,
+    "gameType": "gameA",
+    "background": 4,
+    "track": 10,
+    "level": 3
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 3,
+    "gameType": "gameB",
+    "background": 4,
+    "track": 10,
+    "level": 4
+    },
+    {
+    "difficulty": 1,
+    "trainingMinutes": 2,
+    "gameType": "gameB",
+    "background": 2,
+    "track": 11,
+    "level": 1
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 5,
+    "gameType": "gameB",
+    "background": 4,
+    "track": 11,
+    "level": 2
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 4,
+    "track": 11,
+    "level": 3
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 5,
+    "gameType": "gameA",
+    "background": 2,
+    "track": 12,
+    "level": 1
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 3,
+    "gameType": "gameB",
+    "background": 3,
+    "track": 12,
+    "level": 2
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 5,
+    "gameType": "gameB",
+    "background": 4,
+    "track": 12,
+    "level": 3
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 3,
+    "gameType": "gameA",
+    "background": 3,
+    "track": 13,
+    "level": 1
+    },
+    {
+    "difficulty": 3,
+    "trainingMinutes": 10,
+    "gameType": "gameB",
+    "background": 4,
+    "track": 13,
+    "level": 2
+    }
+    ]
+}
