@@ -21,6 +21,11 @@ public class BackgroundRotation : MonoBehaviour {
 		
 	}
 
+	public void SetBackground(int b)
+	{
+		spriteRenderer.sprite = backgrounds[b];
+	}
+
 	public void ChangeBackground()
 	{
 		int r = Random.Range(0, backgrounds.Length);
